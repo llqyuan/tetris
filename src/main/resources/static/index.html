@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tetris</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+    <noscript>
+        <h2 style="color: #ff0000">
+            JavaScript is disabled. Please enable JavaScript and reload 
+            the page.
+        </h2>
+    </noscript>
+
+    <audio loop id="tetris-theme">
+        <source src="tetris_theme.mp3">
+    </audio>
+
+    <p id="testing">eiofjqwpoifejpqwoiefjopqwoefq</p>
+
+    <div id="main-content">
+        <canvas id="tetris-display">
+
+        </canvas>
+    </div>
+</body>
+</html>
