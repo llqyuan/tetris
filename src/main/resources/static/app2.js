@@ -1,6 +1,136 @@
 var stompClient = null;
 var unitSize = null;
 
+const I = 0;
+const L = 1;
+const J = 2;
+const T = 3;
+const S = 4;
+const Z = 5;
+const O = 6;
+const GHOST = 7;
+
+const UPRIGHT = 0;
+const LEFT = 1;
+const RIGHT = 2;
+const UPSIDEDOWN = 3;
+
+// ========================================================================
+// temporary
+const ICOLOUR = "#00eeff";
+const IOUTLINE = "#038992";
+
+const LCOLOUR = "#ff7300";
+const LOUTLINE = "#bd6706";
+
+const JCOLOUR = "#001aff";
+const JOUTLINE = "#0604a5";
+
+const TCOLOUR = "#ff00dd";
+const TOUTLINE = "#8b0475";
+
+const SCOLOUR = "#00ff55";
+const SOUTLINE = "#149103";
+
+const ZCOLOUR = "#ff0000";
+const ZOUTLINE = "#aa0000";
+
+const OCOLOUR = "#ffee00";
+const OOUTLINE = "#afa402";
+
+const GHOSTCOLOUR = "#919191";
+
+
+// classes for tetris pieces/singleton squares?
+
+function SingleSquare(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.piece = params.piece || null;
+}
+
+function IPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = ICOLOUR;
+    this.strokeStyle = IOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function LPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = LCOLOUR;
+    this.strokeStyle = LOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function JPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = JCOLOUR;
+    this.strokeStyle = JOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function TPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = TCOLOUR;
+    this.strokeStyle = TOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function SPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = SCOLOUR;
+    this.strokeStyle = SOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function ZPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = ZCOLOUR;
+    this.strokeStyle = ZOUTLINE;
+    this.orientation = params.orientation || UPRIGHT;
+}
+
+function OPiece(params) {
+    this.x = params.x || 0;
+    this.y = params.y || 0;
+    this.fillStyle = OCOLOUR;
+    this.strokeStyle = OOUTLINE;
+    this.orientaiton = params.orientation || UPRIGHT;
+}
+
+SingleSquare.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+
+    switch (this.piece) {
+        case I:
+            ctx.fillStyle = ICOLOUR;
+            ctx.strokeStyle = IOUTLINE;
+            ctx.fillRect(this.x, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+            break;
+        case L:
+            ctx.fillStyle = LCOLOUR;
+            ctx.strokeStyle = LOUTLINE;
+            ctx.fillRect(this.x, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+            break;
+        default:
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = "#fffffff";
+            ctx.fillRect(this.x, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+    }
+}
+
+// ========================================================================
+
 
 // connect() connects to the server.
 
@@ -9,7 +139,7 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/drop-piece', function (greeting) {
+        stompClient.subscribe('/topic/drop-piece', function (response) {
             
         });
     });
