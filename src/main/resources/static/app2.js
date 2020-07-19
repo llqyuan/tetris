@@ -8,7 +8,6 @@ const T = 3;
 const S = 4;
 const Z = 5;
 const O = 6;
-const GHOST = 7;
 
 const UPRIGHT = 0;
 const LEFT = 1;
@@ -16,7 +15,7 @@ const RIGHT = 2;
 const UPSIDEDOWN = 3;
 
 // ========================================================================
-// temporary
+
 const ICOLOUR = "#00eeff";
 const IOUTLINE = "#038992";
 
@@ -46,7 +45,7 @@ const GHOSTCOLOUR = "#919191";
 function SingleSquare(params) {
     this.x = params.x || 0;
     this.y = params.y || 0;
-    this.piece = params.piece || null;
+    this.piece = params.piece || -1;
 }
 
 function IPiece(params) {
@@ -55,6 +54,7 @@ function IPiece(params) {
     this.fillStyle = ICOLOUR;
     this.strokeStyle = IOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function LPiece(params) {
@@ -63,6 +63,7 @@ function LPiece(params) {
     this.fillStyle = LCOLOUR;
     this.strokeStyle = LOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function JPiece(params) {
@@ -71,6 +72,7 @@ function JPiece(params) {
     this.fillStyle = JCOLOUR;
     this.strokeStyle = JOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function TPiece(params) {
@@ -79,6 +81,7 @@ function TPiece(params) {
     this.fillStyle = TCOLOUR;
     this.strokeStyle = TOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function SPiece(params) {
@@ -87,6 +90,7 @@ function SPiece(params) {
     this.fillStyle = SCOLOUR;
     this.strokeStyle = SOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function ZPiece(params) {
@@ -95,6 +99,7 @@ function ZPiece(params) {
     this.fillStyle = ZCOLOUR;
     this.strokeStyle = ZOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 function OPiece(params) {
@@ -103,6 +108,7 @@ function OPiece(params) {
     this.fillStyle = OCOLOUR;
     this.strokeStyle = OOUTLINE;
     this.orientaiton = params.orientation || UPRIGHT;
+    this.ghost = params.ghost || false;
 }
 
 SingleSquare.prototype.draw = function(canvas) {
@@ -112,21 +118,83 @@ SingleSquare.prototype.draw = function(canvas) {
         case I:
             ctx.fillStyle = ICOLOUR;
             ctx.strokeStyle = IOUTLINE;
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
             break;
         case L:
             ctx.fillStyle = LCOLOUR;
             ctx.strokeStyle = LOUTLINE;
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+            break;
+        case J:
+            ctx.fillStyle = JCOLOUR;
+            ctx.strokeStyle = JOUTLINE;
+            break;
+        case T:
+            ctx.fillStyle = TCOLOUR;
+            ctx.strokeStyle = TOUTLINE;
+            break;
+        case S:
+            ctx.fillStyle = SCOLOUR;
+            ctx.strokeStyle = SOUTLINE;
+            break;
+        case Z:
+            ctx.fillStyle = ZCOLOUR;
+            ctx.strokeStyle = ZOUTLINE;
+            break;
+        case O:
+            ctx.fillStyle = OCOLOUR;
+            ctx.strokeStyle = OOUTLINE;
             break;
         default:
             ctx.fillStyle = "#ffffff";
             ctx.strokeStyle = "#fffffff";
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
     }
+    ctx.fillRect(this.x, this.y, unitSize, unitSize);
+    ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+}
+
+IPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch (this.orientation) {
+        case UPRIGHT:
+            // what's the spawning position of an i piece?
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
+}
+
+LPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+}
+
+JPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+}
+
+TPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+}
+
+SPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+}
+
+ZPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
+}
+
+OPiece.prototype.draw = function(canvas) {
+    var ctx = canvas.getContext("2d");
 }
 
 // ========================================================================
