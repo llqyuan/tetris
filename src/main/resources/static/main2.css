@@ -11,10 +11,15 @@ body {
     padding: 10px;
 }
 
+#score {
+    height: 5vh;
+}
+
 #tetris-display {
     position: relative;
-    height: 95vh;
+    height: 90vh;
     min-height: 500px;
+    width: 82vh;
     margin: auto;
     overflow: hidden;
 }
