@@ -144,8 +144,8 @@ SingleSquare.prototype.draw = function(canvas) {
             ctx.strokeStyle = OOUTLINE;
             break;
         default:
-            ctx.fillStyle = "#ffffff";
-            ctx.strokeStyle = "#fffffff";
+            ctx.fillStyle = "#efefef";
+            ctx.strokeStyle = "#efefef";
     }
     ctx.fillRect(this.x, this.y, unitSize, unitSize);
     ctx.strokeRect(this.x, this.y, unitSize, unitSize);
@@ -291,7 +291,8 @@ function drawBlankHoldBox(canvas, unitSize) {
 
 function drawBlankBoard(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
-    ctx.strokeRect(6 * unitSize, 9 * unitSize, 10 * unitSize, 20 * unitSize);
+    ctx.strokeRect(6 * unitSize - 2, 9 * unitSize - 2, 
+        10 * unitSize + 4, 20 * unitSize + 4);
 }
 
 
@@ -360,8 +361,8 @@ function initCanvas() {
         ghost: true
     });
     var ipiece3 = new IPiece({
-        x: 6 * unitSize, 
-        y: 14 * unitSize,
+        x: 5 * unitSize, 
+        y: 25 * unitSize,
         orientation: LEFT
     });
     var ipiece4 = new IPiece({
