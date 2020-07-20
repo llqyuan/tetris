@@ -237,26 +237,140 @@ IPiece.prototype.draw = function(canvas) {
 
 LPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch(this.orientation) {
+        case UPRIGHT:
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
 }
 
 JPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch(this.orientation) {
+        case UPRIGHT:
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
 }
 
 TPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch(this.orientation) {
+        case UPRIGHT:
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
 }
 
 SPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch(this.orientation) {
+        case UPRIGHT:
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
 }
 
 ZPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    switch(this.orientation) {
+        case UPRIGHT:
+            break;
+        case LEFT:
+            break;
+        case RIGHT:
+            break;
+        case UPSIDEDOWN:
+            break;
+    }
 }
 
 OPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
+
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    } else {
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
+    }
+    ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+        unitSize, unitSize);
+    ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
+        unitSize, unitSize);
+    ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize,
+        unitSize, unitSize);
+    ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+        unitSize, unitSize);
+    ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+        unitSize, unitSize);
+    ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
+        unitSize, unitSize);
+    ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize,
+        unitSize, unitSize);
+    ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+        unitSize, unitSize);
 }
 
 // ========================================================================
@@ -353,27 +467,19 @@ function initCanvas() {
     drawBlankNextQueue(canvas, unitSize);
 
     // todo: remove. testing, temporary
-    var ipiece1 = new IPiece({x: 6 * unitSize, y: 9 * unitSize});
-    var ipiece2 = new IPiece({
-        x: 11 * unitSize, 
-        y: 9 * unitSize, 
-        orientation: UPSIDEDOWN, 
+    // i piece drawing tested
+    var o1 = new OPiece({
+        x: 5 * unitSize,
+        y: 8 * unitSize,
         ghost: true
     });
-    var ipiece3 = new IPiece({
-        x: 5 * unitSize, 
-        y: 25 * unitSize,
+    var o2 = new OPiece({
+        x: 13 * unitSize, 
+        y: 26 * unitSize,
         orientation: LEFT
     });
-    var ipiece4 = new IPiece({
-        x: 11 * unitSize,
-        y: 14 * unitSize,
-        orientation: RIGHT
-    });
-    ipiece1.draw(canvas);
-    ipiece2.draw(canvas);
-    ipiece3.draw(canvas);
-    ipiece4.draw(canvas);
+    o1.draw(canvas);
+    o2.draw(canvas);
 }
 
 $(function() {
