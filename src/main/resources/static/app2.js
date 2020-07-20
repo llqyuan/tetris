@@ -236,6 +236,7 @@ IPiece.prototype.draw = function(canvas) {
     }
 }
 
+// todo
 LPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -258,6 +259,7 @@ LPiece.prototype.draw = function(canvas) {
     }
 }
 
+// todo
 JPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -280,6 +282,7 @@ JPiece.prototype.draw = function(canvas) {
     }
 }
 
+// todo
 TPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -302,6 +305,7 @@ TPiece.prototype.draw = function(canvas) {
     }
 }
 
+// todo
 SPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -324,6 +328,7 @@ SPiece.prototype.draw = function(canvas) {
     }
 }
 
+// todo
 ZPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -487,6 +492,73 @@ function drawPieceInQueuePosition(canvas, piececode, pos) {
     piece.draw(canvas);
 }
 
+
+// clearPieceInQueuePosition(canvas, pos) erases the piece in 
+// position pos (int: 1, 2, 3, 4, 5)
+
+function clearPieceInQueuePosition(canvas, pos) {
+    var ctx = canvas.getContext("2d");
+    var xpix;
+    var ypix;
+    switch (pos) {
+        case 1:
+            xpix = 13 * unitSize;
+            ypix = 3 * unitSize;
+            break;
+        case 2:
+            xpix = 18 * unitSize;
+            ypix = 3 * unitSize;
+            break;
+        case 3:
+            xpix = 18 * unitSize;
+            ypix = 8 * unitSize;
+            break;
+        case 4:
+            xpix = 18 * unitSize;
+            ypix = 13 * unitSize;
+            break;
+        case 5:
+            xpix = 18 * unitSize;
+            ypix = 18 * unitSize;
+            break;
+    }
+    ctx.fillStyle = "#efefef";
+    ctx.fillRect(xpix - 2, ypix - 2, 4 * unitSize + 4, 4 * unitSize + 4);
+}
+
+
+// drawPieceInHold(canvas, piececode) draws the corresponding 
+// piece in the hold box.
+// todo: clear piece in hold
+
+function drawPieceInHold(canvas, piececode) {
+    var piece;
+    switch (piececode) {
+        case I:
+            piece = new IPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case L:
+            piece = new LPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case J:
+            piece = new JPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case T:
+            piece = new TPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case S:
+            piece = new SPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case Z:
+            piece = new ZPiece({x: unitSize, y: 3 * unitSize});
+            break;
+        case O:
+            piece = new OPiece({x: unitSize, y: 3 * unitSize});
+            break;
+    }
+    piece.draw(canvas);
+}
+
 // initCanvas draws the barebones Tetris board: hold box, board, and 
 // next-queue with no Tetris pieces.
 
@@ -517,6 +589,8 @@ function initCanvas() {
     drawPieceInQueuePosition(canvas, O, 3);
     drawPieceInQueuePosition(canvas, I, 4);
     drawPieceInQueuePosition(canvas, O, 5);
+    clearPieceInQueuePosition(canvas, 1);
+    drawPieceInHold(canvas, I);
 }
 
 // ========================================================================
@@ -527,7 +601,6 @@ function initCanvas() {
 function connect() {
     var socket = new SockJS('/tetris');
     stompClient = Stomp.over(socket);
-    alert(1);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/drop-piece', function (response) {
