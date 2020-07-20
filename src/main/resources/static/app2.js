@@ -37,7 +37,7 @@ const ZOUTLINE = "#aa0000";
 const OCOLOUR = "#ffee00";
 const OOUTLINE = "#afa402";
 
-const GHOSTCOLOUR = "#919191";
+const GHOSTCOLOUR = "#91919177";
 
 
 // classes for tetris pieces/singleton squares?
@@ -107,7 +107,7 @@ function OPiece(params) {
     this.y = params.y || 0;
     this.fillStyle = OCOLOUR;
     this.strokeStyle = OOUTLINE;
-    this.orientaiton = params.orientation || UPRIGHT;
+    this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
 }
 
@@ -163,12 +163,74 @@ IPiece.prototype.draw = function(canvas) {
     switch (this.orientation) {
         case UPRIGHT:
             // what's the spawning position of an i piece?
-            break;
-        case LEFT:
+            // todo: I'll just assume first and check later, and if I'm wrong about 
+            // spawning positions, I'll just move the cases around
+            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 3 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 3 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
             break;
         case RIGHT:
+            ctx.fillRect(this.x + 2 * unitSize, this.y, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + 3 * unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + 3 * unitSize,
+                unitSize, unitSize);
+            break;
+        case LEFT:
+            ctx.fillRect(this.x + unitSize, this.y, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 3 * unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 3 * unitSize,
+                unitSize, unitSize);
             break;
         case UPSIDEDOWN:
+            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 3 * unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 *unitSize,
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 3 * unitSize, this.y + 2 * unitSize,
+                unitSize, unitSize);
             break;
     }
 }
@@ -288,6 +350,29 @@ function initCanvas() {
     drawBlankHoldBox(canvas, unitSize);
     drawBlankBoard(canvas, unitSize);
     drawBlankNextQueue(canvas, unitSize);
+
+    // todo: remove. testing, temporary
+    var ipiece1 = new IPiece({x: 6 * unitSize, y: 9 * unitSize});
+    var ipiece2 = new IPiece({
+        x: 11 * unitSize, 
+        y: 9 * unitSize, 
+        orientation: UPSIDEDOWN, 
+        ghost: true
+    });
+    var ipiece3 = new IPiece({
+        x: 6 * unitSize, 
+        y: 14 * unitSize,
+        orientation: LEFT
+    });
+    var ipiece4 = new IPiece({
+        x: 11 * unitSize,
+        y: 14 * unitSize,
+        orientation: RIGHT
+    });
+    ipiece1.draw(canvas);
+    ipiece2.draw(canvas);
+    ipiece3.draw(canvas);
+    ipiece4.draw(canvas);
 }
 
 $(function() {
