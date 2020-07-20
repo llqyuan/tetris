@@ -15,6 +15,7 @@ const RIGHT = 2;
 const UPSIDEDOWN = 3;
 
 // ========================================================================
+// Drawing pieces
 
 const ICOLOUR = "#00eeff";
 const IOUTLINE = "#038992";
@@ -374,22 +375,7 @@ OPiece.prototype.draw = function(canvas) {
 }
 
 // ========================================================================
-
-
-// connect() connects to the server.
-
-function connect() {
-    var socket = new SockJS('/tetris');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/drop-piece', function (response) {
-            
-        });
-    });
-    $('#tetris-theme').trigger("play");
-}
-
+// Drawing things on the board
 
 // drawBlankHoldBox() draws the hold box.
 
@@ -417,17 +403,17 @@ function drawBlankNextQueue(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
 
     ctx.font = "{}px Arial".replace("{}", Math.floor(unitSize / 2));
-    ctx.strokeText("NEXT", 11 * unitSize, Math.floor(unitSize * 3 / 2));
+    ctx.strokeText("NEXT", 12 * unitSize, Math.floor(unitSize * 3 / 2));
 
-    ctx.moveTo(11 * unitSize, 2 * unitSize);
+    ctx.moveTo(12 * unitSize, 2 * unitSize);
     ctx.lineTo(23 * unitSize, 2 * unitSize);
     ctx.stroke();
 
-    ctx.moveTo(11 * unitSize, 2 * unitSize);
-    ctx.lineTo(11 * unitSize, 8 * unitSize);
+    ctx.moveTo(12 * unitSize, 2 * unitSize);
+    ctx.lineTo(12 * unitSize, 8 * unitSize);
     ctx.stroke();
 
-    ctx.moveTo(11 * unitSize, 8 * unitSize);
+    ctx.moveTo(12 * unitSize, 8 * unitSize);
     ctx.lineTo(17 * unitSize, 8 * unitSize);
     ctx.stroke();
 
@@ -442,6 +428,63 @@ function drawBlankNextQueue(canvas, unitSize) {
     ctx.moveTo(23 * unitSize, 23 * unitSize);
     ctx.lineTo(23 * unitSize, 2 * unitSize);
     ctx.stroke();
+}
+
+
+// drawPieceInQueuePosition(canvas, piececode, pos) draws the piece 
+// represented by piececode (constant I, J, L, T, S, Z, O)
+// in the position pos (int: 1, 2, 3, 4, 5) in the next-piece queue.
+
+function drawPieceInQueuePosition(canvas, piececode, pos) {
+    var xpix;
+    var ypix;
+    var piece;
+    switch (pos) {
+        case 1:
+            xpix = 13 * unitSize;
+            ypix = 3 * unitSize;
+            break;
+        case 2:
+            xpix = 18 * unitSize;
+            ypix = 3 * unitSize;
+            break;
+        case 3:
+            xpix = 18 * unitSize;
+            ypix = 8 * unitSize;
+            break;
+        case 4:
+            xpix = 18 * unitSize;
+            ypix = 13 * unitSize;
+            break;
+        case 5:
+            xpix = 18 * unitSize;
+            ypix = 18 * unitSize;
+            break;
+    }
+    switch(piececode) {
+        case I:
+            piece = new IPiece({x: xpix, y: ypix});
+            break;
+        case J:
+            piece = new JPiece({x: xpix, y:ypix});
+            break;
+        case L:
+            piece = new LPiece({x: xpix, y: ypix});
+            break;
+        case T:
+            piece = new TPiece({x: xpix, y:ypix});
+            break;
+        case S:
+            piece = new SPiece({x: xpix, y: ypix});
+            break;
+        case Z:
+            piece = new ZPiece({x: xpix, y: ypix});
+            break;
+        case O:
+            piece = new OPiece({x: xpix, y:ypix});
+            break;
+    }
+    piece.draw(canvas);
 }
 
 // initCanvas draws the barebones Tetris board: hold box, board, and 
@@ -468,21 +511,33 @@ function initCanvas() {
 
     // todo: remove. testing, temporary
     // i piece drawing tested
-    var o1 = new OPiece({
-        x: 5 * unitSize,
-        y: 8 * unitSize,
-        ghost: true
+    // o piece drawing tested
+    drawPieceInQueuePosition(canvas, I, 1);
+    drawPieceInQueuePosition(canvas, I, 2);
+    drawPieceInQueuePosition(canvas, O, 3);
+    drawPieceInQueuePosition(canvas, I, 4);
+    drawPieceInQueuePosition(canvas, O, 5);
+}
+
+// ========================================================================
+// Other
+
+// connect() connects to the server.
+
+function connect() {
+    var socket = new SockJS('/tetris');
+    stompClient = Stomp.over(socket);
+    alert(1);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/drop-piece', function (response) {
+            
+        });
     });
-    var o2 = new OPiece({
-        x: 13 * unitSize, 
-        y: 26 * unitSize,
-        orientation: LEFT
-    });
-    o1.draw(canvas);
-    o2.draw(canvas);
+    $('#tetris-theme').trigger("play");
 }
 
 $(function() {
     $( "#tetris-display" ).ready(function() { initCanvas(); });
-    $( "#tetris-display" ).ready(function() { connect(); });
+    $( "#tetris-theme" ).ready(function() { connect(); });
 });
