@@ -382,9 +382,9 @@ OPiece.prototype.draw = function(canvas) {
 // ========================================================================
 // Drawing things on the board
 
-// drawBlankHoldBox() draws the hold box.
+// initHoldBox() draws the hold box.
 
-function drawBlankHoldBox(canvas, unitSize) {
+function initHoldBox(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
     ctx.font = "{}px Arial".replace("{}", Math.floor(unitSize / 2));
     ctx.strokeText("HOLD", 0, Math.floor(unitSize * 3 / 2));
@@ -392,19 +392,19 @@ function drawBlankHoldBox(canvas, unitSize) {
 }
 
 
-// drawBlankBoard() draws the board with no Tetris pieces in it.
+// initBoard() draws the board with no Tetris pieces in it.
 
-function drawBlankBoard(canvas, unitSize) {
+function initBoard(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
     ctx.strokeRect(6 * unitSize - 2, 9 * unitSize - 2, 
         10 * unitSize + 4, 20 * unitSize + 4);
 }
 
 
-// drawBlankNextQueue draws the next-pieces queue with no Tetris 
+// initNextQueue() draws the next-pieces queue with no Tetris 
 // pieces in it.
 
-function drawBlankNextQueue(canvas, unitSize) {
+function initNextQueue(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
 
     ctx.font = "{}px Arial".replace("{}", Math.floor(unitSize / 2));
@@ -559,6 +559,16 @@ function drawPieceInHold(canvas, piececode) {
     piece.draw(canvas);
 }
 
+
+// clearPieceInHold(canvas) erases the piece in the hold box.
+
+function clearPieceInHold(canvas) {
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#efefef";
+    ctx.fillRect(unitSize - 2, 3 * unitSize - 2, 
+        4 * unitSize + 4, 4 * unitSize + 4);
+}
+
 // initCanvas draws the barebones Tetris board: hold box, board, and 
 // next-queue with no Tetris pieces.
 
@@ -577,9 +587,9 @@ function initCanvas() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
-    drawBlankHoldBox(canvas, unitSize);
-    drawBlankBoard(canvas, unitSize);
-    drawBlankNextQueue(canvas, unitSize);
+    initHoldBox(canvas, unitSize);
+    initBoard(canvas, unitSize);
+    initNextQueue(canvas, unitSize);
 
     // todo: remove. testing, temporary
     // i piece drawing tested
@@ -591,6 +601,8 @@ function initCanvas() {
     drawPieceInQueuePosition(canvas, O, 5);
     clearPieceInQueuePosition(canvas, 1);
     drawPieceInHold(canvas, I);
+    clearPieceInHold(canvas);
+    drawPieceInHold(canvas, O);
 }
 
 // ========================================================================
