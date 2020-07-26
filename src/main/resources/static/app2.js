@@ -39,6 +39,7 @@ const OCOLOUR = "#ffee00";
 const OOUTLINE = "#afa402";
 
 const GHOSTCOLOUR = "#91919177";
+const BACKGROUND = "#efefef";
 
 
 // classes for tetris pieces/singleton squares?
@@ -145,8 +146,8 @@ SingleSquare.prototype.draw = function(canvas) {
             ctx.strokeStyle = OOUTLINE;
             break;
         default:
-            ctx.fillStyle = "#efefef";
-            ctx.strokeStyle = "#efefef";
+            ctx.fillStyle = BACKGROUND;
+            ctx.strokeStyle = BACKGROUND;
     }
     ctx.fillRect(this.x, this.y, unitSize, unitSize);
     ctx.strokeRect(this.x, this.y, unitSize, unitSize);
@@ -361,21 +362,21 @@ OPiece.prototype.draw = function(canvas) {
         ctx.fillStyle = this.fillStyle;
         ctx.strokeStyle = this.strokeStyle;
     }
-    ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+    ctx.fillRect(this.x + unitSize, this.y, 
+        unitSize, unitSize);
+    ctx.fillRect(this.x + 2 * unitSize, this.y,
+        unitSize, unitSize);
+    ctx.fillRect(this.x + unitSize, this.y + unitSize,
         unitSize, unitSize);
     ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
         unitSize, unitSize);
-    ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize,
+    ctx.strokeRect(this.x + unitSize, this.y, 
         unitSize, unitSize);
-    ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
+    ctx.strokeRect(this.x + 2 * unitSize, this.y,
         unitSize, unitSize);
-    ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+    ctx.strokeRect(this.x + unitSize, this.y + unitSize,
         unitSize, unitSize);
     ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize,
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
         unitSize, unitSize);
 }
 
@@ -522,7 +523,7 @@ function clearPieceInQueuePosition(canvas, pos) {
             ypix = 18 * unitSize;
             break;
     }
-    ctx.fillStyle = "#efefef";
+    ctx.fillStyle = BACKGROUND;
     ctx.fillRect(xpix - 2, ypix - 2, 4 * unitSize + 4, 4 * unitSize + 4);
 }
 
@@ -563,7 +564,7 @@ function drawPieceInHold(canvas, piececode) {
 
 function clearPieceInHold(canvas) {
     var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#efefef";
+    ctx.fillStyle = BACKGROUND;
     ctx.fillRect(unitSize - 2, 3 * unitSize - 2, 
         4 * unitSize + 4, 4 * unitSize + 4);
 }
@@ -618,10 +619,9 @@ function connect() {
             
         });
     });
-    $('#tetris-theme').trigger("play");
 }
 
 $(function() {
-    $( "#tetris-display" ).ready(function() { initCanvas(); });
-    $( "#tetris-theme" ).ready(function() { connect(); });
+    $( "#tetris-display" ).ready(function() { connect(); initCanvas(); });
+    $( document ).on("click", function() {$('#tetris-theme').trigger("play");} );
 });
