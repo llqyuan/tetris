@@ -529,7 +529,6 @@ function clearPieceInQueuePosition(canvas, pos) {
 
 // drawPieceInHold(canvas, piececode) draws the corresponding 
 // piece in the hold box.
-// todo: clear piece in hold
 
 function drawPieceInHold(canvas, piececode) {
     var piece;
