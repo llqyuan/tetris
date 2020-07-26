@@ -250,12 +250,62 @@ LPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
+            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
             break;
         case LEFT:
+            ctx.fillRect(this.x, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
             break;
         case RIGHT:
+            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
             break;
         case UPSIDEDOWN:
+            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
             break;
     }
 }
@@ -594,15 +644,15 @@ function initCanvas() {
     // todo: remove. testing, temporary
     // i piece drawing tested
     // o piece drawing tested
-    drawPieceInQueuePosition(canvas, I, 1);
-    drawPieceInQueuePosition(canvas, I, 2);
-    drawPieceInQueuePosition(canvas, O, 3);
-    drawPieceInQueuePosition(canvas, I, 4);
-    drawPieceInQueuePosition(canvas, O, 5);
-    clearPieceInQueuePosition(canvas, 1);
-    drawPieceInHold(canvas, I);
-    clearPieceInHold(canvas);
-    drawPieceInHold(canvas, O);
+    // drawing and clearing queue/hold positions tested
+    var lup = new LPiece({x: 6 * unitSize, y: 9 * unitSize, orientation: UPRIGHT});
+    var ldown = new LPiece({x: 10 * unitSize, y: 9 * unitSize, orientation: UPSIDEDOWN});
+    var lright = new LPiece({x: 6 * unitSize, y: 13 * unitSize, orientation: RIGHT});
+    var lleft = new LPiece({x: 10 * unitSize, y: 13 * unitSize, orientation: LEFT});
+    lup.draw(canvas);
+    ldown.draw(canvas);
+    lright.draw(canvas);
+    lleft.draw(canvas);
 }
 
 // ========================================================================
