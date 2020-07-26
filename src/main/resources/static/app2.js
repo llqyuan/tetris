@@ -237,7 +237,6 @@ IPiece.prototype.draw = function(canvas) {
     }
 }
 
-// todo
 LPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -310,7 +309,6 @@ LPiece.prototype.draw = function(canvas) {
     }
 }
 
-// todo
 JPiece.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -323,12 +321,62 @@ JPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
+            ctx.fillRect(this.x, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
             break;
         case LEFT:
+            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
             break;
         case RIGHT:
+            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
             break;
         case UPSIDEDOWN:
+            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
+            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
+                unitSize, unitSize);
+            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
+                unitSize, unitSize);
             break;
     }
 }
@@ -646,13 +694,21 @@ function initCanvas() {
     // o piece drawing tested
     // drawing and clearing queue/hold positions tested
     var lup = new LPiece({x: 6 * unitSize, y: 9 * unitSize, orientation: UPRIGHT});
-    var ldown = new LPiece({x: 10 * unitSize, y: 9 * unitSize, orientation: UPSIDEDOWN});
-    var lright = new LPiece({x: 6 * unitSize, y: 13 * unitSize, orientation: RIGHT});
+    var lright = new LPiece({x: 10 * unitSize, y: 9 * unitSize, orientation: RIGHT});
+    var ldown = new LPiece({x: 6 * unitSize, y: 13 * unitSize, orientation: UPSIDEDOWN});
     var lleft = new LPiece({x: 10 * unitSize, y: 13 * unitSize, orientation: LEFT});
     lup.draw(canvas);
-    ldown.draw(canvas);
     lright.draw(canvas);
+    ldown.draw(canvas);
     lleft.draw(canvas);
+    var jup = new JPiece({x: 6 * unitSize, y: 17 * unitSize});
+    var jright = new JPiece({x: 10 * unitSize, y: 17 * unitSize, orientation:RIGHT});
+    var jdown = new JPiece({x: 6 * unitSize, y: 21 * unitSize, orientation:UPSIDEDOWN});
+    var jleft = new JPiece({x: 10 * unitSize, y: 21 * unitSize, orientation: LEFT});
+    jup.draw(canvas);
+    jright.draw(canvas);
+    jdown.draw(canvas);
+    jleft.draw(canvas);
 }
 
 // ========================================================================
