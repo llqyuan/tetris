@@ -1,5 +1,6 @@
 var stompClient = null;
 var unitSize = null;
+var gameActive = false;
 
 const I = 0;
 const L = 1;
@@ -42,7 +43,7 @@ const GHOSTCOLOUR = "#91919177";
 const BACKGROUND = "#efefef";
 
 
-// classes for tetris pieces/singleton squares?
+// Piece classes
 
 function SingleSquare(params) {
     this.x = params.x || 0;
@@ -841,7 +842,7 @@ function initCanvas() {
 }
 
 // ========================================================================
-// Other
+// Page management
 
 // connect() connects to the server.
 
@@ -856,7 +857,31 @@ function connect() {
     });
 }
 
+
+// 
+
+function start(key) {
+    switch (key) {
+        case 68:
+            alert("Debug mode");
+            break;
+        default:
+            document.getElementById("start-overlay").style.display = "none";
+            $('#tetris-theme').trigger("play");
+            gameActive = true;
+    }
+}
+
 $(function() {
     $( "#tetris-display" ).ready(function() { connect(); initCanvas(); });
-    $( document ).on("click", function() {$('#tetris-theme').trigger("play");} );
+    $( document ).on("click", function() {
+        if (!gameActive) {
+            start();
+        }
+    });
+    $( document ).keydown(function(event) {
+        if (!gameActive) {
+            start(event.which);
+        }
+    });
 });
