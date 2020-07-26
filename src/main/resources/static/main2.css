@@ -1,5 +1,5 @@
 body {
-    background-color: #ac4dac;
+    background-color: #efefef;
 }
 
 #main-content {
@@ -11,10 +11,36 @@ body {
     padding: 10px;
 }
 
+#score {
+    height: 5vh;
+}
+
 #tetris-display {
     position: relative;
-    height: 95vh;
+    height: 90vh;
     min-height: 500px;
+    width: 82vh;
     margin: auto;
     overflow: hidden;
+}
+
+#start-overlay {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ac4dacd7;
+}
+
+#start-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    font-size: 50px;
 }
