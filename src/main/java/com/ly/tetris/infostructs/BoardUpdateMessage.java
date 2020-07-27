@@ -2,6 +2,7 @@ package com.ly.tetris.infostructs;
 
 public class BoardUpdateMessage {
     private PieceName piece;
+    // expect other stuff later
 
     public BoardUpdateMessage() {
         this.piece = PieceName.NOTHING;
