@@ -8,11 +8,20 @@ import com.ly.tetris.infostructs.EventMessage;
 
 @Controller
 public class PlayerController {
+
+    private TetrisGame game = new TetrisGame();
     
     @MessageMapping("/timed-interval")
-    @SendTo("/topic/drop-piece")
+    @SendTo("/topic/board-update")
     public BoardUpdateMessage timedInterval(EventMessage event) 
     throws Exception {
         return new BoardUpdateMessage();
+    }
+
+    @MessageMapping("/key-event")
+    @SendTo("/topic/board-update")
+    public BoardUpdateMessage keyEvent(EventMessage event)
+    throws Exception {
+        return new BoardUpdateMessage(event.getKeyCommand());
     }
 }

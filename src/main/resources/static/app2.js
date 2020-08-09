@@ -2,13 +2,13 @@ var stompClient = null;
 var unitSize = null;
 var gameActive = false;
 
-const I = 0;
-const L = 1;
-const J = 2;
-const T = 3;
-const S = 4;
-const Z = 5;
-const O = 6;
+const I = 1;
+const L = 2;
+const J = 3;
+const T = 4;
+const S = 5;
+const Z = 6;
+const O = 7;
 
 const UPRIGHT = 0;
 const LEFT = 1;
@@ -49,6 +49,7 @@ function SingleSquare(params) {
     this.x = params.x || 0;
     this.y = params.y || 0;
     this.piece = params.piece || -1;
+    this.ghost = params.ghost || false;
 }
 
 function IPiece(params) {
@@ -114,6 +115,8 @@ function OPiece(params) {
     this.ghost = params.ghost || false;
 }
 
+// Drawing
+
 SingleSquare.prototype.draw = function(canvas) {
     var ctx = canvas.getContext("2d");
 
@@ -150,8 +153,17 @@ SingleSquare.prototype.draw = function(canvas) {
             ctx.fillStyle = BACKGROUND;
             ctx.strokeStyle = BACKGROUND;
     }
-    ctx.fillRect(this.x, this.y, unitSize, unitSize);
-    ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+    if (this.ghost) {
+        ctx.fillStyle = GHOSTCOLOUR;
+        ctx.strokeStyle = GHOSTCOLOUR;
+    }
+
+    // 10x2 spawn field
+    if (!( this.y < 2 * unitSize ))
+    {
+        ctx.fillRect(this.x, this.y, unitSize, unitSize);
+        ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+    }
 }
 
 IPiece.prototype.draw = function(canvas) {
@@ -165,72 +177,124 @@ IPiece.prototype.draw = function(canvas) {
     }
     switch (this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 3 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 3 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x,
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize,
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize,
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 3 * unitSize,
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + 2 * unitSize, this.y, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 3 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 3 * unitSize,
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 3 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x + unitSize, this.y, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 3 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 3 * unitSize,
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y, 
+                piece: I,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 3 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 3 * unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 *unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 3 * unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y + 2 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: I,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 3 * unitSize, 
+                y: this.y + 2 * unitSize,
+                piece: I,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -646,7 +710,7 @@ function initHoldBox(canvas, unitSize) {
 
 function initBoard(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
-    ctx.strokeRect(6 * unitSize - 2, 9 * unitSize - 2, 
+    ctx.strokeRect(7 * unitSize - 2, 2 * unitSize - 2, 
         10 * unitSize + 4, 20 * unitSize + 4);
 }
 
@@ -658,31 +722,9 @@ function initNextQueue(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
 
     ctx.font = "{}px Arial".replace("{}", Math.floor(unitSize / 2));
-    ctx.strokeText("NEXT", 12 * unitSize, Math.floor(unitSize * 3 / 2));
+    ctx.strokeText("NEXT", 19 * unitSize, Math.floor(unitSize * 3 / 2));
 
-    ctx.moveTo(12 * unitSize, 2 * unitSize);
-    ctx.lineTo(23 * unitSize, 2 * unitSize);
-    ctx.stroke();
-
-    ctx.moveTo(12 * unitSize, 2 * unitSize);
-    ctx.lineTo(12 * unitSize, 8 * unitSize);
-    ctx.stroke();
-
-    ctx.moveTo(12 * unitSize, 8 * unitSize);
-    ctx.lineTo(17 * unitSize, 8 * unitSize);
-    ctx.stroke();
-
-    ctx.moveTo(17 * unitSize, 8 * unitSize);
-    ctx.lineTo(17 * unitSize, 23 * unitSize);
-    ctx.stroke();
-
-    ctx.moveTo(17 * unitSize, 23 * unitSize);
-    ctx.lineTo(23 * unitSize, 23 * unitSize);
-    ctx.stroke();
-
-    ctx.moveTo(23 * unitSize, 23 * unitSize);
-    ctx.lineTo(23 * unitSize, 2 * unitSize);
-    ctx.stroke();
+    ctx.strokeRect(18 * unitSize, 2 * unitSize, 6 * unitSize, 17 * unitSize);
 }
 
 
@@ -691,31 +733,10 @@ function initNextQueue(canvas, unitSize) {
 // in the position pos (int: 1, 2, 3, 4, 5) in the next-piece queue.
 
 function drawPieceInQueuePosition(canvas, piececode, pos) {
-    var xpix;
-    var ypix;
+    var xpix = 19 * unitSize;
+    var ypix = 3 * unitSize + 3 * unitSize * (pos - 1);
     var piece;
-    switch (pos) {
-        case 1:
-            xpix = 13 * unitSize;
-            ypix = 3 * unitSize;
-            break;
-        case 2:
-            xpix = 18 * unitSize;
-            ypix = 3 * unitSize;
-            break;
-        case 3:
-            xpix = 18 * unitSize;
-            ypix = 8 * unitSize;
-            break;
-        case 4:
-            xpix = 18 * unitSize;
-            ypix = 13 * unitSize;
-            break;
-        case 5:
-            xpix = 18 * unitSize;
-            ypix = 18 * unitSize;
-            break;
-    }
+    
     switch(piececode) {
         case I:
             piece = new IPiece({x: xpix, y: ypix});
@@ -748,32 +769,11 @@ function drawPieceInQueuePosition(canvas, piececode, pos) {
 
 function clearPieceInQueuePosition(canvas, pos) {
     var ctx = canvas.getContext("2d");
-    var xpix;
-    var ypix;
-    switch (pos) {
-        case 1:
-            xpix = 13 * unitSize;
-            ypix = 3 * unitSize;
-            break;
-        case 2:
-            xpix = 18 * unitSize;
-            ypix = 3 * unitSize;
-            break;
-        case 3:
-            xpix = 18 * unitSize;
-            ypix = 8 * unitSize;
-            break;
-        case 4:
-            xpix = 18 * unitSize;
-            ypix = 13 * unitSize;
-            break;
-        case 5:
-            xpix = 18 * unitSize;
-            ypix = 18 * unitSize;
-            break;
-    }
+    var xpix = 19 * unitSize;
+    var ypix = 3 * unitSize + 3 * unitSize * (pos - 1);
+
     ctx.fillStyle = BACKGROUND;
-    ctx.fillRect(xpix - 2, ypix - 2, 4 * unitSize + 4, 4 * unitSize + 4);
+    ctx.fillRect(xpix - 2, ypix - 2, 4 * unitSize + 4, 3 * unitSize + 2);
 }
 
 
@@ -822,23 +822,48 @@ function clearPieceInHold(canvas) {
 // next-queue with no Tetris pieces.
 
 function initCanvas() {
-    // The playing field is 24 units by 30 units.
+    // The playing field is 24 units wide and 23 units tall.
 
-    // From top to bottom: 8 units (Hold box), 1 unit (padding), 
+    // From top to bottom: 2 units (padding), 
     // 20 units (board), 1 unit (padding)
 
-    // From left to right: 6 units (Hold box), 1 unit (padding), 
+    // From left to right: 6 units (Hold box), 1 unit (padding),
     // 10 units (board), 1 unit (padding), 6 units (next-pieces 
     // queue)
 
     canvas = document.getElementById("tetris-display");
-    unitSize = Math.floor(canvas.clientHeight / 30);
+    unitSize = Math.floor(canvas.clientHeight / 26);
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
     initHoldBox(canvas, unitSize);
     initBoard(canvas, unitSize);
     initNextQueue(canvas, unitSize);
+
+    // temp
+
+    /*
+    var i1 = new IPiece({
+        x: 7 * unitSize,
+        y: 0 * unitSize,
+        orientation: LEFT
+    });
+    i1.draw(canvas);
+    drawPieceInHold(canvas, I);
+    clearPieceInHold(canvas, I);
+    drawPieceInHold(canvas, T);
+    drawPieceInQueuePosition(canvas, I, 1);
+    drawPieceInQueuePosition(canvas, O, 2);
+    drawPieceInQueuePosition(canvas, T, 3);
+    drawPieceInQueuePosition(canvas, Z, 4);
+    drawPieceInQueuePosition(canvas, S, 5);
+    clearPieceInQueuePosition(canvas, 1);
+    clearPieceInQueuePosition(canvas, 3);
+    clearPieceInQueuePosition(canvas, 5);
+    drawPieceInQueuePosition(canvas, L, 1);
+    drawPieceInQueuePosition(canvas, S, 3);
+    drawPieceInQueuePosition(canvas, J, 5);
+    */
 }
 
 // ========================================================================
@@ -851,14 +876,17 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/drop-piece', function (response) {
-            
+        stompClient.subscribe('/topic/board-update', function (response) {
+            updateBoard(response);
+            console.log(
+                "Response from /topic/board-update: " 
+                + JSON.stringify(response.body));
         });
     });
 }
 
 
-// 
+// Update the page after the game has started
 
 function start(key) {
     switch (key) {
@@ -872,8 +900,106 @@ function start(key) {
     }
 }
 
+
+
+// Updates board given a response from the server.
+
+function updateBoard(response) {
+    // temp
+    // just for acknowledgement; will do more detailed updates 
+    // after server logic is more fleshed out
+    var canvas = document.getElementById("tetris-display");
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 29 * unitSize, 24 * unitSize, unitSize);
+    ctx.strokeText("Acknowledged: {}".replace("{}", window.performance.now()),
+        0, 30 * unitSize);
+}
+
+
+// Handles the animation loop.
+
+function updateFrame() {
+    if (gameActive) {
+        window.requestAnimationFrame(updateFrame);
+    }
+}
+
+
+// Sends the hard drop command to the server.
+
+function sendDown() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "HARDDROP"})
+    );
+}
+
+// Sends the soft drop command to the server.
+
+function sendUp() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "SOFTDROP"})
+    );
+}
+
+// Sends the move-left command to the server.
+
+function sendLeft() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "LEFT"})
+    );
+}
+
+// Sends the move-right command to the server.
+
+function sendRight() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "RIGHT"})
+    );
+}
+
+// Sends the rotate-clockwise command to the server.
+
+function sendClockwise() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "CLOCKWISE"})
+    );
+}
+
+// Sends the rotate-counterclockwise command to the server.
+
+function sendCounterClockwise() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "COUNTERCLOCKWISE"})
+    );
+}
+
+// Sends the hold command to the server.
+
+function sendHold() {
+    stompClient.send(
+        "/app/key-event",
+        {},
+        JSON.stringify({"keyCommand": "HOLD"})
+    );
+}
+
 $(function() {
-    $( "#tetris-display" ).ready(function() { connect(); initCanvas(); });
+    $( "#tetris-display" ).ready(function() { 
+        connect(); 
+        initCanvas(); 
+    });
     $( document ).on("click", function() {
         if (!gameActive) {
             start();
@@ -882,6 +1008,40 @@ $(function() {
     $( document ).keydown(function(event) {
         if (!gameActive) {
             start(event.which);
+
+        } else {
+            switch(event.which) {
+                case 38:
+                event.preventDefault();
+                var stop = setInterval(function() { sendUp(); }, 50);
+                $(window).on("keyup", function(e) { clearInterval(stop); });
+                break;
+            case 40:
+                event.preventDefault();
+                sendDown();
+                break;
+            case 37:
+                event.preventDefault();
+                sendLeft();
+                break;
+            case 39:
+                event.preventDefault();
+                sendRight();
+                break;
+            case 67:
+                event.preventDefault();
+                sendClockwise();
+                break;
+            case 88:
+                event.preventDefault();
+                sendCounterClockwise();
+                break;
+            case 90:
+                event.preventDefault();
+                sendHold();
+                break;
+            }
         }
     });
+    
 });

@@ -11,7 +11,7 @@ import com.ly.tetris.game.pieces.ZPiece;
 import com.ly.tetris.infostructs.PieceName;
 
 public class Board {
-    private Square[] theBoard = new Square[10][22];
+    private Square[][] theBoard = new Square[10][22];
     private Piece inPlay;
 
     // (x,y) is the position of the piece on the board, where (0,0) is 
@@ -33,17 +33,30 @@ public class Board {
 
     // Drops the current piece and removes it from play.
     public void drop() {
+        movePieceToBottom();
+        lockPiece();
     } 
 
     // Attempts to spawn the new piece and update hard drop location.
     // Returns true if piece has room to spawn and false otherwise
     public boolean spawn(PieceName piece) {
-        
+        return true;
     }
 
     // Attempts to rotate the piece that's currently in play and 
     // update hard drop location. Returns true if the piece 
     // has room to rotate and false otherwise. Follows SRS rules.
     public boolean rotate() {
+        return true;
+    }
+
+
+    // Moves the current piece to the bottom of the board
+    private void movePieceToBottom() {
+    }
+
+    // Locks the current piece and removes it from play. 
+    // Requires: the piece is at the bottom of the board
+    private void lockPiece() {
     }
 }
