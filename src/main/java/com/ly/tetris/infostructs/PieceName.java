@@ -1,5 +1,7 @@
 package com.ly.tetris.infostructs;
 
+
+// Names of pieces.
 public enum PieceName{
     I,
     O,
