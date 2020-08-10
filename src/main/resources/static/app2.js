@@ -10,10 +10,10 @@ const S = 5;
 const Z = 6;
 const O = 7;
 
-const UPRIGHT = 0;
-const LEFT = 1;
-const RIGHT = 2;
-const UPSIDEDOWN = 3;
+const UPRIGHT = 1;
+const LEFT = 2;
+const RIGHT = 3;
+const UPSIDEDOWN = 4;
 
 // ========================================================================
 // Drawing pieces
@@ -311,62 +311,124 @@ LPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y,
+                piece: L,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize,
+                piece: L,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x,
+                y: this.y,
+                piece: L,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: L,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: L,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: L,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x, 
+                y: this.y + 2 * unitSize,
+                piece: L,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -383,62 +445,124 @@ JPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y, 
+                piece: J, 
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize,
+                piece: J,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize,
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + 2 * unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: J, 
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x, 
+                y: this.y + 2 * unitSize,
+                piece: J,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y, 
+                piece: J, 
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y,
+                piece: J,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize,
+                y: this.y + 2 * unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: J, 
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize,
+                y: this.y + unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: J,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -455,64 +579,124 @@ TPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: T,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize,
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: T,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize,
+                piece: T,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize,
+                y: this.y + unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: T,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -529,62 +713,124 @@ SPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: S,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x,
+                y: this.y,
+                piece: S,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + 2 * unitSize,
+                y: this.y + unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x, 
+                y: this.y + 2 * unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize,
+                y: this.y + 2 * unitSize, 
+                piece: S,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -601,66 +847,124 @@ ZPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            ctx.fillRect(this.x, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y,
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case LEFT:
-            ctx.fillRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x, 
+                y: this.y + 2 * unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case RIGHT:
-            ctx.fillRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y, unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            ctx.fillRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.fillRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x, this.y + unitSize, unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
-            ctx.strokeRect(this.x + 2 * unitSize, this.y + 2 * unitSize, 
-                unitSize, unitSize);
+            var square1 = new SingleSquare({
+                x: this.x, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square2 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square3 = new SingleSquare({
+                x: this.x + unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            var square4 = new SingleSquare({
+                x: this.x + 2 * unitSize, 
+                y: this.y + 2 * unitSize, 
+                piece: Z,
+                ghost: this.ghost
+            });
+            square1.draw(canvas);
+            square2.draw(canvas);
+            square3.draw(canvas);
+            square4.draw(canvas);
             break;
     }
 }
@@ -675,22 +979,34 @@ OPiece.prototype.draw = function(canvas) {
         ctx.fillStyle = this.fillStyle;
         ctx.strokeStyle = this.strokeStyle;
     }
-    ctx.fillRect(this.x + unitSize, this.y, 
-        unitSize, unitSize);
-    ctx.fillRect(this.x + 2 * unitSize, this.y,
-        unitSize, unitSize);
-    ctx.fillRect(this.x + unitSize, this.y + unitSize,
-        unitSize, unitSize);
-    ctx.fillRect(this.x + 2 * unitSize, this.y + unitSize,
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + unitSize, this.y, 
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + 2 * unitSize, this.y,
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + unitSize, this.y + unitSize,
-        unitSize, unitSize);
-    ctx.strokeRect(this.x + 2 * unitSize, this.y + unitSize,
-        unitSize, unitSize);
+    var square1 = new SingleSquare({
+        x: this.x + unitSize, 
+        y: this.y, 
+        piece: O,
+        ghost: this.ghost
+    });
+    var square2 = new SingleSquare({
+        x: this.x + 2 * unitSize, 
+        y: this.y,
+        piece: O,
+        ghost: this.ghost
+    });
+    var square3 = new SingleSquare({
+        x: this.x + unitSize, 
+        y: this.y + unitSize,
+        piece: O,
+        ghost: this.ghost
+    });
+    var square4 = new SingleSquare({
+        x: this.x + 2 * unitSize, 
+        y: this.y + unitSize,
+        piece: O,
+        ghost: this.ghost
+    });
+    square1.draw(canvas);
+    square2.draw(canvas);
+    square3.draw(canvas);
+    square4.draw(canvas);
 }
 
 // ========================================================================
@@ -840,30 +1156,6 @@ function initCanvas() {
     initBoard(canvas, unitSize);
     initNextQueue(canvas, unitSize);
 
-    // temp
-
-    /*
-    var i1 = new IPiece({
-        x: 7 * unitSize,
-        y: 0 * unitSize,
-        orientation: LEFT
-    });
-    i1.draw(canvas);
-    drawPieceInHold(canvas, I);
-    clearPieceInHold(canvas, I);
-    drawPieceInHold(canvas, T);
-    drawPieceInQueuePosition(canvas, I, 1);
-    drawPieceInQueuePosition(canvas, O, 2);
-    drawPieceInQueuePosition(canvas, T, 3);
-    drawPieceInQueuePosition(canvas, Z, 4);
-    drawPieceInQueuePosition(canvas, S, 5);
-    clearPieceInQueuePosition(canvas, 1);
-    clearPieceInQueuePosition(canvas, 3);
-    clearPieceInQueuePosition(canvas, 5);
-    drawPieceInQueuePosition(canvas, L, 1);
-    drawPieceInQueuePosition(canvas, S, 3);
-    drawPieceInQueuePosition(canvas, J, 5);
-    */
 }
 
 // ========================================================================
@@ -910,9 +1202,9 @@ function updateBoard(response) {
     // after server logic is more fleshed out
     var canvas = document.getElementById("tetris-display");
     var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 29 * unitSize, 24 * unitSize, unitSize);
+    ctx.clearRect(0, 23 * unitSize, 24 * unitSize, unitSize);
     ctx.strokeText("Acknowledged: {}".replace("{}", window.performance.now()),
-        0, 30 * unitSize);
+        0, 24 * unitSize);
 }
 
 
