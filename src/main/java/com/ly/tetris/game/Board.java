@@ -11,21 +11,17 @@ import com.ly.tetris.game.pieces.ZPiece;
 import com.ly.tetris.infostructs.PieceName;
 
 public class Board {
-    private Square[][] theBoard = new Square[10][22];
+    // The board. Rows 20 through 39 are the visible playing field.
+    // Rows 0 through 19 are above the visible playing field.
+    // The upper left corner is (0,0).
+    private Square[][] theBoard = new Square[40][10];
+
+    // The piece currently falling.
     private Piece inPlay;
 
-    // (x,y) is the position of the piece on the board, where (0,0) is 
-    // the upper left corner. The first two lines are off the board, 
-    // and are where pieces first spawn
-    private int x;
-    private int y;
-
-    // (hardDropX, hardDropY) is where the piece would be 
-    // on the board if dropped. (0,0) is the upper left corner.
-    // The first two lines are off the board, and are where 
-    // pieces first spawn
-    private int hardDropX;
-    private int hardDropY;
+    // (drowToRow, x) is where the piece currently in play would be 
+    // on the board if dropped.
+    private int dropToRow;
 
     public Board() {
         this.inPlay = null;
