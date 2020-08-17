@@ -7,18 +7,21 @@ public abstract class Piece {
     // The absolute position of the piece. It represents the upper left 
     // corner of the piece's local field of occupied squares (shape of 
     // field depends on the piece -- eg. 4x4 for I, 3x3 for L)
-    private Posn absolutePosition;
+    private Posn absolutePosition = null;
 
     // Constructor. Sets absolute position to (r, c)
     public Piece(int r, int c) {
-        Posn p = new Posn(r, c);
-        absolutePosition = p;
+        absolutePosition = new Posn(r, c);
     }
 
+    // Getter for the piece's absolute position. 
+    // (Returns a copy, so the client can't modify it)
     public Posn getAbsolutePosition() {
-        return absolutePosn;
+        Posn toReturn = new Posn(absolutePosition);
+        return toReturn;
     }
 
+    // Sets the piece's absolute position to posn.
     public void setAbsolutePosition(Posn posn) {
         absolutePosition.row = posn.row;
         absolutePosition.col = posn.col;

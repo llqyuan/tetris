@@ -8,52 +8,52 @@ import java.util.ListIterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.Posn;
-import com.ly.tetris.game.pieces.IPiece;
+import com.ly.tetris.game.pieces.SPiece;
 
-public class IPieceTest {
-    IPiece piece = null;
+public class SPieceTest {
+    SPiece piece = null;
     ArrayList<Posn> upright;
-    ArrayList<Posn> right;
     ArrayList<Posn> left;
+    ArrayList<Posn> right;
     ArrayList<Posn> upsidedown;
 
-    public IPieceTest() {
+    public SPieceTest() {
         upright = new ArrayList<Posn>();
-        right = new ArrayList<Posn>();
         left = new ArrayList<Posn>();
+        right = new ArrayList<Posn>();
         upsidedown = new ArrayList<Posn>();
 
+        upright.add(new Posn(0, 1));
+        upright.add(new Posn(0, 2));
         upright.add(new Posn(1, 0));
         upright.add(new Posn(1, 1));
-        upright.add(new Posn(1, 2));
-        upright.add(new Posn(1, 3));
 
-        right.add(new Posn(0, 2));
+        right.add(new Posn(0, 1));
+        right.add(new Posn(1, 1));
         right.add(new Posn(1, 2));
         right.add(new Posn(2, 2));
-        right.add(new Posn(3, 2));
 
+        upsidedown.add(new Posn(1, 1));
+        upsidedown.add(new Posn(1, 2));
         upsidedown.add(new Posn(2, 0));
         upsidedown.add(new Posn(2, 1));
-        upsidedown.add(new Posn(2, 2));
-        upsidedown.add(new Posn(2, 3));
 
-        left.add(new Posn(0, 1));
+        left.add(new Posn(0, 0));
+        left.add(new Posn(1, 0));
         left.add(new Posn(1, 1));
         left.add(new Posn(2, 1));
-        left.add(new Posn(3, 1));
     }
 
     @BeforeEach
     public void initialize() {
-        piece = new IPiece();
+        piece = new SPiece();
     }
 
     @Test
     public void spawnLocationIsCorrect() {
-        Posn expected = new Posn(18, 3);
+        Posn expected = new Posn(18, 4);
         Posn actual = piece.getAbsolutePosition();
-        assertEquals(expected, actual, "Spawn position incorrect.");
+        assertEquals(expected, actual, "Spawn location incorrect.");
     }
 
     @Test
@@ -112,7 +112,7 @@ public class IPieceTest {
     }
 
     @Test
-    public void 
+    public void
     occupiedIfRotatedClockwiseShouldReturnIdenticalResult() {
         ArrayList<Posn> actual = piece.occupiedIfRotatedClockwise();
         piece.rotateClockwise();

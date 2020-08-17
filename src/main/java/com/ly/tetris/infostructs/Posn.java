@@ -9,4 +9,18 @@ public class Posn {
         this.row = r;
         this.col = c;
     }
+
+    public Posn(Posn other) {
+        this.row = other.row;
+        this.col = other.col;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Posn)) {
+            return false;
+        }
+        Posn other = (Posn)o;
+        return ( (this.row == other.row) && (this.col == other.col) );
+    }
 }

@@ -17,6 +17,7 @@ const UPSIDEDOWN = 4;
 
 // ========================================================================
 // Drawing pieces
+// ========================================================================
 
 const ICOLOUR = "#00eeff";
 const IOUTLINE = "#038992";
@@ -1011,6 +1012,7 @@ OPiece.prototype.draw = function(canvas) {
 
 // ========================================================================
 // Drawing things on the board
+// ========================================================================
 
 // initHoldBox() draws the hold box.
 
@@ -1147,7 +1149,7 @@ function initCanvas() {
     // 10 units (board), 1 unit (padding), 6 units (next-pieces 
     // queue)
 
-    canvas = document.getElementById("tetris-display");
+    canvas = document.getElementById("tetris-board");
     unitSize = Math.floor(canvas.clientHeight / 26);
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
@@ -1160,6 +1162,7 @@ function initCanvas() {
 
 // ========================================================================
 // Page management
+// ========================================================================
 
 // connect() connects to the server.
 
@@ -1170,9 +1173,6 @@ function connect() {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/board-update', function (response) {
             updateBoard(response);
-            console.log(
-                "Response from /topic/board-update: " 
-                + JSON.stringify(response.body));
         });
     });
 }
@@ -1200,7 +1200,7 @@ function updateBoard(response) {
     // temp
     // just for acknowledgement; will do more detailed updates 
     // after server logic is more fleshed out
-    var canvas = document.getElementById("tetris-display");
+    var canvas = document.getElementById("tetris-board");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 23 * unitSize, 24 * unitSize, unitSize);
     ctx.strokeText("Acknowledged: {}".replace("{}", window.performance.now()),
@@ -1288,7 +1288,7 @@ function sendHold() {
 }
 
 $(function() {
-    $( "#tetris-display" ).ready(function() { 
+    $( "#tetris-board" ).ready(function() { 
         connect(); 
         initCanvas(); 
     });

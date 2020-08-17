@@ -10,6 +10,8 @@ public class IPiece extends Piece {
     // false otherwise.
     private boolean[][] localFieldOccupied = new boolean[4][4];
 
+    // Constructor. Spawns the piece in the upright position above 
+    // the visible field
     public IPiece() {
         super(18, 3);
         for (int i = 0; i < 4; i++) {
@@ -43,6 +45,13 @@ public class IPiece extends Piece {
     @Override
     public ArrayList<Posn> occupiedNow() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                if (localFieldOccupied[r][c]) {
+                    occupied.add(new Posn(r, c));
+                }
+            }
+        }
         return occupied;
     }
 
@@ -54,8 +63,7 @@ public class IPiece extends Piece {
             for (int c = 0; c < 4; c++) {
 
                 if (rotatedField[r][c]) {
-                    Posn occupiedPosition = Posn(r, c);
-                    occupied.add(occupiedPosition);
+                    occupied.add(new Posn(r, c));
                 }
 
             }
@@ -71,10 +79,9 @@ public class IPiece extends Piece {
             for (int c = 0; c < 4; c++) {
 
                 if (rotatedField[r][c]) {
-                    Posn occupiedPosition = Posn(r, c);
-                    occupied.add(occupiedPosition);
+                    occupied.add(new Posn(r, c));
                 }
-                
+
             }
         }
         return occupied;
