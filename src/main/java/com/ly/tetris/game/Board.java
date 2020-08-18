@@ -10,10 +10,11 @@ import com.ly.tetris.game.pieces.TPiece;
 import com.ly.tetris.game.pieces.ZPiece;
 import com.ly.tetris.game.SuperRotationSystem;
 import com.ly.tetris.infostructs.PieceName;
+import com.ly.tetris.infostructs.RotationDirection;
 
 public class Board {
     // The board. Rows 20 through 39 are the visible playing field.
-    // Rows 0 through 19 are above the visible playing field.
+    // Rows 0 through 19 are hidden, above the visible playing field.
     // The upper left corner is (0,0).
     private Square[][] theBoard = new Square[40][10];
 
@@ -48,13 +49,16 @@ public class Board {
     // update hard drop location. Returns true if the piece 
     // has room to rotate and false otherwise. 
     // Follows the Super Rotation System (SRS) rules.
-    public boolean rotate() {
-        // Rotate the piece, then determine whether it's overlapping 
-        // anything on the stack.
-        // If so, try applying SRS offsets.
-        // If a rotation works (doens't overlap anything), update 
-        // the stored piece and return true.
-        // If none of the offsets work, return false.
+    // Requires: the piece in play is not null.
+    public boolean rotate(RotationDirection direction) {
+        // Get the squares that the piece would occupy if it were rotated.
+        // Try applying SRS offsets.
+        // If a rotation works (doesn't overlap anything): 
+        // * rotate the stored piece
+        // * apply the wall kick
+        // * update the hard drop location
+        // and return true.
+        // If none of the offsets work, modify nothing and return false.
 
         return true;
     }
@@ -71,5 +75,11 @@ public class Board {
     // Locks the current piece and sets inPlay to null. 
     // Requires: the piece is at the bottom of the board
     private void lockPiece() {
+    }
+
+    // Returns true if the piece does not overlap with any part of 
+    // the current board and false otherwise.
+    private boolean pieceCanOccupyCurrentLocation(Piece piece) {
+        return true;
     }
 }

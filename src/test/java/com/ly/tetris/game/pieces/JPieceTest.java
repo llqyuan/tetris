@@ -72,6 +72,27 @@ public class JPieceTest {
     }
 
     @Test
+    public void clockwiseRotationDoesNotChangePositionOfPiece() {
+        Posn before = piece.getAbsolutePosition();
+
+        piece.performRotationClockwise();
+        Posn after = piece.getAbsolutePosition();
+        assertEquals(before, after, "First rotation changes the position.");
+
+        piece.performRotationClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after, "Second rotation changes the position.");
+
+        piece.performRotationClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after, "Third rotation changes the position.");
+
+        piece.performRotationClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after, "Fourth rotation changes the position.S");
+    }
+
+    @Test
     public void clockwiseRotationResultsInCorrectSquaresOccupied() {
         ArrayList<Posn> expectedFirstRotate = right;
         ArrayList<Posn> expectedSecondRotate = upsidedown;
@@ -112,6 +133,31 @@ public class JPieceTest {
         piece.performRotationClockwise();
         actual = piece.getOrientation();
         assertEquals(PieceOrientation.UPRIGHT, actual);
+    }
+
+    @Test
+    public void counterclockwiseRotationDoesNotChangePositionOfPiece() {
+        Posn before = piece.getAbsolutePosition();
+
+        piece.performRotationCounterClockwise();
+        Posn after = piece.getAbsolutePosition();
+        assertEquals(before, after,
+                     "First rotation changes the position.");
+
+        piece.performRotationCounterClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after,
+                     "Second rotation changes the position.");
+
+        piece.performRotationCounterClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after,
+                     "Third rotation changes the position.");
+
+        piece.performRotationCounterClockwise();
+        after = piece.getAbsolutePosition();
+        assertEquals(before, after,
+                     "Fourth rotation changes the position.");
     }
 
     @Test
