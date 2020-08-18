@@ -1,6 +1,8 @@
 package com.ly.tetris.game.pieces;
 
 import java.util.ArrayList;
+
+import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
 
 public class IPiece extends Piece {
@@ -13,7 +15,7 @@ public class IPiece extends Piece {
     // Constructor. Spawns the piece in the upright position above 
     // the visible field
     public IPiece() {
-        super(18, 3);
+        super(18, 3, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 4; i++) {
             localFieldOccupied[0][i] = false;
             localFieldOccupied[1][i] = true;
@@ -23,7 +25,7 @@ public class IPiece extends Piece {
     }
 
     @Override
-    public void rotateClockwise(){
+    protected void rotateClockwise(){
         boolean[][] rotated = this.rotatedClockwise();
         for (int r = 0; r < 4; r++) {
             for (int c = 0; c < 4; c++) {
@@ -33,7 +35,7 @@ public class IPiece extends Piece {
     }
 
     @Override
-    public void rotateCounterClockwise() {
+    protected void rotateCounterClockwise() {
         boolean[][] rotated = this.rotatedCounterClockwise();
         for (int r = 0; r < 4; r++) {
             for (int c = 0; c < 4; c++) {
@@ -43,7 +45,7 @@ public class IPiece extends Piece {
     }
 
     @Override
-    public ArrayList<Posn> occupiedNow() {
+    protected ArrayList<Posn> occupiedNow() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         for (int r = 0; r < 4; r++) {
             for (int c = 0; c < 4; c++) {
@@ -56,7 +58,7 @@ public class IPiece extends Piece {
     }
 
     @Override
-    public ArrayList<Posn> occupiedIfRotatedClockwise() {
+    protected ArrayList<Posn> occupiedIfRotatedClockwise() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         boolean[][] rotatedField = this.rotatedClockwise();
         for (int r = 0; r < 4; r++) {
@@ -72,7 +74,7 @@ public class IPiece extends Piece {
     }
 
     @Override
-    public ArrayList<Posn> occupiedIfRotatedCounterClockwise() {
+    protected ArrayList<Posn> occupiedIfRotatedCounterClockwise() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         boolean[][] rotatedField = this.rotatedCounterClockwise();
         for (int r = 0; r < 4; r++) {

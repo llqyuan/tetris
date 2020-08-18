@@ -8,6 +8,7 @@ import com.ly.tetris.game.pieces.Piece;
 import com.ly.tetris.game.pieces.SPiece;
 import com.ly.tetris.game.pieces.TPiece;
 import com.ly.tetris.game.pieces.ZPiece;
+import com.ly.tetris.game.SuperRotationSystem;
 import com.ly.tetris.infostructs.PieceName;
 
 public class Board {
@@ -34,24 +35,40 @@ public class Board {
     } 
 
     // Attempts to spawn the new piece and update hard drop location.
-    // Returns true if piece has room to spawn and false otherwise
-    public boolean spawn(PieceName piece) {
+    // Returns true if piece has room to spawn and false otherwise.
+    // Requires: piece is not NOTHING
+    public boolean spawn(PieceName piece) throws IllegalArgumentException {
+        if (piece == PieceName.NOTHING) {
+            throw new IllegalArgumentException("Piece name is NOTHING.");
+        }
         return true;
     }
 
     // Attempts to rotate the piece that's currently in play and 
     // update hard drop location. Returns true if the piece 
-    // has room to rotate and false otherwise. Follows SRS rules.
+    // has room to rotate and false otherwise. 
+    // Follows the Super Rotation System (SRS) rules.
     public boolean rotate() {
+        // Rotate the piece, then determine whether it's overlapping 
+        // anything on the stack.
+        // If so, try applying SRS offsets.
+        // If a rotation works (doens't overlap anything), update 
+        // the stored piece and return true.
+        // If none of the offsets work, return false.
+
         return true;
     }
 
+
+    // =================================
+    // Private helper methods
+    // =================================
 
     // Moves the current piece to the bottom of the board
     private void movePieceToBottom() {
     }
 
-    // Locks the current piece and removes it from play. 
+    // Locks the current piece and sets inPlay to null. 
     // Requires: the piece is at the bottom of the board
     private void lockPiece() {
     }

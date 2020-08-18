@@ -1,6 +1,8 @@
 package com.ly.tetris.game.pieces;
 
 import java.util.ArrayList;
+
+import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
 
 public class OPiece extends Piece {
@@ -11,7 +13,7 @@ public class OPiece extends Piece {
     private boolean[][] localFieldOccupied = new boolean[3][4];
 
     public OPiece() {
-        super(18, 3);
+        super(18, 3, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 2; i++) {
             localFieldOccupied[i][0] = false;
             localFieldOccupied[i][1] = true;
@@ -24,15 +26,15 @@ public class OPiece extends Piece {
     }
     
     @Override
-    public void rotateClockwise() {
+    protected void rotateClockwise() {
     }
 
     @Override
-    public void rotateCounterClockwise() {
+    protected void rotateCounterClockwise() {
     }
 
     @Override
-    public ArrayList<Posn> occupiedNow() {
+    protected ArrayList<Posn> occupiedNow() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {
@@ -45,7 +47,7 @@ public class OPiece extends Piece {
     }
 
     @Override
-    public ArrayList<Posn> occupiedIfRotatedClockwise() {
+    protected ArrayList<Posn> occupiedIfRotatedClockwise() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {
@@ -58,7 +60,7 @@ public class OPiece extends Piece {
     }
 
     @Override
-    public ArrayList<Posn> occupiedIfRotatedCounterClockwise() {
+    protected ArrayList<Posn> occupiedIfRotatedCounterClockwise() {
         ArrayList<Posn> occupied = new ArrayList<Posn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {

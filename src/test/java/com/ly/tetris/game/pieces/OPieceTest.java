@@ -1,4 +1,4 @@
-package com.ly.tetris;
+package com.ly.tetris.game.pieces;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
 import com.ly.tetris.game.pieces.OPiece;
 
@@ -35,40 +36,48 @@ public class OPieceTest {
     }
 
     @Test
+    public void spawnSquaresOccupiedAreCorrect() {
+        ArrayList<Posn> actual = piece.squaresOccupiedNow();
+        this.isPermutation(expectedOccupied, actual);
+    }
+
+    @Test
     public void spawnOrientationIsCorrect() {
-        ArrayList<Posn> actual = piece.occupiedNow();
+        PieceOrientation expected = PieceOrientation.UPRIGHT;
+        PieceOrientation actual = piece.getOrientation();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void clockwiseRotationResultsInCorrectSquaresOccupied() {
+        piece.performRotationClockwise();
+        ArrayList<Posn> actual = piece.squaresOccupiedNow();
         this.isPermutation(expectedOccupied, actual);
     }
 
     @Test
-    public void rotateClockwiseCorrectly() {
-        piece.rotateClockwise();
-        ArrayList<Posn> actual = piece.occupiedNow();
-        this.isPermutation(expectedOccupied, actual);
-    }
-
-    @Test
-    public void rotateCounterClockwiseCorrectly() {
-        piece.rotateCounterClockwise();
-        ArrayList<Posn> actual = piece.occupiedNow();
+    public void counterclockwiseRotatResultsInCorrectSquaresOccupied() {
+        piece.performRotationCounterClockwise();
+        ArrayList<Posn> actual = piece.squaresOccupiedNow();
         this.isPermutation(expectedOccupied, actual);
     }
 
     @Test
     public void 
     occupiedIfRotatedClockwiseShouldReturnIdenticalResult() {
-        ArrayList<Posn> actual = piece.occupiedIfRotatedClockwise();
-        piece.rotateClockwise();
-        ArrayList<Posn> expected = piece.occupiedNow();
+        ArrayList<Posn> actual = piece.squaresOccupiedIfRotatedClockwise();
+        piece.performRotationClockwise();
+        ArrayList<Posn> expected = piece.squaresOccupiedNow();
         this.isPermutation(expected, actual);
     }
 
     @Test
     public void 
     occupiedIfRotatedCounterclockShouldReturnIdenticalResult() {
-        ArrayList<Posn> actual = piece.occupiedIfRotatedCounterClockwise();
-        piece.rotateCounterClockwise();
-        ArrayList<Posn> expected = piece.occupiedNow();
+        ArrayList<Posn> actual = 
+            piece.squaresOccupiedIfRotatedCounterClockwise();
+        piece.performRotationCounterClockwise();
+        ArrayList<Posn> expected = piece.squaresOccupiedNow();
         this.isPermutation(expected, actual);
     }
 
@@ -87,7 +96,7 @@ public class OPieceTest {
             Posn shouldContain = it.next();
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
-                       "Doesn't contain expected positions. ");
+                       "Doesn't contain expected posns. ");
         }
     }
 }
