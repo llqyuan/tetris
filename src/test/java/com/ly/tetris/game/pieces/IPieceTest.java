@@ -7,42 +7,45 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.ly.tetris.infostructs.LocationPosn;
+import com.ly.tetris.infostructs.OffsetPosn;
+import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
 import com.ly.tetris.game.pieces.IPiece;
 
 public class IPieceTest {
     IPiece piece = null;
-    ArrayList<Posn> upright;
-    ArrayList<Posn> right;
-    ArrayList<Posn> left;
-    ArrayList<Posn> upsidedown;
+    ArrayList<LocationPosn> uprightSpawn;
+    ArrayList<LocationPosn> rightSpawn;
+    ArrayList<LocationPosn> leftSpawn;
+    ArrayList<LocationPosn> upsidedownSpawn;
 
     public IPieceTest() {
-        upright = new ArrayList<Posn>();
-        right = new ArrayList<Posn>();
-        left = new ArrayList<Posn>();
-        upsidedown = new ArrayList<Posn>();
+        uprightSpawn = new ArrayList<LocationPosn>();
+        rightSpawn = new ArrayList<LocationPosn>();
+        leftSpawn = new ArrayList<LocationPosn>();
+        upsidedownSpawn = new ArrayList<LocationPosn>();
 
-        upright.add(new Posn(1, 0));
-        upright.add(new Posn(1, 1));
-        upright.add(new Posn(1, 2));
-        upright.add(new Posn(1, 3));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 0));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 2));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 3));
 
-        right.add(new Posn(0, 2));
-        right.add(new Posn(1, 2));
-        right.add(new Posn(2, 2));
-        right.add(new Posn(3, 2));
+        rightSpawn.add(new LocationPosn(18 + 0, 3 + 2));
+        rightSpawn.add(new LocationPosn(18 + 1, 3 + 2));
+        rightSpawn.add(new LocationPosn(18 + 2, 3 + 2));
+        rightSpawn.add(new LocationPosn(18 + 3, 3 + 2));
 
-        upsidedown.add(new Posn(2, 0));
-        upsidedown.add(new Posn(2, 1));
-        upsidedown.add(new Posn(2, 2));
-        upsidedown.add(new Posn(2, 3));
+        upsidedownSpawn.add(new LocationPosn(18 + 2, 3 + 0));
+        upsidedownSpawn.add(new LocationPosn(18 + 2, 3 + 1));
+        upsidedownSpawn.add(new LocationPosn(18 + 2, 3 + 2));
+        upsidedownSpawn.add(new LocationPosn(18 + 2, 3 + 3));
 
-        left.add(new Posn(0, 1));
-        left.add(new Posn(1, 1));
-        left.add(new Posn(2, 1));
-        left.add(new Posn(3, 1));
+        leftSpawn.add(new LocationPosn(18 + 0, 3 + 1));
+        leftSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        leftSpawn.add(new LocationPosn(18 + 2, 3 + 1));
+        leftSpawn.add(new LocationPosn(18 + 3, 3 + 1));
     }
 
     @BeforeEach
@@ -51,32 +54,37 @@ public class IPieceTest {
     }
 
     @Test
+    public void nameIsI() {
+        assertEquals(PieceName.I, piece.name());
+    }
+
+    @Test
     public void spawnLocationIsCorrect() {
-        Posn expected = new Posn(18, 3);
-        Posn actual = piece.getAbsolutePosition();
+        LocationPosn expected = new LocationPosn(18, 3);
+        LocationPosn actual = piece.getAbsolutePosition();
         assertEquals(expected, actual, "Spawn position incorrect.");
     }
 
     @Test
     public void spawnSquaresOccupiedAreCorrect() {
-        ArrayList<Posn> expected = upright;
-        ArrayList<Posn> actual = piece.squaresOccupiedNow();
+        ArrayList<LocationPosn> expected = uprightSpawn;
+        ArrayList<LocationPosn> actual = piece.squaresOccupiedNow();
         this.isPermutation(expected, actual);
     }
 
     @Test
     public void spawnOrientationIsCorrect() {
         PieceOrientation expected = PieceOrientation.UPRIGHT;
-        PieceOrientation actual = piece.getOrientation();
+        PieceOrientation actual = piece.orientationNow();
         assertEquals(expected, actual);
     }
 
     @Test
     public void clockwiseRotationDoesNotChangePositionOfPiece() {
-        Posn before = piece.getAbsolutePosition();
+        LocationPosn before = piece.getAbsolutePosition();
 
         piece.performRotationClockwise();
-        Posn after = piece.getAbsolutePosition();
+        LocationPosn after = piece.getAbsolutePosition();
         assertEquals(before, after, "First rotation changes the position.");
 
         piece.performRotationClockwise();
@@ -94,13 +102,13 @@ public class IPieceTest {
 
     @Test
     public void clockwiseRotationResultsInCorrectSquaresOccupied() {
-        ArrayList<Posn> expectedFirstRotate = right;
-        ArrayList<Posn> expectedSecondRotate = upsidedown;
-        ArrayList<Posn> expectedThirdRotate = left;
-        ArrayList<Posn> expectedFourthRotate = upright;
+        ArrayList<LocationPosn> expectedFirstRotate = rightSpawn;
+        ArrayList<LocationPosn> expectedSecondRotate = upsidedownSpawn;
+        ArrayList<LocationPosn> expectedThirdRotate = leftSpawn;
+        ArrayList<LocationPosn> expectedFourthRotate = uprightSpawn;
 
         piece.performRotationClockwise();
-        ArrayList<Posn> actual = piece.squaresOccupiedNow();
+        ArrayList<LocationPosn> actual = piece.squaresOccupiedNow();
         this.isPermutation(expectedFirstRotate, actual);
 
         piece.performRotationClockwise();
@@ -119,28 +127,28 @@ public class IPieceTest {
     @Test
     public void clockwiseRotationResultsInCorrectOrientation() {
         piece.performRotationClockwise();
-        PieceOrientation actual = piece.getOrientation();
+        PieceOrientation actual = piece.orientationNow();
         assertEquals(PieceOrientation.RIGHT, actual);
 
         piece.performRotationClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.UPSIDEDOWN, actual);
 
         piece.performRotationClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.LEFT, actual);
 
         piece.performRotationClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.UPRIGHT, actual);
     }
 
     @Test
     public void counterclockwiseRotationDoesNotChangePositionOfPiece() {
-        Posn before = piece.getAbsolutePosition();
+        LocationPosn before = piece.getAbsolutePosition();
 
         piece.performRotationCounterClockwise();
-        Posn after = piece.getAbsolutePosition();
+        LocationPosn after = piece.getAbsolutePosition();
         assertEquals(before, after,
                      "First rotation changes the position.");
 
@@ -162,13 +170,13 @@ public class IPieceTest {
 
     @Test
     public void counterclockwiseRotatResultsInCorrectSquaresOccupied() {
-        ArrayList<Posn> expectedFirstRotate = left;
-        ArrayList<Posn> expectedSecondRotate = upsidedown;
-        ArrayList<Posn> expectedThirdRotate = right;
-        ArrayList<Posn> expectedFourthRotate = upright;
+        ArrayList<LocationPosn> expectedFirstRotate = leftSpawn;
+        ArrayList<LocationPosn> expectedSecondRotate = upsidedownSpawn;
+        ArrayList<LocationPosn> expectedThirdRotate = rightSpawn;
+        ArrayList<LocationPosn> expectedFourthRotate = uprightSpawn;
 
         piece.performRotationCounterClockwise();
-        ArrayList<Posn> actual = piece.squaresOccupiedNow();
+        ArrayList<LocationPosn> actual = piece.squaresOccupiedNow();
         this.isPermutation(expectedFirstRotate, actual);
 
         piece.performRotationCounterClockwise();
@@ -187,28 +195,93 @@ public class IPieceTest {
     @Test
     public void counterclockwiseRotatResultsInCorrectOrientation() {
         piece.performRotationCounterClockwise();
-        PieceOrientation actual = piece.getOrientation();
+        PieceOrientation actual = piece.orientationNow();
         assertEquals(PieceOrientation.LEFT, actual);
 
         piece.performRotationCounterClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.UPSIDEDOWN, actual);
 
         piece.performRotationCounterClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.RIGHT, actual);
 
         piece.performRotationCounterClockwise();
-        actual = piece.getOrientation();
+        actual = piece.orientationNow();
         assertEquals(PieceOrientation.UPRIGHT, actual);
+    }
+
+    @Test
+    public void
+    orientationIfRotatedClockwiseShouldReturnIdenticalResult() {
+        PieceOrientation actual = piece.orientationIfRotatedClockwise();
+        piece.performRotationClockwise();
+        PieceOrientation expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon first rotation.");
+        
+        actual = piece.orientationIfRotatedClockwise();
+        piece.performRotationClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon second rotation.");
+
+        actual = piece.orientationIfRotatedClockwise();
+        piece.performRotationClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon third rotation.");
+        
+        actual = piece.orientationIfRotatedClockwise();
+        piece.performRotationClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon fourth rotation.");
+    }
+
+    @Test
+    public void
+    orientationIfRotatedCounterclockShouldReturnIdenticalResult() {
+        PieceOrientation actual = 
+            piece.orientationIfRotatedCounterClockwise();
+        piece.performRotationCounterClockwise();
+        PieceOrientation expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon first rotation.");
+        
+        actual = piece.orientationIfRotatedCounterClockwise();
+        piece.performRotationCounterClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon second rotation.");
+
+        actual = piece.orientationIfRotatedCounterClockwise();
+        piece.performRotationCounterClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon third rotation.");
+        
+        actual = piece.orientationIfRotatedCounterClockwise();
+        piece.performRotationCounterClockwise();
+        expected = piece.orientationNow();
+        assertEquals(
+            expected, actual, 
+            "Orientation doesn't match upon fourth rotation.");
     }
 
     @Test
     public void 
     occupiedIfRotatedClockwiseShouldReturnIdenticalResult() {
-        ArrayList<Posn> actual = piece.squaresOccupiedIfRotatedClockwise();
+        ArrayList<LocationPosn> actual = piece.squaresOccupiedIfRotatedClockwise();
         piece.performRotationClockwise();
-        ArrayList<Posn> expected = piece.squaresOccupiedNow();
+        ArrayList<LocationPosn> expected = piece.squaresOccupiedNow();
         this.isPermutation(expected, actual);
 
         actual = piece.squaresOccupiedIfRotatedClockwise();
@@ -230,10 +303,10 @@ public class IPieceTest {
     @Test
     public void 
     occupiedIfRotatedCounterclockShouldReturnIdenticalResult() {
-        ArrayList<Posn> actual = 
+        ArrayList<LocationPosn> actual = 
             piece.squaresOccupiedIfRotatedCounterClockwise();
         piece.performRotationCounterClockwise();
-        ArrayList<Posn> expected = piece.squaresOccupiedNow();
+        ArrayList<LocationPosn> expected = piece.squaresOccupiedNow();
         this.isPermutation(expected, actual);
 
         actual = piece.squaresOccupiedIfRotatedCounterClockwise();
@@ -258,13 +331,13 @@ public class IPieceTest {
 
     // Asserts that expected is a permutation of actual.
     private void 
-    isPermutation(ArrayList<Posn> expected, ArrayList<Posn> actual) {
+    isPermutation(ArrayList<LocationPosn> expected, ArrayList<LocationPosn> actual) {
         assertEquals(expected.size(), actual.size(),
                      "Not of right length: ");
 
-        ListIterator<Posn> it = expected.listIterator();
+        ListIterator<LocationPosn> it = expected.listIterator();
         while (it.hasNext()) {
-            Posn shouldContain = it.next();
+            LocationPosn shouldContain = it.next();
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
                        "Doesn't contain expected posns. ");

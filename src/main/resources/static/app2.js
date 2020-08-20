@@ -1189,6 +1189,7 @@ function start(key) {
             document.getElementById("start-overlay").style.display = "none";
             $('#tetris-theme').trigger("play");
             gameActive = true;
+            updateFrame();
     }
 }
 

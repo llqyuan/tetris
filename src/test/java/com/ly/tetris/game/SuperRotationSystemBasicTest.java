@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import org.junit.jupiter.api.Test;
 import com.ly.tetris.game.SuperRotationSystem;
+import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
@@ -85,7 +86,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.O, start, end);
             assertEquals(
                 1, suggested.size(),
@@ -108,7 +109,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.I, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -131,7 +132,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.J, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -154,7 +155,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.L, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -177,7 +178,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.S, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -200,7 +201,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.T, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -223,7 +224,7 @@ public class SuperRotationSystemBasicTest {
                 = it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.Z, start, end);
             assertEquals(
                 5, suggested.size(),
@@ -246,7 +247,7 @@ public class SuperRotationSystemBasicTest {
                 it.next();
             PieceOrientation start = rotation.getKey();
             PieceOrientation end = rotation.getValue();
-            ArrayList<Posn> suggested = 
+            ArrayList<OffsetPosn> suggested = 
                 SuperRotationSystem.kicksToAttempt(PieceName.J, start, end);
             assertEquals(
                 0, suggested.size(),
@@ -268,7 +269,7 @@ public class SuperRotationSystemBasicTest {
         allPieces.add(PieceName.S);
         allPieces.add(PieceName.T);
         allPieces.add(PieceName.Z);
-        Posn expected = new Posn(0, 0);
+        OffsetPosn expected = new OffsetPosn(0, 0);
 
         ListIterator<PieceName> pieceIter = allPieces.listIterator();
 
@@ -284,7 +285,7 @@ public class SuperRotationSystemBasicTest {
                     rotation = rotationIter.next();
                 PieceOrientation start = rotation.getKey();
                 PieceOrientation end = rotation.getValue();
-                ArrayList<Posn> suggested = 
+                ArrayList<OffsetPosn> suggested = 
                     SuperRotationSystem.kicksToAttempt(piece, start, end);
                 assertTrue(suggested.size() > 0, 
                            "List of suggested kicks is empty.");

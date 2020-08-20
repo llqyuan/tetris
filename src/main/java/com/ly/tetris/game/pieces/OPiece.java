@@ -2,6 +2,8 @@ package com.ly.tetris.game.pieces;
 
 import java.util.ArrayList;
 
+import com.ly.tetris.infostructs.OffsetPosn;
+import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.Posn;
 
@@ -24,6 +26,24 @@ public class OPiece extends Piece {
             localFieldOccupied[2][i] = false;
         }
     }
+
+    public OPiece(int r, int c) {
+        super(r, c, PieceOrientation.UPRIGHT);
+        for (int i = 0; i < 2; i++) {
+            localFieldOccupied[i][0] = false;
+            localFieldOccupied[i][1] = true;
+            localFieldOccupied[i][2] = true;
+            localFieldOccupied[i][3] = false;
+        }
+        for (int i = 0; i < 4; i++) {
+            localFieldOccupied[2][i] = false;
+        }
+    }
+
+    @Override
+    protected PieceName nameOfPiece() {
+        return PieceName.O;
+    }
     
     @Override
     protected void rotateClockwise() {
@@ -34,12 +54,12 @@ public class OPiece extends Piece {
     }
 
     @Override
-    protected ArrayList<Posn> occupiedNow() {
-        ArrayList<Posn> occupied = new ArrayList<Posn>();
+    protected ArrayList<OffsetPosn> occupiedNow() {
+        ArrayList<OffsetPosn> occupied = new ArrayList<OffsetPosn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {
                 if (localFieldOccupied[r][c]) {
-                    occupied.add(new Posn(r, c));
+                    occupied.add(new OffsetPosn(r, c));
                 }
              }
         }
@@ -47,12 +67,12 @@ public class OPiece extends Piece {
     }
 
     @Override
-    protected ArrayList<Posn> occupiedIfRotatedClockwise() {
-        ArrayList<Posn> occupied = new ArrayList<Posn>();
+    protected ArrayList<OffsetPosn> occupiedIfRotatedClockwise() {
+        ArrayList<OffsetPosn> occupied = new ArrayList<OffsetPosn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {
                 if (localFieldOccupied[r][c]) {
-                    occupied.add(new Posn(r, c));
+                    occupied.add(new OffsetPosn(r, c));
                 }
              }
         }
@@ -60,12 +80,12 @@ public class OPiece extends Piece {
     }
 
     @Override
-    protected ArrayList<Posn> occupiedIfRotatedCounterClockwise() {
-        ArrayList<Posn> occupied = new ArrayList<Posn>();
+    protected ArrayList<OffsetPosn> occupiedIfRotatedCounterClockwise() {
+        ArrayList<OffsetPosn> occupied = new ArrayList<OffsetPosn>();
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 4; c++) {
                 if (localFieldOccupied[r][c]) {
-                    occupied.add(new Posn(r, c));
+                    occupied.add(new OffsetPosn(r, c));
                 }
              }
         }
