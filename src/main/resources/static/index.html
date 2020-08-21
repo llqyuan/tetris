@@ -22,16 +22,36 @@
     </audio>
     
     <div id="main-content">
-        <div id="score">
-            <p>Score: 0</p>
+        <div id="tetris-display">
+            <div id="score">
+                <p>Score: 0</p>
+            </div>
+            <canvas id="tetris-board"> 
+    
+            </canvas>
         </div>
-        <canvas id="tetris-display">
-
-        </canvas>
     </div>
 
     <div id="start-overlay">
-        <div id="start-message">Click anywhere to start</p>
+        <div id="start-message">
+            <h1> (Click anywhere to start) </h1>
+            <h3> Controls: </h3>
+            <p> 
+                Left/right: Move piece
+            </p>
+            <p>
+                Down: Hard drop
+            </p>
+            <p>
+                Up: Soft drop
+            </p>
+            <p>
+                C/X: Rotate
+            </p>
+            <p>
+                Z: Hold
+            </p>
+        </div>
     </div>
 
 </body>

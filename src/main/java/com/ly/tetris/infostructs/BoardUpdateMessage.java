@@ -4,10 +4,11 @@ public class BoardUpdateMessage {
     private PieceName piece;
     // expect other stuff later:
     // * location and type of piece in play
-    // * piece locking and subsequent addition to tetris stack
+    // * piece was locked and added to tetris stack
     // * update hold
     // * update next queue
-    // * new spawn unsuccessful
+    // * new spawn was unsuccessful
+    // * start or update a timer (fall timer, lock timer)
 
     // temp, remove
     private KeyCommand acknowledge = KeyCommand.NOTHING;

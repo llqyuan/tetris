@@ -1,31 +1,33 @@
 body {
-    background-color: #efefef;
+    background-color: #ac4dac;
 }
 
 #main-content {
     margin: auto;
-    height: 95vh;
-    min-height: 500px;
-    width: 82vh;
+    text-align: center;
+}
+
+#tetris-display {
+    display: inline-block;
     background-color: #efefef;
     padding: 10px;
 }
 
 #score {
     height: 5vh;
+    text-align: left;
 }
 
-#tetris-display {
+#tetris-board {
     position: relative;
     height: 90vh;
-    min-height: 500px;
     width: 82vh;
     margin: auto;
     overflow: hidden;
 }
 
 #start-overlay {
-    position: absolute;
+    position: fixed;
     display: block;
     width: 100%;
     height: 100%;
@@ -42,5 +44,4 @@ body {
     left: 50%;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
-    font-size: 50px;
 }

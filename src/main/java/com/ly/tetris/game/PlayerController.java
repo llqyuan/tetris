@@ -9,7 +9,11 @@ import com.ly.tetris.infostructs.EventMessage;
 @Controller
 public class PlayerController {
 
-    private TetrisGame game = new TetrisGame();
+    private TetrisGame game;
+
+    public PlayerController() {
+        game = new TetrisGame();
+    }
     
     @MessageMapping("/timed-interval")
     @SendTo("/topic/board-update")
