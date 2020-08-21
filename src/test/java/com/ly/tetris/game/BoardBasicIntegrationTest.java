@@ -421,17 +421,69 @@ public class BoardBasicIntegrationTest {
 
     @Test
     public void srsRotationKicksAnOutOfRangePieceBackInRange() {
+        ArrayList<LocationPosn> expectedSpawn = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> expectedRotated = new ArrayList<LocationPosn>();
+        expectedSpawn.add(new LocationPosn(39, 3));
+        expectedSpawn.add(new LocationPosn(39, 4));
+        expectedSpawn.add(new LocationPosn(39, 5));
+        expectedSpawn.add(new LocationPosn(39, 6));
+        expectedRotated.add(new LocationPosn(39, 6));
+        expectedRotated.add(new LocationPosn(38, 6));
+        expectedRotated.add(new LocationPosn(37, 6));
+        expectedRotated.add(new LocationPosn(36, 6));
+
+        assertTrue(board.spawn(PieceName.I, 38, 3));
+        this.assertIsPermutation(
+            expectedSpawn, board.squaresOccupiedByPieceInPlay());
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(
+            expectedRotated, board.squaresOccupiedByPieceInPlay());
 
     }
 
     @Test
     public void srsRotationKicksAnObstructedPieceUsingMidSuggestion() {
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(20, 3));
+        preoccupy.add(new LocationPosn(20, 4));
+        expected.add(new LocationPosn(19, 3));
+        expected.add(new LocationPosn(18, 3));
+        expected.add(new LocationPosn(18, 4));
+        expected.add(new LocationPosn(17, 3));
 
+        board = new Board(preoccupy);
+        this.assertIsPermutation(preoccupy, board.squaresOccupiedByStack());
+        assertTrue(board.spawn(PieceName.T));
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(expected, board.squaresOccupiedByPieceInPlay());
     }
 
     @Test
     public void srsRotationKicksAnObstructedPieceUsingLastSuggestion() {
-        
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(18, 2));
+        preoccupy.add(new LocationPosn(18, 3));
+        preoccupy.add(new LocationPosn(19, 2));
+        preoccupy.add(new LocationPosn(20, 2));
+        preoccupy.add(new LocationPosn(20, 4));
+        preoccupy.add(new LocationPosn(20, 5));
+        preoccupy.add(new LocationPosn(21, 2));
+        preoccupy.add(new LocationPosn(21, 5));
+        preoccupy.add(new LocationPosn(22, 2));
+        preoccupy.add(new LocationPosn(22, 4));
+        preoccupy.add(new LocationPosn(22, 5));
+        expected.add(new LocationPosn(20, 3));
+        expected.add(new LocationPosn(21, 3));
+        expected.add(new LocationPosn(21, 4));
+        expected.add(new LocationPosn(22, 3));
+
+        board = new Board(preoccupy);
+        this.assertIsPermutation(preoccupy, board.squaresOccupiedByStack());
+        assertTrue(board.spawn(PieceName.T));
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(expected, board.squaresOccupiedByPieceInPlay());
     }
 
     // ==============================================
