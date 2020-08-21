@@ -338,8 +338,8 @@ public class JPieceTest {
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
                 "Doesn't contain expected posn (xxx, yyy). "
-                .replaceFirst("xxx", Integer.toString(shouldContain.row)
-                .replaceFirst("yyy", Integer.toString(shouldContain.col))));
+                .replaceFirst("xxx", Integer.toString(shouldContain.row))
+                .replaceFirst("yyy", Integer.toString(shouldContain.col)));
         }
     }
 }

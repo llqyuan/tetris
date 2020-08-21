@@ -25,6 +25,8 @@ Ideas:
 Functions:
 * lockPiece, movePieceToBottom (testing)
 * spawn (testing)
+  (Consider adding an overloaded version that takes a spawn location, for 
+   tests)
 * rotate (testing)
 * squares occupied by piece in play, hard drop ghost (testing)
 * get a copy of the board, including which pieces are occupying which 
@@ -175,6 +177,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
+    // * dropToRow is updated
     public boolean spawn(PieceName piece) 
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -217,10 +220,62 @@ public class Board {
         }
     }
 
+    // Attempts to spawn the new piece at (r, c) and update hard drop 
+    // location. Returns true if the piece has room to spawn and 
+    // false otherwise.
+    // (Intended for debugging purposes only)
+    // Requires:
+    // * there is no piece in play before calling the function
+    // * piece is not NOTHING
+    // Effects:
+    // * May modify the board by spawning a new piece
+    // * dropToRow is updated
+    public boolean spawn(PieceName piece, int r, int c)
+    throws IllegalArgumentException, IllegalStateException {
+        if (inPlay != null) {
+            throw new IllegalStateException(
+                "Tried to spawn new piece while a piece was falling.");
+        }
+        Piece newlySpawned = null;
+        switch (piece) {
+            case I:
+                newlySpawned = new IPiece(r, c);
+                break;
+            case J:
+                newlySpawned = new JPiece(r, c);
+                break;
+            case L:
+                newlySpawned = new LPiece(r, c);
+                break;
+            case O:
+                newlySpawned = new OPiece(r, c);
+                break;
+            case S:
+                newlySpawned = new SPiece(r, c);
+                break;
+            case T:
+                newlySpawned = new TPiece(r, c);
+                break;
+            case Z:
+                newlySpawned = new ZPiece(r, c);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                    "Piece name is NOTHING.");
+        }
+        if (this.pieceCanOccupyCurrentLocation(newlySpawned)) {
+            inPlay = newlySpawned;
+            this.updateDropToRow();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Attempts to rotate the piece that's currently in play and 
     // update hard drop location. Returns true if the piece 
     // has room to rotate and false otherwise. 
-    // Follows the Super Rotation System (SRS) rules.
+    // Follows Super Rotation System (SRS) rules.
     // Requires: 
     // * the piece in play is not null.
     // Effects: 
@@ -360,7 +415,8 @@ public class Board {
     // * all squares occupied are free
     // Effects:
     // * Modifies the board.
-    // * inPlay becomes null and dropToRow becomes invalid
+    // * inPlay becomes null, and dropToRow becomes invalid until 
+    //   a new piece is spawned
     private void lockPiece() {
         ArrayList<LocationPosn> occupied = inPlay.squaresOccupiedNow();
         ListIterator<LocationPosn> iterOccupied = occupied.listIterator();

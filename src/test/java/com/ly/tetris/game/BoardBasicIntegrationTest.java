@@ -1,6 +1,7 @@
 package com.ly.tetris.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
-public class BoardIntegrationTest {
+public class BoardBasicIntegrationTest {
     Board board;
 
     @BeforeEach
@@ -38,6 +39,18 @@ public class BoardIntegrationTest {
         ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
         this.assertIsPermutation(
             expected, board.squaresOccupiedByHardDropGhost());
+    }
+
+    @Test
+    public void spawningUnsuccessfulIfAndOnlyIfNoRoom() {
+        ArrayList<LocationPosn> occupy = new ArrayList<LocationPosn>();
+        occupy.add(new LocationPosn(19, 5));
+        board = new Board(occupy);
+        assertFalse(board.spawn(PieceName.I),
+                    "Spawned I piece on a board where (19, 5) was occupied.");
+        assertEquals(PieceName.NOTHING, board.pieceInPlay());
+        board = new Board(occupy);
+        assertTrue(board.spawn(PieceName.S));
     }
 
     @Test
@@ -311,12 +324,15 @@ public class BoardIntegrationTest {
     }
 
     // =============================================
-    // Rotating on the spot in empty board
+    // Rotating on the spot in empty board 
+
+    // (sanity check; the bulk of the testing was already done
+    // in the piece classes)
     // ==============================================
 
     @Test
     public void pieceRotates() {
-        board.spawn(PieceName.I);
+        board.spawn(PieceName.T);
         assertEquals(
             PieceOrientation.UPRIGHT, board.orientationOfPieceInPlay(),
             "Orientation of spawning piece isn't upright.");
@@ -359,37 +375,43 @@ public class BoardIntegrationTest {
 
     @Test
     public void iOccupiesCorrectSpotsAfterRotating() {
+        ArrayList<LocationPosn> upright = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> right = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> upsidedown = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> left = new ArrayList<LocationPosn>();
 
-    }
+        upright.add(new LocationPosn(18 + 1, 3 + 0));
+        upright.add(new LocationPosn(18 + 1, 3 + 1));
+        upright.add(new LocationPosn(18 + 1, 3 + 2));
+        upright.add(new LocationPosn(18 + 1, 3 + 3));
 
-    @Test
-    public void jOccupiesCorrectSpotsAfterRotating() {
+        right.add(new LocationPosn(18 + 0, 3 + 2));
+        right.add(new LocationPosn(18 + 1, 3 + 2));
+        right.add(new LocationPosn(18 + 2, 3 + 2));
+        right.add(new LocationPosn(18 + 3, 3 + 2));
 
-    }
+        upsidedown.add(new LocationPosn(18 + 2, 3 + 0));
+        upsidedown.add(new LocationPosn(18 + 2, 3 + 1));
+        upsidedown.add(new LocationPosn(18 + 2, 3 + 2));
+        upsidedown.add(new LocationPosn(18 + 2, 3 + 3));
 
-    @Test
-    public void lOccupiesCorrectSpotsAfterRotating() {
+        left.add(new LocationPosn(18 + 0, 3 + 1));
+        left.add(new LocationPosn(18 + 1, 3 + 1));
+        left.add(new LocationPosn(18 + 2, 3 + 1));
+        left.add(new LocationPosn(18 + 3, 3 + 1));
 
-    }
+        board.spawn(PieceName.I);
+        board.rotate(RotationDirection.CLOCKWISE);
+        this.assertIsPermutation(right, board.squaresOccupiedByPieceInPlay());
 
-    @Test
-    public void oOccupiesCorrectSpotsAfterRotating() {
+        board.rotate(RotationDirection.CLOCKWISE);
+        this.assertIsPermutation(upsidedown, board.squaresOccupiedByPieceInPlay());
 
-    }
+        board.rotate(RotationDirection.CLOCKWISE);
+        this.assertIsPermutation(left, board.squaresOccupiedByPieceInPlay());
 
-    @Test
-    public void sOccupiesCorrectSpotsAfterRotating() {
-
-    }
-
-    @Test
-    public void tOccupiesCorrectSpotsAfterRotating() {
-
-    }
-
-    @Test
-    public void zOccupiesCorrectSpotsAfterRotating() {
-
+        board.rotate(RotationDirection.CLOCKWISE);
+        this.assertIsPermutation(upright, board.squaresOccupiedByPieceInPlay());
     }
 
 
@@ -515,48 +537,122 @@ public class BoardIntegrationTest {
     }
 
     @Test
-    public void hardDropGhostOnGroundAfterRotatingI() {
+    public void hardDropGhostOnGroundAfterRotating() {
+        ArrayList<LocationPosn> upright = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> left = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> right = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> down = new ArrayList<LocationPosn>();
+        upright.add(new LocationPosn(38, 3));
+        upright.add(new LocationPosn(39, 3));
+        upright.add(new LocationPosn(39, 4));
+        upright.add(new LocationPosn(39, 5));
+        left.add(new LocationPosn(37, 4));
+        left.add(new LocationPosn(38, 4));
+        left.add(new LocationPosn(39, 4));
+        left.add(new LocationPosn(39, 3));
+        down.add(new LocationPosn(38, 3));
+        down.add(new LocationPosn(38, 4));
+        down.add(new LocationPosn(38, 5));
+        down.add(new LocationPosn(39, 5));
+        right.add(new LocationPosn(37, 4));
+        right.add(new LocationPosn(37, 5));
+        right.add(new LocationPosn(38, 4));
+        right.add(new LocationPosn(39, 4));
 
-    }
+        board.spawn(PieceName.J);
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(right, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingJ() {
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(down, board.squaresOccupiedByHardDropGhost());
 
-    }
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(left, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingL() {
-        
-    }
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(upright, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingO() {
-        
-    }
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(left, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingS() {
-        
-    }
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(down, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingT() {
-        
-    }
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(right, board.squaresOccupiedByHardDropGhost());
 
-    @Test
-    public void hardDropGhostOnGroundAfterRotatingZ() {
-        
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(upright, board.squaresOccupiedByHardDropGhost());
     }
 
     @Test
     public void hardDropGhostOnStackAfterSpawning() {
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(37, 4));
+        preoccupy.add(new LocationPosn(38, 4));
+        preoccupy.add(new LocationPosn(39, 4));
+        preoccupy.add(new LocationPosn(39, 5));
+        expected.add(new LocationPosn(36, 3));
+        expected.add(new LocationPosn(36, 4));
+        expected.add(new LocationPosn(36, 5));
+        expected.add(new LocationPosn(35, 4));
 
+        board = new Board(preoccupy);
+        this.assertIsPermutation(preoccupy, board.squaresOccupiedByStack());
+        board.spawn(PieceName.T);
+        this.assertIsPermutation(expected, board.squaresOccupiedByHardDropGhost());
     }
 
     @Test
     public void hardDropGhostOnStackAfterRotating() {
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> upright = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> right = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> down = new ArrayList<LocationPosn>();
+        ArrayList<LocationPosn> left = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(38, 3));
+        preoccupy.add(new LocationPosn(39, 3));
+        preoccupy.add(new LocationPosn(39, 4));
+        preoccupy.add(new LocationPosn(39, 5));
+        upright.add(new LocationPosn(37, 3));
+        upright.add(new LocationPosn(37, 4));
+        upright.add(new LocationPosn(37, 5));
+        upright.add(new LocationPosn(36, 5));
+        right.add(new LocationPosn(38, 4));
+        right.add(new LocationPosn(38, 5));
+        right.add(new LocationPosn(37, 4));
+        right.add(new LocationPosn(36, 4));
+        down.add(new LocationPosn(37, 3));
+        down.add(new LocationPosn(36, 3));
+        down.add(new LocationPosn(36, 4));
+        down.add(new LocationPosn(36, 5));
+        left.add(new LocationPosn(38, 4));
+        left.add(new LocationPosn(37, 4));
+        left.add(new LocationPosn(36, 4));
+        left.add(new LocationPosn(36, 3));
 
+        board = new Board(preoccupy);
+        this.assertIsPermutation(preoccupy, board.squaresOccupiedByStack());
+        board.spawn(PieceName.L);
+
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(right, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(down, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(left, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.CLOCKWISE));
+        this.assertIsPermutation(upright, board.squaresOccupiedByHardDropGhost());
+
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(left, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(down, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(right, board.squaresOccupiedByHardDropGhost());
+        assertTrue(board.rotate(RotationDirection.COUNTERCLOCKWISE));
+        this.assertIsPermutation(upright, board.squaresOccupiedByHardDropGhost());
     }
 
 
@@ -578,8 +674,8 @@ public class BoardIntegrationTest {
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
                        "Doesn't contain expected posn (xxx, yyy). "
-                       .replaceFirst("xxx", Integer.toString(shouldContain.row)
-                       .replaceFirst("yyy", Integer.toString(shouldContain.col))));
+                       .replaceFirst("xxx", Integer.toString(shouldContain.row))
+                       .replaceFirst("yyy", Integer.toString(shouldContain.col)));
         }
     }
 }
