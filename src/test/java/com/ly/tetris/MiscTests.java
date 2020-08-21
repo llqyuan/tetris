@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.OffsetPosn;
-import com.ly.tetris.infostructs.Posn;
 import com.ly.tetris.game.pieces.IPiece;
 
 public class MiscTests {

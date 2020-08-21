@@ -7,11 +7,9 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import org.junit.jupiter.api.Test;
-import com.ly.tetris.game.SuperRotationSystem;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
 
 public class SuperRotationSystemBasicTest {
 

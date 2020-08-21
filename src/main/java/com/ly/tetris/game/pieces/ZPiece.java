@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
 
 public class ZPiece extends Piece {
     // A 3x3 grid, representing the field around the piece. 
@@ -17,7 +16,7 @@ public class ZPiece extends Piece {
     // Constructor. Spawns the piece in the upright position above the 
     // visible field
     public ZPiece() {
-        super(18, 4, PieceOrientation.UPRIGHT);
+        super(18, 3, PieceOrientation.UPRIGHT);
         localFieldOccupied[0][0] = true;
         localFieldOccupied[0][1] = true;
         localFieldOccupied[0][2] = false;

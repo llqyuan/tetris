@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
-import com.ly.tetris.game.pieces.OPiece;
 
 public class OPieceTest {
     OPiece piece = null;
@@ -172,7 +170,9 @@ public class OPieceTest {
             LocationPosn shouldContain = it.next();
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
-                       "Doesn't contain expected posns. ");
+                "Doesn't contain expected posn (xxx, yyy). "
+                .replaceFirst("xxx", Integer.toString(shouldContain.row)
+                .replaceFirst("yyy", Integer.toString(shouldContain.col))));
         }
     }
 }

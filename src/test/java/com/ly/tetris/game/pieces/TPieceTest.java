@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
-import com.ly.tetris.game.pieces.TPiece;
 
 public class TPieceTest {
     TPiece piece = null;
@@ -26,25 +24,25 @@ public class TPieceTest {
         rightSpawn = new ArrayList<LocationPosn>();
         upsidedownSpawn = new ArrayList<LocationPosn>();
 
-        uprightSpawn.add(new LocationPosn(18 + 0, 4 + 1));
-        uprightSpawn.add(new LocationPosn(18 + 1, 4 + 0));
-        uprightSpawn.add(new LocationPosn(18 + 1, 4 + 1));
-        uprightSpawn.add(new LocationPosn(18 + 1, 4 + 2));
+        uprightSpawn.add(new LocationPosn(18 + 0, 3 + 1));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 0));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        uprightSpawn.add(new LocationPosn(18 + 1, 3 + 2));
 
-        rightSpawn.add(new LocationPosn(18 + 0, 4 + 1));
-        rightSpawn.add(new LocationPosn(18 + 1, 4 + 1));
-        rightSpawn.add(new LocationPosn(18 + 1, 4 + 2));
-        rightSpawn.add(new LocationPosn(18 + 2, 4 + 1));
+        rightSpawn.add(new LocationPosn(18 + 0, 3 + 1));
+        rightSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        rightSpawn.add(new LocationPosn(18 + 1, 3 + 2));
+        rightSpawn.add(new LocationPosn(18 + 2, 3 + 1));
 
-        upsidedownSpawn.add(new LocationPosn(18 + 1, 4 + 0));
-        upsidedownSpawn.add(new LocationPosn(18 + 1, 4 + 1));
-        upsidedownSpawn.add(new LocationPosn(18 + 1, 4 + 2));
-        upsidedownSpawn.add(new LocationPosn(18 + 2, 4 + 1));
+        upsidedownSpawn.add(new LocationPosn(18 + 1, 3 + 0));
+        upsidedownSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        upsidedownSpawn.add(new LocationPosn(18 + 1, 3 + 2));
+        upsidedownSpawn.add(new LocationPosn(18 + 2, 3 + 1));
 
-        leftSpawn.add(new LocationPosn(18 + 0, 4 + 1));
-        leftSpawn.add(new LocationPosn(18 + 1, 4 + 0));
-        leftSpawn.add(new LocationPosn(18 + 1, 4 + 1));
-        leftSpawn.add(new LocationPosn(18 + 2, 4 + 1));
+        leftSpawn.add(new LocationPosn(18 + 0, 3 + 1));
+        leftSpawn.add(new LocationPosn(18 + 1, 3 + 0));
+        leftSpawn.add(new LocationPosn(18 + 1, 3 + 1));
+        leftSpawn.add(new LocationPosn(18 + 2, 3 + 1));
     }
 
     @BeforeEach
@@ -59,7 +57,7 @@ public class TPieceTest {
 
     @Test
     public void spawnLocationIsCorrect() {
-        LocationPosn expected = new LocationPosn(18, 4);
+        LocationPosn expected = new LocationPosn(18, 3);
         LocationPosn actual = piece.getAbsolutePosition();
         assertEquals(expected, actual, "Spawn location incorrect.");
     }
@@ -339,7 +337,9 @@ public class TPieceTest {
             LocationPosn shouldContain = it.next();
             int searched = actual.indexOf(shouldContain);
             assertTrue(searched >= 0, 
-                       "Doesn't contain expected posns. ");
+                "Doesn't contain expected posn (xxx, yyy). "
+                .replaceFirst("xxx", Integer.toString(shouldContain.row)
+                .replaceFirst("yyy", Integer.toString(shouldContain.col))));
         }
     }
 }

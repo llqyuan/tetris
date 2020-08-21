@@ -16,7 +16,7 @@ public class LPiece extends Piece {
     // Constructor. Spawns the piece in the upright position above
     // the visible field
     public LPiece() {
-        super(18, 4, PieceOrientation.UPRIGHT);
+        super(18, 3, PieceOrientation.UPRIGHT);
         localFieldOccupied[0][0] = false;
         localFieldOccupied[0][1] = false;
         localFieldOccupied[0][2] = true;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
 
 /*
     

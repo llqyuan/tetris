@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
-import com.ly.tetris.infostructs.Posn;
 
 public class OPiece extends Piece {
     // A grid 4 units wide and 3 units tall, representing the field 
