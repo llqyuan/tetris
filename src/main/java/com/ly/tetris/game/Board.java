@@ -24,8 +24,6 @@ Ideas:
   lines cleared, so TetrisGame can determine how many points to award?
 
 Functions:
-* get a copy of the board, including which pieces are occupying which 
-  squares
 
 */
 
@@ -59,7 +57,7 @@ public class Board {
         this.inPlay = null;
         for (int r = 0; r < 40; r++) {
             for (int c = 0; c < 10; c++) {
-                theBoard[r][c] = new Square();
+                theBoard[r][c] = new Square(r, c);
             }
         }
     }
@@ -69,7 +67,7 @@ public class Board {
         this.inPlay = null;
         for (int r = 0; r < 40; r++) {
             for (int c = 0; c < 10; c++) {
-                theBoard[r][c] = new Square();
+                theBoard[r][c] = new Square(r, c);
             }
         }
         ListIterator<LocationPosn> iter = alreadyOccupied.listIterator();

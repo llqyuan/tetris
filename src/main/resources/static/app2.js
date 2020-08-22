@@ -1222,7 +1222,7 @@ function updateFrame() {
 
 function sendDown() {
     stompClient.send(
-        "/app/key-event",
+        "/app/hard-drop",
         {},
         JSON.stringify({"keyCommand": "HARDDROP"})
     );
@@ -1232,7 +1232,7 @@ function sendDown() {
 
 function sendUp() {
     stompClient.send(
-        "/app/key-event",
+        "/app/soft-drop",
         {},
         JSON.stringify({"keyCommand": "SOFTDROP"})
     );
@@ -1242,7 +1242,7 @@ function sendUp() {
 
 function sendLeft() {
     stompClient.send(
-        "/app/key-event",
+        "/app/move",
         {},
         JSON.stringify({"keyCommand": "LEFT"})
     );
@@ -1252,7 +1252,7 @@ function sendLeft() {
 
 function sendRight() {
     stompClient.send(
-        "/app/key-event",
+        "/app/move",
         {},
         JSON.stringify({"keyCommand": "RIGHT"})
     );
@@ -1262,7 +1262,7 @@ function sendRight() {
 
 function sendClockwise() {
     stompClient.send(
-        "/app/key-event",
+        "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "CLOCKWISE"})
     );
@@ -1272,7 +1272,7 @@ function sendClockwise() {
 
 function sendCounterClockwise() {
     stompClient.send(
-        "/app/key-event",
+        "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "COUNTERCLOCKWISE"})
     );
@@ -1282,7 +1282,7 @@ function sendCounterClockwise() {
 
 function sendHold() {
     stompClient.send(
-        "/app/key-event",
+        "/app/hold",
         {},
         JSON.stringify({"keyCommand": "HOLD"})
     );
