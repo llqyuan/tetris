@@ -425,8 +425,8 @@ public class Board {
         this.dropToRow = updatedDropToRow;
     }
 
-    // Attempts to move the piece by diffr rows down and diffc rows right.
-    // Returns true if the piece has room to move and false otherwise.
+    // Attempts to move the piece by diffr rows down and diffc cols right.
+    // Returns true if the piece can occupy the space and false otherwise.
     // Requires: 
     // * there is a piece in play
     // Effects:
@@ -436,7 +436,7 @@ public class Board {
     throws IllegalStateException {
         if (inPlay == null) {
             throw new IllegalStateException(
-                "Tried to move a nonexistent piece left.");
+                "Tried to move a nonexistent piece.");
         }
         OffsetPosn offset = new OffsetPosn(diffr, diffc);
         ArrayList<LocationPosn> occupiedAfterMove = 
@@ -539,9 +539,9 @@ public class Board {
     private ArrayList<LocationPosn> 
     offsetList(ArrayList<LocationPosn> original, OffsetPosn offsetBy) {
         ArrayList<LocationPosn> offset  = new ArrayList<LocationPosn>();
-        ListIterator<LocationPosn> iter = original.listIterator();
-        while (iter.hasNext()) {
-            offset.add(iter.next().add(offsetBy));
+        ListIterator<LocationPosn> iterOriginal = original.listIterator();
+        while (iterOriginal.hasNext()) {
+            offset.add(iterOriginal.next().add(offsetBy));
         }
         return offset;
     }

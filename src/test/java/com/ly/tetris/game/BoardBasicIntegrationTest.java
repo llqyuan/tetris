@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.LocationPosn;
+import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
@@ -487,6 +488,195 @@ public class BoardBasicIntegrationTest {
     }
 
     // ==============================================
+    // Moving left, right, or down (softdropping)
+    // ==============================================
+
+    @Test
+    public void movingLeftUpdatesPieceInPlay() {
+        assertTrue(board.spawn(PieceName.S));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn leftOneSquare = new OffsetPosn(0, -1);
+        ArrayList<LocationPosn> expectedAfterMove = 
+            this.offsetList(occupiedBeforeMove, leftOneSquare);
+        assertTrue(board.moveLeft());
+        this.assertIsPermutation(
+            expectedAfterMove, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void movingRightUpdatesPieceInPlay() {
+        assertTrue(board.spawn(PieceName.Z));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn rightOneSquare = new OffsetPosn(0, 1);
+        ArrayList<LocationPosn> expectedAfterMove = 
+            this.offsetList(occupiedBeforeMove, rightOneSquare);
+        assertTrue(board.moveRight());
+        this.assertIsPermutation(
+            expectedAfterMove, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void moveLeftToBounds() {
+        assertTrue(board.spawn(PieceName.L));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn leftThree = new OffsetPosn(0, -3);
+        ArrayList<LocationPosn> expectedAfterMoves = 
+            this.offsetList(occupiedBeforeMove, leftThree);
+        int countTimesLeft = 0;
+        while (board.moveLeft() && countTimesLeft < 11) {
+            countTimesLeft += 1;
+        }
+        assertTrue(
+            countTimesLeft < 11, 
+            "Able to move left 11+ times without hitting a wall.");
+        assertEquals(3, countTimesLeft, 
+            ("Newly spawned L piece moved left xxx times before no longer " + 
+            "being able to move, expected 3.")
+            .replaceFirst("xxx", Integer.toString(countTimesLeft)));
+        this.assertIsPermutation(
+            expectedAfterMoves, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void moveRightToBounds() {
+        assertTrue(board.spawn(PieceName.S));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn rightFour = new OffsetPosn(0, 4);
+        ArrayList<LocationPosn> expectedAfterMoves = 
+            this.offsetList(occupiedBeforeMove, rightFour);
+        int countTimesRight = 0;
+        while (board.moveRight() && countTimesRight < 11) {
+            countTimesRight += 1;
+        }
+        assertTrue(
+            countTimesRight < 11, 
+            "Able to move right 11+ times without hitting a wall.");
+        assertEquals(4, countTimesRight, 
+            ("Newly spawned S piece moved right xxx times before no longer " + 
+            "being able to move, expected 4.")
+            .replaceFirst("xxx", Integer.toString(countTimesRight)));
+        this.assertIsPermutation(
+            expectedAfterMoves, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void moveLeftRightToStack() {
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(19, 0));
+        preoccupy.add(new LocationPosn(19, 8));
+        preoccupy.add(new LocationPosn(18, 1));
+        preoccupy.add(new LocationPosn(20, 7));
+
+        board = new Board(preoccupy);
+        assertTrue(board.spawn(PieceName.I));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn leftTwo = new OffsetPosn(0, -2);
+        OffsetPosn rightThree = new OffsetPosn(0, 3);
+
+        ArrayList<LocationPosn> expected =
+            this.offsetList(occupiedBeforeMove, leftTwo);
+        int countMoved = 0;
+        while (board.moveLeft() && countMoved < 11) {
+            countMoved += 1;
+        }
+        assertTrue(
+            countMoved < 11,
+            "Able to move left 11+ times without hitting a wall.");
+        assertEquals(2, countMoved,
+            "Able to move I piece xxx times left, expected 2."
+            .replaceFirst("xxx", Integer.toString(countMoved)));
+        this.assertIsPermutation(
+            expected, board.squaresOccupiedByPieceInPlay());
+
+        expected = this.offsetList(expected, rightThree);
+        countMoved = 0;
+        while (board.moveRight() && countMoved < 11) {
+            countMoved += 1;
+        }
+        assertTrue(
+            countMoved < 11,
+            "Able to move right 11+ times without hitting a wall.");
+        assertEquals(3, countMoved,
+            "Able to move I piece xxx times right, expected 3."
+            .replaceFirst("xxx", Integer.toString(countMoved)));
+        this.assertIsPermutation(
+            expected, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void movingDownUpdatesPieceInPlay() {
+        assertTrue(board.spawn(PieceName.O));
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn downOne = new OffsetPosn(1, 0);
+        ArrayList<LocationPosn> expectedAfterMove = 
+            this.offsetList(occupiedBeforeMove, downOne);
+        assertTrue(board.moveDown());
+        this.assertIsPermutation(
+            expectedAfterMove, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void moveDownToBounds() {
+        assertTrue(board.spawn(PieceName.Z));
+        ArrayList<LocationPosn> occupiedBeforeMove =
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn downTwenty = new OffsetPosn(20, 0);
+        ArrayList<LocationPosn> expectedAfter = 
+            this.offsetList(occupiedBeforeMove, downTwenty);
+        
+        int countTimes = 0;
+        while (board.moveDown() && countTimes < 41) {
+            countTimes += 1;
+        }
+        assertTrue(
+            countTimes < 41, 
+            "Able to move down 41+ times without reaching the ground.");
+        assertEquals(
+            20, countTimes, 
+            "Moved Z piece xxx times down, expected 20."
+            .replaceFirst("xxx", Integer.toString(countTimes)));
+        this.assertIsPermutation(
+            expectedAfter, board.squaresOccupiedByPieceInPlay());
+    }
+
+    @Test
+    public void moveDownToStack() {
+        ArrayList<LocationPosn> preoccupy = new ArrayList<LocationPosn>();
+        preoccupy.add(new LocationPosn(38, 3));
+        preoccupy.add(new LocationPosn(39, 3));
+        preoccupy.add(new LocationPosn(39, 4));
+        preoccupy.add(new LocationPosn(39, 5));
+        board = new Board(preoccupy);
+
+        assertTrue(board.spawn(PieceName.I));
+        ArrayList<LocationPosn> occupiedBeforeMove =
+            board.squaresOccupiedByPieceInPlay();
+        OffsetPosn downEighteen = new OffsetPosn(18, 0);
+        ArrayList<LocationPosn> expectedAfter = 
+            this.offsetList(occupiedBeforeMove, downEighteen);
+        
+        int countTimes = 0;
+        while (board.moveDown() && countTimes < 41) {
+            countTimes += 1;
+        }
+        assertTrue(
+            countTimes < 41, 
+            "Able to move down 41+ times without reaching the ground.");
+        assertEquals(
+            18, countTimes, 
+            "Moved I piece xxx times down, expected 18."
+            .replaceFirst("xxx", Integer.toString(countTimes)));
+        this.assertIsPermutation(
+            expectedAfter, board.squaresOccupiedByPieceInPlay());
+    }
+
+    // ==============================================
     // Hard drop ghost updated correctly
     // ==============================================
 
@@ -707,6 +897,16 @@ public class BoardBasicIntegrationTest {
         this.assertIsPermutation(upright, board.squaresOccupiedByHardDropGhost());
     }
 
+    @Test
+    public void hardDropGhostOnGroundAfterMoving() {
+
+    }
+
+    @Test
+    public void hardDropGhostOnStackAfterMoving() {
+
+    }
+
 
     // =====================
     // Private helper methods
@@ -729,5 +929,17 @@ public class BoardBasicIntegrationTest {
                        .replaceFirst("xxx", Integer.toString(shouldContain.row))
                        .replaceFirst("yyy", Integer.toString(shouldContain.col)));
         }
+    }
+
+    // Returns a list obtained from original by applying an offset 
+    // of offsetBy to each entry.
+    private ArrayList<LocationPosn> 
+    offsetList(ArrayList<LocationPosn> original, OffsetPosn offsetBy) {
+        ArrayList<LocationPosn> offset  = new ArrayList<LocationPosn>();
+        ListIterator<LocationPosn> iterOriginal = original.listIterator();
+        while (iterOriginal.hasNext()) {
+            offset.add(iterOriginal.next().add(offsetBy));
+        }
+        return offset;
     }
 }
