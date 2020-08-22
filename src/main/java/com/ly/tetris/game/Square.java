@@ -14,6 +14,10 @@ public class Square {
         occupiedBy = p;
     }
 
+    public Square(Square other) {
+        this.occupiedBy = other.occupiedBy;
+    }
+
     // Returns true if this square is occupied and false otherwise.
     public boolean isOccupied() {
         return (occupiedBy != PieceName.NOTHING);

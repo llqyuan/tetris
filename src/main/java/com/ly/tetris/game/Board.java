@@ -26,7 +26,6 @@ Ideas:
 Functions:
 * get a copy of the board, including which pieces are occupying which 
   squares
-* move left, right
 
 */
 
@@ -85,6 +84,18 @@ public class Board {
     // =================
     // Public interface
     // =================
+
+    // Returns a copy of the board. The copy does not contain 
+    // information on the piece in play.
+    public Square[][] copyOfBoard() {
+        Square[][] copy = new Square[40][10];
+        for (int r = 0; r < 40; r++) {
+            for (int c = 0; c < 10; c++) {
+                copy[r][c] = new Square(theBoard[r][c]);
+            }
+        }
+        return copy;
+    }
 
     // Returns the name of the piece currently in play, or 
     // PieceName.NOTHING if none are in play.
