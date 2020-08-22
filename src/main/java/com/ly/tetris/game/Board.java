@@ -20,17 +20,13 @@ import com.ly.tetris.infostructs.RotationDirection;
 todo:
 
 Ideas:
-* Need to figure out where to clear lines. In hardDrop?
+* Need to figure out where to clear lines. In hardDrop, returning number of 
+  lines cleared, so TetrisGame can determine how many points to award?
 
 Functions:
-* lockPiece, movePieceToBottom (testing)
-* spawn (testing)
-  (Consider adding an overloaded version that takes a spawn location, for 
-   tests)
-* rotate (testing)
-* squares occupied by piece in play, hard drop ghost (testing)
 * get a copy of the board, including which pieces are occupying which 
-  squares -- for TetrisGame?
+  squares
+* move left, right
 
 */
 
@@ -154,6 +150,39 @@ public class Board {
         return occupied;
     }
 
+    // Attempts to move the piece in play left by one square.
+    // Returns true if successful and false otherwise.
+    // Requires:
+    // * there is a piece in play
+    // Effects:
+    // * May modify board
+    // * Updates dropToRow if the piece was successfully moved
+    public boolean moveLeft() throws IllegalStateException {
+        return this.moveDirection(0, -1);
+    }
+
+    // Attempts to move the piece in play right by one square.
+    // Returns true if successful and false otherwise.
+    // Requires:
+    // * there is a piece in play
+    // Effects:
+    // * May modify the board
+    // * Updates dropToRow if the piece was successfully moved
+    public boolean moveRight() throws IllegalStateException {
+        return this.moveDirection(0, 1);
+    }
+
+    // Attempts to move the piece in play down by one square.
+    // Returns true if successful and false otherwise.
+    // Requires:
+    // * there is a piece in play
+    // Effects:
+    // * May modify the board
+    // * Updates dropToRow if the piece was successfully moved
+    public boolean moveDown() {
+        return this.moveDirection(1, 0);
+    }
+
     // Hard drops the current piece and removes it from play.
     // Effects: 
     // * Modifies the board.
@@ -177,7 +206,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * dropToRow is updated
+    // * Updates dropToRow if the piece is successfully rotated
     public boolean spawn(PieceName piece) 
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -229,7 +258,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * dropToRow is updated
+    // * Updates dropToRow
     public boolean spawn(PieceName piece, int r, int c)
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -280,6 +309,7 @@ public class Board {
     // * the piece in play is not null.
     // Effects: 
     // * May modify the board.
+    // * Updates dropToRow
     public boolean rotate(RotationDirection direction) 
     throws NullPointerException, IllegalStateException
     {
@@ -393,6 +423,37 @@ public class Board {
                 this.offsetList(occupiedOneRowDown, oneRowDown);
         }
         this.dropToRow = updatedDropToRow;
+    }
+
+    // Attempts to move the piece by diffr rows down and diffc rows right.
+    // Returns true if the piece has room to move and false otherwise.
+    // Requires: 
+    // * there is a piece in play
+    // Effects:
+    // * May modify the board by moving the piece in play
+    // * Updates dropToRow if the piece was successfully moved
+    private boolean moveDirection(int diffr, int diffc) 
+    throws IllegalStateException {
+        if (inPlay == null) {
+            throw new IllegalStateException(
+                "Tried to move a nonexistent piece left.");
+        }
+        OffsetPosn offset = new OffsetPosn(diffr, diffc);
+        ArrayList<LocationPosn> occupiedAfterMove = 
+            this.offsetList(inPlay.squaresOccupiedNow(), offset);
+        
+        if (this.posnsInRange(occupiedAfterMove) && 
+            this.squaresAreFree(occupiedAfterMove))
+        {
+            LocationPosn locationAfterMove = 
+                inPlay.getAbsolutePosition().add(offset);
+            inPlay.setAbsolutePosition(locationAfterMove);
+            this.updateDropToRow();
+            return true;
+
+        } else {
+            return false;
+        }
     }
 
     // Moves the current piece to the bottom of the board
