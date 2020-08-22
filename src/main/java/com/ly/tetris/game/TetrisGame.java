@@ -3,6 +3,7 @@ package com.ly.tetris.game;
 import java.util.ArrayList;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
+import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.PieceName;
 
 /* 
@@ -46,8 +47,9 @@ left or right), tell the browser to reset the timer and restart it.
 */
 
 public class TetrisGame {
+
     // Game board.
-    private Board board = null;
+    private Board board;
 
     // Score.
     private int score;
@@ -57,9 +59,9 @@ public class TetrisGame {
 
     // Hold piece
     private PieceName hold;
-
+    
     // Next queue
-    private ArrayList<PieceName> next = null;
+    private NextPiecesQueue next;
 
     // Height of board.
     private final int height;
@@ -75,20 +77,19 @@ public class TetrisGame {
         this.score = 0;
         this.difficulty = 1;
         this.hold = PieceName.NOTHING;
-        this.next = new ArrayList<PieceName>();
+        this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
         this.height = this.previousBoardCopy.length;
         this.width = this.previousBoardCopy[0].length;
-        // Here, generate starting pieces (random)
     }
 
     public TetrisGame(boolean debug) {
         this.board = new Board();
         this.score = 0;
-        // Here, read info from debug file?
         this.difficulty = 1;
         this.hold = PieceName.NOTHING;
-        this.next = new ArrayList<PieceName>();
+        // Read info from debug file to generate starting lineup?
+        this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
         this.height = this.previousBoardCopy.length;
         this.width = this.previousBoardCopy[0].length;
@@ -102,10 +103,44 @@ public class TetrisGame {
     // resulting board.
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
         board.moveLeft();
-        Square[][] boardCopy = board.copyOfBoard();
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return this.produceBoardUpdate(event);
     }
 
     // Moves the piece and return information on the state of the 
     // resulting board.
+    public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
+        board.moveRight();
+        return this.produceBoardUpdate(event);
+    }
+
+    // =========================================================
+    // Private helper methods
+    // =========================================================
+
+    // Returns a message detailing the state of the board.
+    // Effects:
+    // * Updates previousBoardCopy
+    private BoardUpdateMessage produceBoardUpdate(EventMessage event) {
+        PieceName inPlay = board.pieceInPlay();
+        ArrayList<LocationPosn> squaresOfPieceInPlay = 
+            board.squaresOccupiedByPieceInPlay();
+        ArrayList<LocationPosn> squaresOfHardDropGhost = 
+            board.squaresOccupiedByHardDropGhost();
+
+        ArrayList<Square> changesToStack = new ArrayList<Square>();
+        Square[][] boardCopy = board.copyOfBoard();
+        for (int r = 0; r < this.height; r++) {
+            for (int c = 0; c < this.width; c++) {
+                if (!(boardCopy[r][c].equals(previousBoardCopy[r][c]))) {
+                    changesToStack.add(boardCopy[r][c]);
+                }
+            }
+        }
+
+        PieceName hold = this.hold;
+        ArrayList<PieceName> nextFivePieces = null;
+        // todo
+
+        return new BoardUpdateMessage(event.getKeyCommand());
+    }
 }

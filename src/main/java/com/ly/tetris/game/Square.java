@@ -28,6 +28,15 @@ public class Square {
         this.col = other.col;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Square)) {
+            return false;
+        }
+        Square other = (Square)o;
+        return (this.occupiedBy == other.occupiedBy);
+    }
+
     // Returns true if this square is occupied and false otherwise.
     public boolean isOccupied() {
         return (occupiedBy != PieceName.NOTHING);
