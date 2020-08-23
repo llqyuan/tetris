@@ -1,6 +1,9 @@
 var stompClient = null;
 var unitSize = null;
 var gameActive = false;
+var timer = null;
+var previousSquaresOfPieceInPlay = null;
+var previousSquaresOfHardDropGhost = null;
 
 const I = 1;
 const L = 2;
@@ -51,6 +54,7 @@ function SingleSquare(params) {
     this.y = params.y || 0;
     this.piece = params.piece || -1;
     this.ghost = params.ghost || false;
+    this.erase = params.erase || false;
 }
 
 function IPiece(params) {
@@ -157,13 +161,18 @@ SingleSquare.prototype.draw = function(canvas) {
     if (this.ghost) {
         ctx.fillStyle = GHOSTCOLOUR;
         ctx.strokeStyle = GHOSTCOLOUR;
+    } if (this.erase) {
+        ctx.fillStyle = BACKGROUND;
+        ctx.strokeStyle = BACKGROUND;
     }
 
     // 10x2 spawn field
-    if (!( this.y < 2 * unitSize ))
+    if (this.y >= 2 * unitSize  && !this.erase)
     {
         ctx.fillRect(this.x, this.y, unitSize, unitSize);
         ctx.strokeRect(this.x, this.y, unitSize, unitSize);
+    } else if (this.y >= 2 * unitSize) {
+        ctx.fillRect(this.x - 2, this.y - 2, unitSize + 4, unitSize + 4);
     }
 }
 
@@ -1028,8 +1037,8 @@ function initHoldBox(canvas, unitSize) {
 
 function initBoard(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
-    ctx.strokeRect(7 * unitSize - 2, 2 * unitSize - 2, 
-        10 * unitSize + 4, 20 * unitSize + 4);
+    ctx.strokeRect(7 * unitSize - 3, 2 * unitSize - 3, 
+        10 * unitSize + 6, 20 * unitSize + 6);
 }
 
 
@@ -1040,7 +1049,7 @@ function initNextQueue(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
 
     ctx.font = "{}px Arial".replace("{}", Math.floor(unitSize / 2));
-    ctx.strokeText("NEXT", 19 * unitSize, Math.floor(unitSize * 3 / 2));
+    ctx.strokeText("NEXT", 18 * unitSize, Math.floor(unitSize * 3 / 2));
 
     ctx.strokeRect(18 * unitSize, 2 * unitSize, 6 * unitSize, 17 * unitSize);
 }
@@ -1054,7 +1063,9 @@ function drawPieceInQueuePosition(canvas, piececode, pos) {
     var xpix = 19 * unitSize;
     var ypix = 3 * unitSize + 3 * unitSize * (pos - 1);
     var piece;
-    
+
+    clearPieceInQueuePosition(canvas, pos);
+
     switch(piececode) {
         case I:
             piece = new IPiece({x: xpix, y: ypix});
@@ -1100,6 +1111,7 @@ function clearPieceInQueuePosition(canvas, pos) {
 
 function drawPieceInHold(canvas, piececode) {
     var piece;
+    clearPieceInHold(canvas);
     switch (piececode) {
         case I:
             piece = new IPiece({x: unitSize, y: 3 * unitSize});
@@ -1161,7 +1173,7 @@ function initCanvas() {
 }
 
 // ========================================================================
-// Page management
+// Page management: General
 // ========================================================================
 
 // connect() connects to the server.
@@ -1189,23 +1201,85 @@ function start(key) {
             document.getElementById("start-overlay").style.display = "none";
             $('#tetris-theme').trigger("play");
             gameActive = true;
+            sendGameStart();
             updateFrame();
     }
 }
 
 
 
-// Updates board given a response from the server.
+// Updates the board given a response from the server.
 
 function updateBoard(response) {
-    // temp
-    // just for acknowledgement; will do more detailed updates 
-    // after server logic is more fleshed out
     var canvas = document.getElementById("tetris-board");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 23 * unitSize, 24 * unitSize, unitSize);
-    ctx.strokeText("Acknowledged: {}".replace("{}", window.performance.now()),
-        0, 24 * unitSize);
+
+    var body = JSON.parse(response.body);
+
+    // Update the timer
+    // Draw the new piece in hold
+    // Draw the new pieces in the next queue
+    // Draw the changes to the stack
+    // Erase the previous hard drop ghost and piece in play
+    if (previousSquaresOfHardDropGhost != null) {
+        for (var i = 0; i < previousSquaresOfHardDropGhost.length; i++) {
+            var ypix = (previousSquaresOfHardDropGhost[i].row - 18) * unitSize;
+            var xpix = (previousSquaresOfHardDropGhost[i].col + 7) * unitSize;
+            var sq = new SingleSquare({x: xpix, y: ypix, erase: true});
+            sq.draw(canvas);
+        }
+
+    } if (previousSquaresOfPieceInPlay != null) {
+        for (var i = 0; i < previousSquaresOfPieceInPlay.length; i++) {
+            var ypix = (previousSquaresOfPieceInPlay[i].row - 18) * unitSize;
+            var xpix = (previousSquaresOfPieceInPlay[i].col + 7) * unitSize;
+            var sq = new SingleSquare({x: xpix, y: ypix, erase: true});
+            sq.draw(canvas);
+        }
+    }
+    // Draw the hard drop ghost
+    var ghost = body.squaresOfHardDropGhost;
+    for (var i = 0; i < ghost.length; i++) {
+        var ypix = (ghost[i].row - 18) * unitSize;
+        var xpix = (ghost[i].col + 7) * unitSize;
+        var sq = new SingleSquare({x: xpix, y: ypix, ghost: true});
+        sq.draw(canvas);
+    }
+    previousSquaresOfHardDropGhost = ghost;
+
+    // Draw the piece in play
+    var name = String(body.pieceInPlay);
+    var pieceSquares = body.squaresOfPieceInPlay;
+    var pieceColour;
+    switch(name) {
+        case "I":
+            pieceColour = I;
+            break;
+        case "J":
+            pieceColour = J;
+            break;
+        case "L":
+            pieceColour = L;
+            break;
+        case "O":
+            pieceColour = O;
+            break;
+        case "S":
+            pieceColour = S;
+            break;
+        case "T":
+            pieceColour = T;
+            break;
+        case "Z":
+            pieceColour = Z;
+            break;
+    }
+    for (var i = 0; i < pieceSquares.length; i++) {
+        var ypix = (pieceSquares[i].row - 18) * unitSize;
+        var xpix = (pieceSquares[i].col + 7) * unitSize;
+        var sq = new SingleSquare({x: xpix, y: ypix, piece: pieceColour});
+        sq.draw(canvas);
+    }
+    previousSquaresOfPieceInPlay = pieceSquares;
 }
 
 
@@ -1217,12 +1291,26 @@ function updateFrame() {
     }
 }
 
+// ==========================================================================
+// Page management: Sending commands to the server
+// ========================================================================
+
+// Tells the server to start the game.
+
+function sendGameStart() {
+    stompClient.send(
+        "/app/start-new-game",
+        {},
+        JSON.stringify({"keyCommand": "NOTHING"})
+    );
+}
+
 
 // Sends the hard drop command to the server.
 
-function sendDown() {
+function sendHardDrop() {
     stompClient.send(
-        "/app/key-event",
+        "/app/hard-drop",
         {},
         JSON.stringify({"keyCommand": "HARDDROP"})
     );
@@ -1230,9 +1318,9 @@ function sendDown() {
 
 // Sends the soft drop command to the server.
 
-function sendUp() {
+function sendSoftDrop() {
     stompClient.send(
-        "/app/key-event",
+        "/app/soft-drop",
         {},
         JSON.stringify({"keyCommand": "SOFTDROP"})
     );
@@ -1242,7 +1330,7 @@ function sendUp() {
 
 function sendLeft() {
     stompClient.send(
-        "/app/key-event",
+        "/app/move",
         {},
         JSON.stringify({"keyCommand": "LEFT"})
     );
@@ -1252,7 +1340,7 @@ function sendLeft() {
 
 function sendRight() {
     stompClient.send(
-        "/app/key-event",
+        "/app/move",
         {},
         JSON.stringify({"keyCommand": "RIGHT"})
     );
@@ -1262,7 +1350,7 @@ function sendRight() {
 
 function sendClockwise() {
     stompClient.send(
-        "/app/key-event",
+        "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "CLOCKWISE"})
     );
@@ -1272,7 +1360,7 @@ function sendClockwise() {
 
 function sendCounterClockwise() {
     stompClient.send(
-        "/app/key-event",
+        "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "COUNTERCLOCKWISE"})
     );
@@ -1282,7 +1370,7 @@ function sendCounterClockwise() {
 
 function sendHold() {
     stompClient.send(
-        "/app/key-event",
+        "/app/hold",
         {},
         JSON.stringify({"keyCommand": "HOLD"})
     );
@@ -1304,35 +1392,43 @@ $(function() {
 
         } else {
             switch(event.which) {
-                case 38:
-                event.preventDefault();
-                var stop = setInterval(function() { sendUp(); }, 50);
-                $(window).on("keyup", function(e) { clearInterval(stop); });
-                break;
-            case 40:
-                event.preventDefault();
-                sendDown();
-                break;
-            case 37:
-                event.preventDefault();
-                sendLeft();
-                break;
-            case 39:
-                event.preventDefault();
-                sendRight();
-                break;
-            case 67:
-                event.preventDefault();
-                sendClockwise();
-                break;
-            case 88:
-                event.preventDefault();
-                sendCounterClockwise();
-                break;
-            case 90:
-                event.preventDefault();
-                sendHold();
-                break;
+                case 40:
+                    event.preventDefault();
+                    var stop = setInterval(
+                        function() { 
+                            sendSoftDrop(); 
+                        }, 
+                        100);
+                    $(window).on(
+                        "keyup", 
+                        function(e) { 
+                            clearInterval(stop); 
+                        });
+                    break;
+                case 32:
+                    event.preventDefault();
+                    sendHardDrop();
+                    break;
+                case 37:
+                    event.preventDefault();
+                    sendLeft();
+                    break;
+                case 39:
+                    event.preventDefault();
+                    sendRight();
+                    break;
+                case 88:
+                    event.preventDefault();
+                    sendClockwise();
+                    break;
+                case 90:
+                    event.preventDefault();
+                    sendCounterClockwise();
+                    break;
+                case 67:
+                    event.preventDefault();
+                    sendHold();
+                    break;
             }
         }
     });
