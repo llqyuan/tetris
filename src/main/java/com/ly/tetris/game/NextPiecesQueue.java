@@ -22,11 +22,7 @@ public class NextPiecesQueue {
         temp.add(PieceName.S);
         temp.add(PieceName.T);
         temp.add(PieceName.Z);
-        Collections.shuffle(temp);
-        ListIterator<PieceName> iter = temp.listIterator();
-        while (iter.hasNext()) {
-            this.next.addLast(iter.next());
-        }
+        this.addShuffledQueueToNext(temp);
     }
 
     // Returns the next piece in the queue and removes it from the 
@@ -34,9 +30,39 @@ public class NextPiecesQueue {
     // Effects:
     // * Removes the first piece from next.
     // * If there are too few pieces in next, adds 14 more to 
-    //   the end of next.
+    //   the end: two of each of the 7 piece types, in a 
+    //   random order.
     public PieceName firstPieceInQueue() {
-        // todo
-        return PieceName.NOTHING;
+        PieceName firstPieceInQueue = next.removeFirst();
+        if (next.size() < 5) {
+            ArrayList<PieceName> temp = new ArrayList<PieceName>();
+            temp.add(PieceName.I);
+            temp.add(PieceName.I);
+            temp.add(PieceName.J);
+            temp.add(PieceName.J);
+            temp.add(PieceName.L);
+            temp.add(PieceName.L);
+            temp.add(PieceName.O);
+            temp.add(PieceName.O);
+            temp.add(PieceName.S);
+            temp.add(PieceName.S);
+            temp.add(PieceName.T);
+            temp.add(PieceName.T);
+            temp.add(PieceName.Z);
+            temp.add(PieceName.Z);
+            this.addShuffledQueueToNext(temp);
+        }
+        return firstPieceInQueue;
+    }
+
+    // Shuffles toAdd, then adds each piece in toAdd to next.
+    // Effects:
+    // * Adds the pieces from toAdd to the end of next, in a random order
+    private void addShuffledQueueToNext(ArrayList<PieceName> toAdd) {
+        Collections.shuffle(toAdd);
+        ListIterator<PieceName> iter = toAdd.listIterator();
+        while (iter.hasNext()) {
+            this.next.addLast(iter.next());
+        }
     }
 }
