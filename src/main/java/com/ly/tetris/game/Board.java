@@ -19,9 +19,14 @@ import com.ly.tetris.infostructs.RotationDirection;
 /*
 todo:
 
-Ideas:
 * Need to figure out where to clear lines. In hardDrop, returning number of 
   lines cleared, so TetrisGame can determine how many points to award?
+
+* Need to figure out how to recognize bonuses like perfect clears,
+  Tspins.
+  - Tetris: Cleared 4 lines
+  - Perfect clear: Board is empty after clearing a line
+  - T spin: ? I should search up the Tetris Guideline algorithm
 
 Functions:
 
@@ -159,6 +164,18 @@ public class Board {
         return occupied;
     }
 
+    // Returns true if there is a piece in play and it is in the 
+    // air, and false otherwise.
+    // Requires:
+    // * dropToRow is up to date
+    public boolean pieceIsInAir() {
+        if (inPlay != null) {
+            return dropToRow > inPlay.getAbsolutePosition().row;
+        } else {
+            return false;
+        }
+    }
+
     // Attempts to move the piece in play left by one square.
     // Returns true if successful and false otherwise.
     // Requires:
@@ -188,7 +205,7 @@ public class Board {
     // Effects:
     // * May modify the board
     // * Updates dropToRow if the piece was successfully moved
-    public boolean moveDown() {
+    public boolean moveDown() throws IllegalStateException {
         return this.moveDirection(1, 0);
     }
 
@@ -215,7 +232,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * Updates dropToRow if the piece is successfully rotated
+    // * Updates dropToRow if the piece is successfully spawned
     public boolean spawn(PieceName piece) 
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -267,7 +284,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * Updates dropToRow
+    // * Updates dropToRow if the piece is successfully spawned
     public boolean spawn(PieceName piece, int r, int c)
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -318,7 +335,7 @@ public class Board {
     // * the piece in play is not null.
     // Effects: 
     // * May modify the board.
-    // * Updates dropToRow
+    // * Updates dropToRow if the piece is successfully rotated
     public boolean rotate(RotationDirection direction) 
     throws NullPointerException, IllegalStateException
     {
@@ -411,7 +428,8 @@ public class Board {
     // Requires:
     // * There is a piece in play
     // Effects: 
-    // * Modifies the board.
+    // * Modifies the board
+    // * Updates dropToRow
     private void updateDropToRow() throws NullPointerException {
         if (inPlay == null) {
             throw new NullPointerException("Piece in play is null.");
@@ -435,7 +453,7 @@ public class Board {
     }
 
     // Attempts to move the piece by diffr rows down and diffc cols right.
-    // Returns true if the piece can occupy the space and false otherwise.
+    // Returns true if the piece was able to move and false otherwise.
     // Requires: 
     // * there is a piece in play
     // Effects:

@@ -1,19 +1,22 @@
 package com.ly.tetris.game;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ListIterator;
 import com.ly.tetris.infostructs.PieceName;
 
 public class NextPiecesQueue {
-    private ArrayDeque<PieceName> next;
+    private ArrayList<PieceName> next;
+
+    // =========================================================
+    // Public interface
+    // =========================================================
 
     // Constructor. Generates a starting queue for a new game 
     // (contains one instance of each of the 7 piece types, 
     // in a random order)
     public NextPiecesQueue() {
-        this.next = new ArrayDeque<PieceName>();
+        this.next = new ArrayList<PieceName>();
         ArrayList<PieceName> temp = new ArrayList<PieceName>();
         temp.add(PieceName.I);
         temp.add(PieceName.J);
@@ -29,31 +32,45 @@ public class NextPiecesQueue {
     // queue.
     // Effects:
     // * Removes the first piece from next.
-    // * If there are too few pieces in next, adds 14 more to 
-    //   the end: two of each of the 7 piece types, in a 
+    // * If there are too few pieces in next, adds 7 more to 
+    //   the end: one of each of the 7 piece types, in a 
     //   random order.
-    public PieceName firstPieceInQueue() {
-        PieceName firstPieceInQueue = next.removeFirst();
+    public PieceName produceAndRemoveNextPieceInQueue() {
+        PieceName firstPieceInQueue = next.remove(0);
         if (next.size() < 5) {
             ArrayList<PieceName> temp = new ArrayList<PieceName>();
             temp.add(PieceName.I);
-            temp.add(PieceName.I);
-            temp.add(PieceName.J);
             temp.add(PieceName.J);
             temp.add(PieceName.L);
-            temp.add(PieceName.L);
-            temp.add(PieceName.O);
             temp.add(PieceName.O);
             temp.add(PieceName.S);
-            temp.add(PieceName.S);
             temp.add(PieceName.T);
-            temp.add(PieceName.T);
-            temp.add(PieceName.Z);
             temp.add(PieceName.Z);
             this.addShuffledQueueToNext(temp);
         }
         return firstPieceInQueue;
     }
+
+    // Returns the next five pieces in the queue.
+    public ArrayList<PieceName> peekNextFivePieces() 
+    throws IllegalStateException {
+        ArrayList<PieceName> nextFive = new ArrayList<PieceName>();
+        int count = 0;
+        ListIterator<PieceName> iter = next.listIterator();
+        while (iter.hasNext() && count < 5) {
+            nextFive.add(iter.next());
+            count += 1;
+        }
+        if (count < 5) {
+            throw new IllegalStateException(
+                "There are fewer than 5 pieces in the next-pieces queue.");
+        }
+        return nextFive;
+    }
+
+    // ===========================================================
+    // Private helper methods
+    // ===========================================================
 
     // Shuffles toAdd, then adds each piece in toAdd to next.
     // Effects:
@@ -62,7 +79,7 @@ public class NextPiecesQueue {
         Collections.shuffle(toAdd);
         ListIterator<PieceName> iter = toAdd.listIterator();
         while (iter.hasNext()) {
-            this.next.addLast(iter.next());
+            this.next.add(iter.next());
         }
     }
 }

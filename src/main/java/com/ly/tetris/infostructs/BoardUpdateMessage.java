@@ -60,6 +60,30 @@ public class BoardUpdateMessage {
         this.acknowledge = key;
     }
 
+    public BoardUpdateMessage(
+        PieceName pieceInPlay,
+        ArrayList<LocationPosn> squaresOfPieceInPlay,
+        ArrayList<LocationPosn> squaresOfHardDropGhost,
+        ArrayList<Square> changesToStack,
+        PieceName hold,
+        ArrayList<PieceName> nextFivePieces,
+        boolean spawnUnsuccessful,
+        TimerUpdateMessage timerUpdate,
+        int score,
+        KeyCommand key
+    ) {
+        this.pieceInPlay = pieceInPlay;
+        this.squaresOfPieceInPlay = squaresOfPieceInPlay;
+        this.squaresOfHardDropGhost = squaresOfHardDropGhost;
+        this.changesToStack = changesToStack;
+        this.hold = hold;
+        this.nextFivePieces = nextFivePieces;
+        this.spawnUnsuccessful = spawnUnsuccessful;
+        this.timerUpdate = timerUpdate;
+        this.score = score;
+        this.acknowledge = key;
+    }
+
     public PieceName getPieceInPlay() {
         return pieceInPlay;
     }
