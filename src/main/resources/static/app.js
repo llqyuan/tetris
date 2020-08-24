@@ -1275,7 +1275,7 @@ function updateBoard(response) {
             }
         }
     }
-    // Draw the changes to the stack
+    
     // Erase the previous hard drop ghost and piece in play
     if (tetris.previousSquaresOfHardDropGhost != null) {
         for (var i = 0; i < tetris.previousSquaresOfHardDropGhost.length; i++) {
@@ -1301,6 +1301,49 @@ function updateBoard(response) {
             sq.draw(canvas);
         }
     }
+
+    // Draw the changes to the stack
+    var changes = body.changesToStack;
+    for (var i = 0; i < changes.length; i++) {
+        var ypix = (changes[i].row - 18) * tetris.unitSize;
+        var xpix = (changes[i].col + 7) * tetris.unitSize;
+        var sq;
+        switch(String(changes[i].occupiedBy)) {
+            case "I":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: I});
+                sq.draw(canvas);
+                break;
+            case "J":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: J});
+                sq.draw(canvas);
+                break;
+            case "L":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: L});
+                sq.draw(canvas);
+                break;
+            case "O":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: O});
+                sq.draw(canvas);
+                break;
+            case "S":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: S});
+                sq.draw(canvas);
+                break;
+            case "T":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: T});
+                sq.draw(canvas);
+                break;
+            case "Z":
+                sq = new SingleSquare({x: xpix, y: ypix, piece: Z});
+                sq.draw(canvas);
+                break;
+            default:
+                sq = new SingleSquare({x: xpix, y: ypix, erase: true});
+                sq.draw(canvas);
+                break;
+        }
+    }
+
     // Draw the hard drop ghost
     var ghost = body.squaresOfHardDropGhost;
     for (var i = 0; i < ghost.length; i++) {
