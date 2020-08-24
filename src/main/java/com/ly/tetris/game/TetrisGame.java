@@ -115,17 +115,25 @@ public class TetrisGame {
 
     // Moves the piece and returns information on the state of the 
     // resulting board.
-    // If the piece is on the ground, resets the lock timer.
+    // If the piece is on the ground afterward, resets the lock timer.
+    // If the piece is in the air afterward but was on the ground before,
+    // sets a fall timer.
     // Effects:
     // * May move the piece in play left on this.board
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
         board.moveLeft();
+        boolean inAirAfter = board.pieceIsInAir();
+
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!board.pieceIsInAir()) {
+        if (!inAirAfter) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
         }
         return this.produceBoardUpdate(
             event, 
@@ -138,17 +146,25 @@ public class TetrisGame {
 
     // Moves the piece and return information on the state of the 
     // resulting board.
-    // If the piece is on the ground, resets the lock timer.
+    // If the piece is on the ground afterward, resets the lock timer.
+    // If the piece is in the air afterward but was on the ground before,
+    // sets a fall timer.
     // Effects:
     // * May move the piece in play right on this.board
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
         board.moveRight();
+        boolean inAirAfter = board.pieceIsInAir();
+
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!board.pieceIsInAir()) {
+        if (!inAirAfter) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
         }
         return this.produceBoardUpdate(
             event, 
@@ -223,6 +239,36 @@ public class TetrisGame {
             requestNewUpdateIn);
     }
 
+    // Hard drops the piece (manual). Attempts to spawn a new piece
+    // If the spawn was successful, sets the fall timer.
+    // Otherwise tells the browser to end the game.
+    // Effects:
+    // * Hard drops the current piece on the board
+    // * May spawn a new piece on the board
+    public BoardUpdateMessage hardDrop(EventMessage event)
+    throws Exception {
+        board.hardDrop();
+        boolean spawnUnsuccessful = 
+            !board.spawn(next.produceAndRemoveNextPieceInQueue());
+        if (spawnUnsuccessful) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                false, 
+                -1);
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                true, 
+                false, 
+                this.fallInterval());
+        }
+    }
+
     // Soft drops the piece by one row (manual). Ignore for 
     // certain levels (where a piece's fall from softdropping is 
     // slower than the fall from gravity alone).
@@ -260,6 +306,16 @@ public class TetrisGame {
             updateLockTimer, 
             requestNewUpdateIn);
     }
+
+    // todo
+    // Locks the piece on the ground (automatic, delayed lock).
+    // Spawns a new piece and sets the fall timer.
+    // Only appropriate to call if the piece is on the ground.
+    // Requires:
+    // * The piece in play is on the ground
+    // Effects:
+    // * Locks the current piece on the board
+    // * Spawns a new piece on the board
 
     // Soft drops the piece by one row (automatic, due to gravity).
     // If the piece is in the air afterwards, start a new fall timer.

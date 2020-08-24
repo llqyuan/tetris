@@ -40,7 +40,7 @@ public class Board {
     // The board. Rows 20 through 39 are the visible playing field.
     // Rows 0 through 19 are hidden, above the visible playing field.
     // The upper left corner is (0,0).
-    private Square[][] theBoard = new Square[40][10];
+    private final Square[][] theBoard = new Square[40][10];
 
     // The piece currently falling. Should be null before spawning 
     // the first piece, or after locking a piece but before spawning a
@@ -210,15 +210,17 @@ public class Board {
     }
 
     // Hard drops the current piece and removes it from play.
+    // Returns the number of lines cleared.
     // Effects: 
     // * Modifies the board.
     // * Removes the current piece in play from play, after which 
     //   no piece will be falling.
-    public void hardDrop() throws IllegalStateException {
+    public int hardDrop() throws IllegalStateException {
         if (inPlay != null) {
             movePieceToBottom();
             lockPiece();
             inPlay = null;
+            return this.clearLines();
         } else {
             throw new IllegalStateException(
                 "Tried to hard-drop a nonexistent piece.");
@@ -496,6 +498,7 @@ public class Board {
     }
 
     // Locks the current piece and sets inPlay to null. 
+    // Does not clear lines.
     // Requires: 
     // * the piece is in range of the board (that is, it is not occupying 
     ///  squares off of the board)
@@ -513,6 +516,50 @@ public class Board {
             theBoard[square.row][square.col].occupiedBy = inPlay.name();
         }
         inPlay = null;
+    }
+
+    // Clears the rows that are currently "full", ie. can be cleared.
+    // Returns the number of lines cleared.
+    // Intended for use immediately after this.lockPiece().
+    // Effects:
+    // * May modify the board by clearing lines.
+    private int clearLines() {
+        int cleared = 0;
+        for (int r = 0; r < 40; r++) {
+            boolean rowIsFull = true;
+            for (int c = 0; c < 10; c++) {
+                if (!theBoard[r][c].isOccupied()) {
+                    rowIsFull = false;
+                    break;
+                }
+            }
+            if (rowIsFull) {
+                cleared += 1;
+                copyRowsAboveOneRowDown(r);
+            }
+        }
+        return cleared;
+    }
+
+    // Copies the rows above copyDownTo one row down.
+    // Intended for use in this.clearLines() only.
+    // Requires:
+    // * 20 <= copyDownTo < 40
+    // Effects:
+    // * Modifies the board
+    private void copyRowsAboveOneRowDown(int copyDownTo) 
+    throws IllegalArgumentException {
+        if (!(20 <= copyDownTo && copyDownTo < 40)) {
+            throw new IllegalArgumentException(
+                "Expected copyDownTo to be between 20 and 39 " +
+                "inclusive, got xxx."
+                .replaceFirst("xxx", Integer.toString(copyDownTo)));
+        }
+        for (int r = copyDownTo ; r > 0; r--) {
+            for (int c = 0; c < 10; c++) {
+                theBoard[r][c].occupiedBy = theBoard[r - 1][c].occupiedBy;
+            }
+        }
     }
 
     // Returns true if the piece does not overlap with any part of 

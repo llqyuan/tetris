@@ -45,7 +45,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage hardDropCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.hardDrop(event);
     }
 
     // Receives a message from the browser to soft-drop the piece by 
