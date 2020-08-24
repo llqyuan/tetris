@@ -76,7 +76,11 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage rotateCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        if (event.getKeyCommand() == KeyCommand.CLOCKWISE) {
+            return game.rotateClockwise(event);
+        } else {
+            return game.rotateCounterClockwise(event);
+        }
     }
 
     // Receives a message from the browser to hold the current 

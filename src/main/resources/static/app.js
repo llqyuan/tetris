@@ -1220,7 +1220,61 @@ function updateBoard(response) {
 
     // Update the timer
     // Draw the new piece in hold
+    var hold = String(body.hold);
+    if (body.spawnedPiece) {    
+        switch(hold) {
+            case "I":
+                drawPieceInHold(canvas, I);
+                break;
+            case "J":
+                drawPieceInHold(canvas, J);
+                break;
+            case "L":
+                drawPieceInHold(canvas, L);
+                break;
+            case "O":
+                drawPieceInHold(canvas, O);
+                break;
+            case "S":
+                drawPieceInHold(canvas, S);
+                break;
+            case "T":
+                drawPieceInHold(canvas, T);
+                break;
+            case "Z":
+                drawPieceInHold(canvas, Z);
+                break;
+        }
+    }
     // Draw the new pieces in the next queue
+    var next = body.nextFivePieces;
+    if (body.spawnedPiece) {
+        for (var i = 0; i < next.length; i++) {
+            switch(String(next[i])) {
+                case "I":
+                    drawPieceInQueuePosition(canvas, I, i + 1);
+                    break;
+                case "J":
+                    drawPieceInQueuePosition(canvas, J, i + 1);
+                    break;
+                case "L":
+                    drawPieceInQueuePosition(canvas, L, i + 1);
+                    break;
+                case "O":
+                    drawPieceInQueuePosition(canvas, O, i + 1);
+                    break;
+                case "S":
+                    drawPieceInQueuePosition(canvas, S, i + 1);
+                    break;
+                case "T":
+                    drawPieceInQueuePosition(canvas, T, i + 1);
+                    break;
+                case "Z":
+                    drawPieceInQueuePosition(canvas, Z, i + 1);
+                    break;
+            }
+        }
+    }
     // Draw the changes to the stack
     // Erase the previous hard drop ghost and piece in play
     if (tetris.previousSquaresOfHardDropGhost != null) {

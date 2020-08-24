@@ -23,6 +23,7 @@ public class BoardUpdateMessage {
 
     private PieceName hold;
     private ArrayList<PieceName> nextFivePieces;
+    private boolean spawnedPiece;
     private boolean spawnUnsuccessful;
     private TimerUpdateMessage timerUpdate;
     private int score;
@@ -36,6 +37,7 @@ public class BoardUpdateMessage {
         this.changesToStack = new ArrayList<Square>();
         this.hold = PieceName.NOTHING;
         this.nextFivePieces = new ArrayList<PieceName>();
+        this.spawnedPiece = false;
         this.spawnUnsuccessful = false;
         this.timerUpdate = new TimerUpdateMessage();
         this.score = 0;
@@ -54,6 +56,7 @@ public class BoardUpdateMessage {
         this.hold = PieceName.NOTHING;
         this.nextFivePieces = new ArrayList<PieceName>();
         nextFivePieces.add(PieceName.I);
+        this.spawnedPiece = false;
         this.spawnUnsuccessful = false;
         this.timerUpdate = new TimerUpdateMessage();
         this.score = 0;
@@ -67,6 +70,7 @@ public class BoardUpdateMessage {
         ArrayList<Square> changesToStack,
         PieceName hold,
         ArrayList<PieceName> nextFivePieces,
+        boolean spawnedPiece,
         boolean spawnUnsuccessful,
         TimerUpdateMessage timerUpdate,
         int score,
@@ -78,6 +82,7 @@ public class BoardUpdateMessage {
         this.changesToStack = changesToStack;
         this.hold = hold;
         this.nextFivePieces = nextFivePieces;
+        this.spawnedPiece = spawnedPiece;
         this.spawnUnsuccessful = spawnUnsuccessful;
         this.timerUpdate = timerUpdate;
         this.score = score;
@@ -106,6 +111,10 @@ public class BoardUpdateMessage {
 
     public ArrayList<PieceName> getNextFivePieces() {
         return nextFivePieces;
+    }
+
+    public boolean getSpawnedPiece() {
+        return spawnedPiece;
     }
 
     public boolean getSpawnUnsuccessful() {
