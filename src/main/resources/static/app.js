@@ -1,9 +1,10 @@
-var stompClient = null;
-var unitSize = null;
-var gameActive = false;
-var timer = null;
-var previousSquaresOfPieceInPlay = null;
-var previousSquaresOfHardDropGhost = null;
+var tetris = {};
+tetris.stompClient = null;
+tetris.unitSize = null;
+tetris.gameActive = false;
+tetris.timer = null;
+tetris.previousSquaresOfPieceInPlay = null;
+tetris.previousSquaresOfHardDropGhost = null;
 
 const I = 1;
 const L = 2;
@@ -167,12 +168,12 @@ SingleSquare.prototype.draw = function(canvas) {
     }
 
     // 10x2 spawn field
-    if (this.y >= 2 * unitSize  && !this.erase)
+    if (this.y >= 2 * tetris.unitSize  && !this.erase)
     {
-        ctx.fillRect(this.x, this.y, unitSize, unitSize);
-        ctx.strokeRect(this.x, this.y, unitSize, unitSize);
-    } else if (this.y >= 2 * unitSize) {
-        ctx.fillRect(this.x - 2, this.y - 2, unitSize + 4, unitSize + 4);
+        ctx.fillRect(this.x, this.y, tetris.unitSize, tetris.unitSize);
+        ctx.strokeRect(this.x, this.y, tetris.unitSize, tetris.unitSize);
+    } else if (this.y >= 2 * tetris.unitSize) {
+        ctx.fillRect(this.x - 2, this.y - 2, tetris.unitSize + 4, tetris.unitSize + 4);
     }
 }
 
@@ -189,25 +190,25 @@ IPiece.prototype.draw = function(canvas) {
         case UPRIGHT:
             var square1 = new SingleSquare({
                 x: this.x,
-                y: this.y + unitSize,
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize,
-                y: this.y + unitSize,
+                x: this.x + tetris.unitSize,
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize,
-                y: this.y + unitSize,
+                x: this.x + 2 * tetris.unitSize,
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 3 * unitSize,
-                y: this.y + unitSize,
+                x: this.x + 3 * tetris.unitSize,
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
@@ -218,26 +219,26 @@ IPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: I,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize,
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize,
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 3 * unitSize,
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 3 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
@@ -248,26 +249,26 @@ IPiece.prototype.draw = function(canvas) {
             break;
         case LEFT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: I,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize,
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize,
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 3 * unitSize,
+                x: this.x + tetris.unitSize, 
+                y: this.y + 3 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
@@ -279,25 +280,25 @@ IPiece.prototype.draw = function(canvas) {
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
                 x: this.x, 
-                y: this.y + 2 * unitSize,
+                y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: I,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize,
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 3 * unitSize, 
-                y: this.y + 2 * unitSize,
+                x: this.x + 3 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
@@ -322,26 +323,26 @@ LPiece.prototype.draw = function(canvas) {
     switch(this.orientation) {
         case UPRIGHT:
             var square1 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize,
+                y: this.y + tetris.unitSize,
                 piece: L,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
@@ -358,20 +359,20 @@ LPiece.prototype.draw = function(canvas) {
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
@@ -382,26 +383,26 @@ LPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
@@ -413,25 +414,25 @@ LPiece.prototype.draw = function(canvas) {
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
                 x: this.x, 
-                y: this.y + 2 * unitSize,
+                y: this.y + 2 * tetris.unitSize,
                 piece: L,
                 ghost: this.ghost
             });
@@ -463,19 +464,19 @@ JPiece.prototype.draw = function(canvas) {
             });
             var square2 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize,
+                y: this.y + tetris.unitSize,
                 piece: J,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize,
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize,
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
@@ -486,26 +487,26 @@ JPiece.prototype.draw = function(canvas) {
             break;
         case LEFT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: J, 
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
                 x: this.x, 
-                y: this.y + 2 * unitSize,
+                y: this.y + 2 * tetris.unitSize,
                 piece: J,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
@@ -516,26 +517,26 @@ JPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: J, 
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: J,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize,
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize,
+                y: this.y + 2 * tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
@@ -547,25 +548,25 @@ JPiece.prototype.draw = function(canvas) {
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: J, 
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize,
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize,
+                y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
@@ -590,26 +591,26 @@ TPiece.prototype.draw = function(canvas) {
     switch(this.orientation) {
         case UPRIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: T,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
@@ -620,26 +621,26 @@ TPiece.prototype.draw = function(canvas) {
             break;
         case LEFT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: T,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
@@ -650,26 +651,26 @@ TPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: T,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize,
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize,
                 piece: T,
                 ghost: this.ghost
             });
@@ -681,25 +682,25 @@ TPiece.prototype.draw = function(canvas) {
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize,
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize,
+                y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
@@ -724,26 +725,26 @@ SPiece.prototype.draw = function(canvas) {
     switch(this.orientation) {
         case UPRIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: S,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
                 y: this.y, 
                 piece: S,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
@@ -761,19 +762,19 @@ SPiece.prototype.draw = function(canvas) {
             });
             var square2 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
@@ -784,26 +785,26 @@ SPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: S,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
@@ -814,26 +815,26 @@ SPiece.prototype.draw = function(canvas) {
             break;
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + 2 * unitSize,
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize,
+                y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
                 x: this.x, 
-                y: this.y + 2 * unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize,
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize,
+                y: this.y + 2 * tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
@@ -864,20 +865,20 @@ ZPiece.prototype.draw = function(canvas) {
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: Z,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
@@ -888,26 +889,26 @@ ZPiece.prototype.draw = function(canvas) {
             break;
         case LEFT:
             var square1 = new SingleSquare({
-                x: this.x + unitSize, 
+                x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
                 x: this.x, 
-                y: this.y + 2 * unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
@@ -918,26 +919,26 @@ ZPiece.prototype.draw = function(canvas) {
             break;
         case RIGHT:
             var square1 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
                 y: this.y, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
@@ -949,25 +950,25 @@ ZPiece.prototype.draw = function(canvas) {
         case UPSIDEDOWN:
             var square1 = new SingleSquare({
                 x: this.x, 
-                y: this.y + unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square2 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square3 = new SingleSquare({
-                x: this.x + unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
             var square4 = new SingleSquare({
-                x: this.x + 2 * unitSize, 
-                y: this.y + 2 * unitSize, 
+                x: this.x + 2 * tetris.unitSize, 
+                y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
@@ -990,26 +991,26 @@ OPiece.prototype.draw = function(canvas) {
         ctx.strokeStyle = this.strokeStyle;
     }
     var square1 = new SingleSquare({
-        x: this.x + unitSize, 
+        x: this.x + tetris.unitSize, 
         y: this.y, 
         piece: O,
         ghost: this.ghost
     });
     var square2 = new SingleSquare({
-        x: this.x + 2 * unitSize, 
+        x: this.x + 2 * tetris.unitSize, 
         y: this.y,
         piece: O,
         ghost: this.ghost
     });
     var square3 = new SingleSquare({
-        x: this.x + unitSize, 
-        y: this.y + unitSize,
+        x: this.x + tetris.unitSize, 
+        y: this.y + tetris.unitSize,
         piece: O,
         ghost: this.ghost
     });
     var square4 = new SingleSquare({
-        x: this.x + 2 * unitSize, 
-        y: this.y + unitSize,
+        x: this.x + 2 * tetris.unitSize, 
+        y: this.y + tetris.unitSize,
         piece: O,
         ghost: this.ghost
     });
@@ -1060,8 +1061,8 @@ function initNextQueue(canvas, unitSize) {
 // in the position pos (int: 1, 2, 3, 4, 5) in the next-piece queue.
 
 function drawPieceInQueuePosition(canvas, piececode, pos) {
-    var xpix = 19 * unitSize;
-    var ypix = 3 * unitSize + 3 * unitSize * (pos - 1);
+    var xpix = 19 * tetris.unitSize;
+    var ypix = 3 * tetris.unitSize + 3 * tetris.unitSize * (pos - 1);
     var piece;
 
     clearPieceInQueuePosition(canvas, pos);
@@ -1098,11 +1099,11 @@ function drawPieceInQueuePosition(canvas, piececode, pos) {
 
 function clearPieceInQueuePosition(canvas, pos) {
     var ctx = canvas.getContext("2d");
-    var xpix = 19 * unitSize;
-    var ypix = 3 * unitSize + 3 * unitSize * (pos - 1);
+    var xpix = 19 * tetris.unitSize;
+    var ypix = 3 * tetris.unitSize + 3 * tetris.unitSize * (pos - 1);
 
     ctx.fillStyle = BACKGROUND;
-    ctx.fillRect(xpix - 2, ypix - 2, 4 * unitSize + 4, 3 * unitSize + 2);
+    ctx.fillRect(xpix - 2, ypix - 2, 4 * tetris.unitSize + 4, 3 * tetris.unitSize + 2);
 }
 
 
@@ -1114,25 +1115,25 @@ function drawPieceInHold(canvas, piececode) {
     clearPieceInHold(canvas);
     switch (piececode) {
         case I:
-            piece = new IPiece({x: unitSize, y: 3 * unitSize});
+            piece = new IPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case L:
-            piece = new LPiece({x: unitSize, y: 3 * unitSize});
+            piece = new LPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case J:
-            piece = new JPiece({x: unitSize, y: 3 * unitSize});
+            piece = new JPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case T:
-            piece = new TPiece({x: unitSize, y: 3 * unitSize});
+            piece = new TPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case S:
-            piece = new SPiece({x: unitSize, y: 3 * unitSize});
+            piece = new SPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case Z:
-            piece = new ZPiece({x: unitSize, y: 3 * unitSize});
+            piece = new ZPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
         case O:
-            piece = new OPiece({x: unitSize, y: 3 * unitSize});
+            piece = new OPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
             break;
     }
     piece.draw(canvas);
@@ -1144,8 +1145,8 @@ function drawPieceInHold(canvas, piececode) {
 function clearPieceInHold(canvas) {
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = BACKGROUND;
-    ctx.fillRect(unitSize - 2, 3 * unitSize - 2, 
-        4 * unitSize + 4, 4 * unitSize + 4);
+    ctx.fillRect(tetris.unitSize - 2, 3 * tetris.unitSize - 2, 
+        4 * tetris.unitSize + 4, 4 * tetris.unitSize + 4);
 }
 
 // initCanvas draws the barebones Tetris board: hold box, board, and 
@@ -1162,13 +1163,13 @@ function initCanvas() {
     // queue)
 
     canvas = document.getElementById("tetris-board");
-    unitSize = Math.floor(canvas.clientHeight / 26);
+    tetris.unitSize = Math.floor(canvas.clientHeight / 26);
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
-    initHoldBox(canvas, unitSize);
-    initBoard(canvas, unitSize);
-    initNextQueue(canvas, unitSize);
+    initHoldBox(canvas, tetris.unitSize);
+    initBoard(canvas, tetris.unitSize);
+    initNextQueue(canvas, tetris.unitSize);
 
 }
 
@@ -1179,13 +1180,15 @@ function initCanvas() {
 // connect() connects to the server.
 
 function connect() {
-    var socket = new SockJS('/tetris');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/board-update', function (response) {
-            updateBoard(response);
-        });
+    var socket = new SockJS("/tetris");
+    tetris.stompClient = Stomp.over(socket);
+    tetris.stompClient.connect({}, function (frame) {
+        console.log("Connected: " + frame);
+        tetris.stompClient.subscribe(
+            "/topic/board-update", 
+            function (response) {
+                updateBoard(response);
+            });
     });
 }
 
@@ -1200,7 +1203,7 @@ function start(key) {
         default:
             document.getElementById("start-overlay").style.display = "none";
             $('#tetris-theme').trigger("play");
-            gameActive = true;
+            tetris.gameActive = true;
             sendGameStart();
             updateFrame();
     }
@@ -1220,18 +1223,26 @@ function updateBoard(response) {
     // Draw the new pieces in the next queue
     // Draw the changes to the stack
     // Erase the previous hard drop ghost and piece in play
-    if (previousSquaresOfHardDropGhost != null) {
-        for (var i = 0; i < previousSquaresOfHardDropGhost.length; i++) {
-            var ypix = (previousSquaresOfHardDropGhost[i].row - 18) * unitSize;
-            var xpix = (previousSquaresOfHardDropGhost[i].col + 7) * unitSize;
+    if (tetris.previousSquaresOfHardDropGhost != null) {
+        for (var i = 0; i < tetris.previousSquaresOfHardDropGhost.length; i++) {
+            var ypix = 
+                (tetris.previousSquaresOfHardDropGhost[i].row - 18) 
+                * tetris.unitSize;
+            var xpix = 
+                (tetris.previousSquaresOfHardDropGhost[i].col + 7) 
+                * tetris.unitSize;
             var sq = new SingleSquare({x: xpix, y: ypix, erase: true});
             sq.draw(canvas);
         }
 
-    } if (previousSquaresOfPieceInPlay != null) {
-        for (var i = 0; i < previousSquaresOfPieceInPlay.length; i++) {
-            var ypix = (previousSquaresOfPieceInPlay[i].row - 18) * unitSize;
-            var xpix = (previousSquaresOfPieceInPlay[i].col + 7) * unitSize;
+    } if (tetris.previousSquaresOfPieceInPlay != null) {
+        for (var i = 0; i < tetris.previousSquaresOfPieceInPlay.length; i++) {
+            var ypix = 
+                (tetris.previousSquaresOfPieceInPlay[i].row - 18) 
+                * tetris.unitSize;
+            var xpix = 
+                (tetris.previousSquaresOfPieceInPlay[i].col + 7) 
+                * tetris.unitSize;
             var sq = new SingleSquare({x: xpix, y: ypix, erase: true});
             sq.draw(canvas);
         }
@@ -1239,12 +1250,12 @@ function updateBoard(response) {
     // Draw the hard drop ghost
     var ghost = body.squaresOfHardDropGhost;
     for (var i = 0; i < ghost.length; i++) {
-        var ypix = (ghost[i].row - 18) * unitSize;
-        var xpix = (ghost[i].col + 7) * unitSize;
+        var ypix = (ghost[i].row - 18) * tetris.unitSize;
+        var xpix = (ghost[i].col + 7) * tetris.unitSize;
         var sq = new SingleSquare({x: xpix, y: ypix, ghost: true});
         sq.draw(canvas);
     }
-    previousSquaresOfHardDropGhost = ghost;
+    tetris.previousSquaresOfHardDropGhost = ghost;
 
     // Draw the piece in play
     var name = String(body.pieceInPlay);
@@ -1274,19 +1285,19 @@ function updateBoard(response) {
             break;
     }
     for (var i = 0; i < pieceSquares.length; i++) {
-        var ypix = (pieceSquares[i].row - 18) * unitSize;
-        var xpix = (pieceSquares[i].col + 7) * unitSize;
+        var ypix = (pieceSquares[i].row - 18) * tetris.unitSize;
+        var xpix = (pieceSquares[i].col + 7) * tetris.unitSize;
         var sq = new SingleSquare({x: xpix, y: ypix, piece: pieceColour});
         sq.draw(canvas);
     }
-    previousSquaresOfPieceInPlay = pieceSquares;
+    tetris.previousSquaresOfPieceInPlay = pieceSquares;
 }
 
 
 // Handles the animation loop.
 
 function updateFrame() {
-    if (gameActive) {
+    if (tetris.gameActive) {
         window.requestAnimationFrame(updateFrame);
     }
 }
@@ -1298,7 +1309,7 @@ function updateFrame() {
 // Tells the server to start the game.
 
 function sendGameStart() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/start-new-game",
         {},
         JSON.stringify({"keyCommand": "NOTHING"})
@@ -1309,7 +1320,7 @@ function sendGameStart() {
 // Sends the hard drop command to the server.
 
 function sendHardDrop() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/hard-drop",
         {},
         JSON.stringify({"keyCommand": "HARDDROP"})
@@ -1319,7 +1330,7 @@ function sendHardDrop() {
 // Sends the soft drop command to the server.
 
 function sendSoftDrop() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/soft-drop",
         {},
         JSON.stringify({"keyCommand": "SOFTDROP"})
@@ -1329,7 +1340,7 @@ function sendSoftDrop() {
 // Sends the move-left command to the server.
 
 function sendLeft() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/move",
         {},
         JSON.stringify({"keyCommand": "LEFT"})
@@ -1339,7 +1350,7 @@ function sendLeft() {
 // Sends the move-right command to the server.
 
 function sendRight() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/move",
         {},
         JSON.stringify({"keyCommand": "RIGHT"})
@@ -1349,7 +1360,7 @@ function sendRight() {
 // Sends the rotate-clockwise command to the server.
 
 function sendClockwise() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "CLOCKWISE"})
@@ -1359,7 +1370,7 @@ function sendClockwise() {
 // Sends the rotate-counterclockwise command to the server.
 
 function sendCounterClockwise() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/rotate",
         {},
         JSON.stringify({"keyCommand": "COUNTERCLOCKWISE"})
@@ -1369,7 +1380,7 @@ function sendCounterClockwise() {
 // Sends the hold command to the server.
 
 function sendHold() {
-    stompClient.send(
+    tetris.stompClient.send(
         "/app/hold",
         {},
         JSON.stringify({"keyCommand": "HOLD"})
@@ -1382,12 +1393,12 @@ $(function() {
         initCanvas(); 
     });
     $( document ).on("click", function() {
-        if (!gameActive) {
+        if (!tetris.gameActive) {
             start();
         }
     });
     $( document ).keydown(function(event) {
-        if (!gameActive) {
+        if (!tetris.gameActive) {
             start(event.which);
 
         } else {
