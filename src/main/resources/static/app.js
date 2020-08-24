@@ -170,10 +170,11 @@ SingleSquare.prototype.draw = function(canvas) {
     // 10x2 spawn field
     if (this.y >= 2 * tetris.unitSize  && !this.erase)
     {
-        ctx.fillRect(this.x, this.y, tetris.unitSize, tetris.unitSize);
-        ctx.strokeRect(this.x, this.y, tetris.unitSize, tetris.unitSize);
+        ctx.lineWidth = 2;
+        ctx.fillRect(this.x + 1, this.y + 1, tetris.unitSize - 2, tetris.unitSize - 2);
+        ctx.strokeRect(this.x + 1, this.y + 1, tetris.unitSize - 2, tetris.unitSize - 2);
     } else if (this.y >= 2 * tetris.unitSize) {
-        ctx.fillRect(this.x - 2, this.y - 2, tetris.unitSize + 4, tetris.unitSize + 4);
+        ctx.fillRect(this.x, this.y, tetris.unitSize, tetris.unitSize);
     }
 }
 
@@ -1038,8 +1039,8 @@ function initHoldBox(canvas, unitSize) {
 
 function initBoard(canvas, unitSize) {
     var ctx = canvas.getContext("2d");
-    ctx.strokeRect(7 * unitSize - 3, 2 * unitSize - 3, 
-        10 * unitSize + 6, 20 * unitSize + 6);
+    ctx.strokeRect(7 * unitSize - 2, 2 * unitSize - 2, 
+        10 * unitSize + 4, 20 * unitSize + 4);
 }
 
 

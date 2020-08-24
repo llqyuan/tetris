@@ -60,6 +60,10 @@ public class TetrisGame {
     // Copy of board as of previous update.
     private Square[][] previousBoardCopy;
 
+    // True if a piece was previously held but no piece has 
+    // been locked between then and now.
+    private boolean heldButNotLocked;
+
     public TetrisGame() {
         this.board = new Board();
         this.score = 0;
@@ -71,6 +75,7 @@ public class TetrisGame {
         this.width = this.previousBoardCopy[0].length;
         this.lockTime = 500;
         this.softDropTime = 100;
+        this.heldButNotLocked = false;
     }
 
     public TetrisGame(boolean debug) {
@@ -85,6 +90,7 @@ public class TetrisGame {
         this.width = this.previousBoardCopy[0].length;
         this.lockTime = 500;
         this.softDropTime = 100;
+        this.heldButNotLocked = false;
     }
 
     // ==================================================
@@ -239,17 +245,56 @@ public class TetrisGame {
             requestNewUpdateIn);
     }
 
-    // Hard drops the piece (manual). Attempts to spawn a new piece
+    // Holds the piece. 
+    // Effects:
+    // * Holds the current piece on the board
+    // * Sets the fall timer for a newly spawned piece
+    public BoardUpdateMessage hold(EventMessage event)
+    throws Exception {
+        if (this.heldButNotLocked) {
+            return this.produceBoardUpdate(
+                event, 
+                false, 
+                false, 
+                false, 
+                false, 
+                -1);
+        }
+        PieceName putInHold = board.removePieceFromPlay();
+        PieceName spawnPiece;
+        if (hold == PieceName.NOTHING) {
+            spawnPiece = next.produceAndRemoveNextPieceInQueue();
+        } else {
+            spawnPiece = hold;
+        }
+        if (!board.spawn(spawnPiece)) {
+            throw new IllegalStateException(
+                "Failed to spawn new piece after holding.");
+        }
+        this.hold = putInHold;
+        this.heldButNotLocked = true;
+        return this.produceBoardUpdate(
+            event, 
+            true, 
+            false, 
+            true, 
+            false, 
+            this.fallInterval());
+    }
+
+    // Hard drops the piece (manual). Attempts to spawn a new piece.
     // If the spawn was successful, sets the fall timer.
     // Otherwise tells the browser to end the game.
     // Effects:
     // * Hard drops the current piece on the board
+    // * Resets the flag this.heldButNotLocked
     // * May spawn a new piece on the board
     public BoardUpdateMessage hardDrop(EventMessage event)
     throws Exception {
         board.hardDrop();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
+        this.heldButNotLocked = false;
         if (spawnUnsuccessful) {
             return this.produceBoardUpdate(
                 event, 
@@ -315,6 +360,7 @@ public class TetrisGame {
     // * The piece in play is on the ground
     // Effects:
     // * Locks the current piece on the board
+    // * Resets the flag this.heldButNotLocked
     // * Spawns a new piece on the board
 
     // Soft drops the piece by one row (automatic, due to gravity).

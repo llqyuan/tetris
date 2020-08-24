@@ -176,6 +176,19 @@ public class Board {
         }
     }
 
+    // Removes the piece from play. Returns the name of the piece 
+    // in play, or NOTHING if no piece was in play.
+    // Effects:
+    // * Removes the current piece from play, if there was one.
+    public PieceName removePieceFromPlay() {
+        PieceName piece = PieceName.NOTHING;
+        if (inPlay != null) {
+            piece = inPlay.name();
+        }
+        inPlay = null;
+        return piece;
+    }
+
     // Attempts to move the piece in play left by one square.
     // Returns true if successful and false otherwise.
     // Requires:

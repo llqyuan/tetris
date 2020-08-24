@@ -89,6 +89,6 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage holdCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.hold(event);
     }
 }
