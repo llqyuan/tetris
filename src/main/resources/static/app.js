@@ -1214,6 +1214,20 @@ function clearPieceInHold(canvas) {
         4 * tetris.unitSize + 4, 4 * tetris.unitSize + 4);
 }
 
+
+// clearBoard() clears the entire board.
+function clearBoard() {
+    var canvas = document.getElementById("tetris-board");
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = BACKGROUND;
+    ctx.fillRect(
+        7 * tetris.unitSize, 
+        2 * tetris.unitSize, 
+        10 * tetris.unitSize, 
+        20 * tetris.unitSize);
+}
+
+
 // initCanvas draws the barebones Tetris board: hold box, board, and 
 // next-queue with no Tetris pieces.
 
@@ -1267,10 +1281,12 @@ function start(key) {
             break;
         default:
             document.getElementById("start-overlay").style.display = "none";
+            document.getElementById("game-over-overlay").style.display = "none";
             $('#tetris-theme').trigger("play");
             tetris.gameActive = true;
             sendGameStart();
             updateFrame();
+            clearBoard();
     }
 }
 
@@ -1499,13 +1515,24 @@ function updateBoard(response) {
     var canvas = document.getElementById("tetris-board");
     var body = JSON.parse(response.body);
 
-    updateTimer(body);
-    updateHoldPiece(canvas, body);
-    updateNextQueue(canvas, body);
-    erasePreviousGhostAndCopyOfFallingPiece(canvas);
-    updateTetrisStack(canvas, body);
-    updateNewHardDropGhost(canvas, body);
-    updateNewCopyOfPieceInPlay(canvas, body);
+    if (body.spawnUnsuccessful) {
+        document.getElementById("game-over-overlay").style.display = "block";
+        $('#tetris-theme').trigger("pause");
+        tetris.gameActive = false;
+        if (tetris.timer != null) {
+            clearTimeout(tetris.timer);
+        }
+        tetris.timer = null;
+
+    } else {
+        updateTimer(body);
+        updateHoldPiece(canvas, body);
+        updateNextQueue(canvas, body);
+        erasePreviousGhostAndCopyOfFallingPiece(canvas);
+        updateTetrisStack(canvas, body);
+        updateNewHardDropGhost(canvas, body);
+        updateNewCopyOfPieceInPlay(canvas, body);
+    }
 }
 
 
@@ -1636,7 +1663,7 @@ $(function() {
                         function() { 
                             sendSoftDrop(); 
                         }, 
-                        100);
+                        250);
                     $(window).on(
                         "keyup", 
                         function(e) { 

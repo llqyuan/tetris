@@ -18,7 +18,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage timedFall(EventMessage event) 
     throws Exception {
-        return game.gravityDrop(event);
+        return game.automaticFallOrLock(event);
     }
 
     // Receives a message from the browser to lock the piece, assuming 
@@ -27,7 +27,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage timedLock(EventMessage event)
     throws Exception {
-        return game.automaticLock(event);
+        return game.automaticFallOrLock(event);
     }
 
     // Receives a message from the browser to start a new game.

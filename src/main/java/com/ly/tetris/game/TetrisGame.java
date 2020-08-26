@@ -136,9 +136,11 @@ public class TetrisGame {
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter && succeeded) {
-            updateLockTimer = true;
-            requestNewUpdateIn = this.lockTime;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
         } else if (!inAirBefore) {
             updateFallTimer = true;
             requestNewUpdateIn = this.fallInterval();
@@ -167,9 +169,11 @@ public class TetrisGame {
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter && succeeded) {
-            updateLockTimer = true;
-            requestNewUpdateIn = this.lockTime;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
         } else if (!inAirBefore) {
             updateFallTimer = true;
             requestNewUpdateIn = this.fallInterval();
@@ -199,9 +203,11 @@ public class TetrisGame {
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter && succeeded) {
-            updateLockTimer = true;
-            requestNewUpdateIn = this.lockTime;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
         } else if (!inAirBefore) {
             updateFallTimer = true;
             requestNewUpdateIn = this.fallInterval();
@@ -231,9 +237,11 @@ public class TetrisGame {
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter && succeeded) {
-            updateLockTimer = true;
-            requestNewUpdateIn = this.lockTime;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
         } else if (!inAirBefore) {
             updateFallTimer = true;
             requestNewUpdateIn = this.fallInterval();
@@ -311,7 +319,7 @@ public class TetrisGame {
                 false, 
                 false, 
                 -1);
-        } else {
+        } else if (board.pieceIsInAir()) {
             return this.produceBoardUpdate(
                 event, 
                 true, 
@@ -319,6 +327,14 @@ public class TetrisGame {
                 true, 
                 false, 
                 this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                true, 
+                this.lockTime);
         }
     }
 
@@ -360,6 +376,22 @@ public class TetrisGame {
             requestNewUpdateIn);
     }
 
+    // Locks the piece if it is on the ground, or soft-drops it 
+    // by one row if it is in the air (automatic).
+    public BoardUpdateMessage automaticFallOrLock(EventMessage event)
+    throws Exception {
+        if (board.pieceIsInAir()) {
+            return this.gravityDrop(event);
+        } else {
+            return this.automaticLock(event);
+        }
+    }
+
+
+    // =========================================================
+    // Private helper methods
+    // =========================================================
+
     // Locks the piece on the ground (automatic, delayed lock).
     // Spawns a new piece and sets the fall timer.
     // Only appropriate to call if the piece is on the ground.
@@ -369,7 +401,7 @@ public class TetrisGame {
     // * Locks the current piece on the board
     // * Resets the flag this.heldButNotLocked
     // * Spawns a new piece on the board
-    public BoardUpdateMessage automaticLock(EventMessage event)
+    private BoardUpdateMessage automaticLock(EventMessage event)
     throws Exception {
         if (board.pieceIsInAir()) {
             throw new IllegalStateException(
@@ -389,7 +421,7 @@ public class TetrisGame {
                 false, 
                 false, 
                 -1);
-        } else {
+        } else if (board.pieceIsInAir()) {
             return this.produceBoardUpdate(
                 event, 
                 true, 
@@ -397,6 +429,14 @@ public class TetrisGame {
                 true, 
                 false, 
                 this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                true, 
+                this.lockTime);
         }
     }
 
@@ -408,7 +448,7 @@ public class TetrisGame {
     // * The piece in play is in the air
     // Effects:
     // * Moves the piece down on this.board
-    public BoardUpdateMessage gravityDrop(EventMessage event) 
+    private BoardUpdateMessage gravityDrop(EventMessage event) 
     throws Exception {
         if (!board.moveDown()) {
             throw new IllegalStateException(
@@ -436,11 +476,6 @@ public class TetrisGame {
             updateLockTimer, 
             requestNewUpdateIn);
     }
-
-
-    // =========================================================
-    // Private helper methods
-    // =========================================================
 
     // Returns a message detailing the state of the board.
     // This should be called once between each command from the 

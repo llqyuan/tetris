@@ -23,9 +23,6 @@
     
     <div id="main-content">
         <div id="tetris-display">
-            <div id="score">
-                <p>Score: 0</p>
-            </div>
             <canvas id="tetris-board"> 
     
             </canvas>
@@ -33,7 +30,7 @@
     </div>
 
     <div id="start-overlay">
-        <div id="start-message">
+        <div class="player-message">
             <h1> (Click anywhere to start) </h1>
             <h3> Controls: </h3>
             <p> 
@@ -51,6 +48,14 @@
             <p>
                 C: Hold
             </p>
+        </div>
+    </div>
+
+    <div id="game-over-overlay">
+        <div class="player-message">
+            <h2> Game over! </h2>
+            <p id="final-score">  </p>
+            <p> Click anywhere to start a new game.</p>
         </div>
     </div>
 
