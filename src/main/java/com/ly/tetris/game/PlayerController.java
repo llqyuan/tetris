@@ -27,7 +27,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage timedLock(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.automaticLock(event);
     }
 
     // Receives a message from the browser to start a new game.

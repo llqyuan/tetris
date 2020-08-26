@@ -61,7 +61,9 @@ public class TetrisGame {
     private Square[][] previousBoardCopy;
 
     // True if a piece was previously held but no piece has 
-    // been locked between then and now.
+    // been locked between then and now (in which case the player 
+    // cannot spawn the currently held piece until the current 
+    // piece locks)
     private boolean heldButNotLocked;
 
     public TetrisGame() {
@@ -128,13 +130,13 @@ public class TetrisGame {
     // * May move the piece in play left on this.board
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
-        board.moveLeft();
+        boolean succeeded = board.moveLeft();
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter) {
+        if (!inAirAfter && succeeded) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
         } else if (!inAirBefore) {
@@ -159,13 +161,13 @@ public class TetrisGame {
     // * May move the piece in play right on this.board
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
-        board.moveRight();
+        boolean succeeded = board.moveRight();
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter) {
+        if (!inAirAfter && succeeded) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
         } else if (!inAirBefore) {
@@ -191,13 +193,13 @@ public class TetrisGame {
     public BoardUpdateMessage rotateClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
-        board.rotate(RotationDirection.CLOCKWISE);
+        boolean succeeded = board.rotate(RotationDirection.CLOCKWISE);
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter) {
+        if (!inAirAfter && succeeded) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
         } else if (!inAirBefore) {
@@ -223,13 +225,13 @@ public class TetrisGame {
     public BoardUpdateMessage rotateCounterClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
-        board.rotate(RotationDirection.COUNTERCLOCKWISE);
+        boolean succeeded = board.rotate(RotationDirection.COUNTERCLOCKWISE);
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
         int requestNewUpdateIn = -1;
-        if (!inAirAfter) {
+        if (!inAirAfter && succeeded) {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
         } else if (!inAirBefore) {
@@ -267,19 +269,25 @@ public class TetrisGame {
         } else {
             spawnPiece = hold;
         }
-        if (!board.spawn(spawnPiece)) {
-            throw new IllegalStateException(
-                "Failed to spawn new piece after holding.");
+        if (board.spawn(spawnPiece)) {
+            this.hold = putInHold;
+            this.heldButNotLocked = true;
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                false, 
+                true, 
+                false, 
+                this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                true, 
+                false, 
+                false, 
+                -1);
         }
-        this.hold = putInHold;
-        this.heldButNotLocked = true;
-        return this.produceBoardUpdate(
-            event, 
-            true, 
-            false, 
-            true, 
-            false, 
-            this.fallInterval());
     }
 
     // Hard drops the piece (manual). Attempts to spawn a new piece.
@@ -352,7 +360,6 @@ public class TetrisGame {
             requestNewUpdateIn);
     }
 
-    // todo
     // Locks the piece on the ground (automatic, delayed lock).
     // Spawns a new piece and sets the fall timer.
     // Only appropriate to call if the piece is on the ground.
@@ -362,6 +369,36 @@ public class TetrisGame {
     // * Locks the current piece on the board
     // * Resets the flag this.heldButNotLocked
     // * Spawns a new piece on the board
+    public BoardUpdateMessage automaticLock(EventMessage event)
+    throws Exception {
+        if (board.pieceIsInAir()) {
+            throw new IllegalStateException(
+                "Called automaticLock() at an inappropriate time. " +
+                "The piece was in the air. gravityDrop() should have " +
+                "been called instead.");
+        }
+        board.hardDrop();
+        boolean spawnUnsuccessful = 
+            !board.spawn(next.produceAndRemoveNextPieceInQueue());
+        this.heldButNotLocked = false;
+        if (spawnUnsuccessful) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                false, 
+                -1);
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                true, 
+                false, 
+                this.fallInterval());
+        }
+    }
 
     // Soft drops the piece by one row (automatic, due to gravity).
     // If the piece is in the air afterwards, start a new fall timer.
@@ -377,7 +414,7 @@ public class TetrisGame {
             throw new IllegalStateException(
                 "Called gravityDrop() at an inappropriate time. " +
                 "The piece was on the ground and unable to move down. " +
-                "[lock function] should be called instead.");
+                "automaticLock() should be called instead.");
         }
         boolean updateFallTimer;
         boolean updateLockTimer;
@@ -457,6 +494,7 @@ public class TetrisGame {
                 squaresOfHardDropGhost,
                 changesToStack,
                 hold,
+                this.heldButNotLocked,
                 nextFivePieces,
                 spawnedNewPiece,
                 spawnWasUnsuccessful,

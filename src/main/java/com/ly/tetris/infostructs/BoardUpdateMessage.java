@@ -22,6 +22,7 @@ public class BoardUpdateMessage {
     private ArrayList<Square> changesToStack;
 
     private PieceName hold;
+    private boolean sealHoldPiece;
     private ArrayList<PieceName> nextFivePieces;
     private boolean spawnedPiece;
     private boolean spawnUnsuccessful;
@@ -36,6 +37,7 @@ public class BoardUpdateMessage {
         this.squaresOfHardDropGhost = new ArrayList<LocationPosn>();
         this.changesToStack = new ArrayList<Square>();
         this.hold = PieceName.NOTHING;
+        this.sealHoldPiece = false;
         this.nextFivePieces = new ArrayList<PieceName>();
         this.spawnedPiece = false;
         this.spawnUnsuccessful = false;
@@ -44,31 +46,13 @@ public class BoardUpdateMessage {
         this.acknowledge = KeyCommand.NOTHING;
     }
 
-    // temp, remove/modify
-    public BoardUpdateMessage(KeyCommand key) {
-        this.pieceInPlay = PieceName.NOTHING;
-        this.squaresOfPieceInPlay = new ArrayList<LocationPosn>();
-        squaresOfPieceInPlay.add(new LocationPosn(0, 0));
-        this.squaresOfHardDropGhost = new ArrayList<LocationPosn>();
-        squaresOfHardDropGhost.add(new LocationPosn(0, 0));
-        this.changesToStack = new ArrayList<Square>();
-        changesToStack.add(new Square(0, 0));
-        this.hold = PieceName.NOTHING;
-        this.nextFivePieces = new ArrayList<PieceName>();
-        nextFivePieces.add(PieceName.I);
-        this.spawnedPiece = false;
-        this.spawnUnsuccessful = false;
-        this.timerUpdate = new TimerUpdateMessage();
-        this.score = 0;
-        this.acknowledge = key;
-    }
-
     public BoardUpdateMessage(
         PieceName pieceInPlay,
         ArrayList<LocationPosn> squaresOfPieceInPlay,
         ArrayList<LocationPosn> squaresOfHardDropGhost,
         ArrayList<Square> changesToStack,
         PieceName hold,
+        boolean sealHoldPiece,
         ArrayList<PieceName> nextFivePieces,
         boolean spawnedPiece,
         boolean spawnUnsuccessful,
@@ -81,6 +65,7 @@ public class BoardUpdateMessage {
         this.squaresOfHardDropGhost = squaresOfHardDropGhost;
         this.changesToStack = changesToStack;
         this.hold = hold;
+        this.sealHoldPiece = sealHoldPiece;
         this.nextFivePieces = nextFivePieces;
         this.spawnedPiece = spawnedPiece;
         this.spawnUnsuccessful = spawnUnsuccessful;
@@ -107,6 +92,10 @@ public class BoardUpdateMessage {
 
     public PieceName getHold() {
         return hold;
+    }
+
+    public boolean getSealHoldPiece() {
+        return sealHoldPiece;
     }
 
     public ArrayList<PieceName> getNextFivePieces() {

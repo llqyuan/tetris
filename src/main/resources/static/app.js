@@ -55,6 +55,7 @@ function SingleSquare(params) {
     this.y = params.y || 0;
     this.piece = params.piece || -1;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
     this.erase = params.erase || false;
 }
 
@@ -65,6 +66,7 @@ function IPiece(params) {
     this.strokeStyle = IOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function LPiece(params) {
@@ -74,6 +76,7 @@ function LPiece(params) {
     this.strokeStyle = LOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function JPiece(params) {
@@ -83,6 +86,7 @@ function JPiece(params) {
     this.strokeStyle = JOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function TPiece(params) {
@@ -92,6 +96,7 @@ function TPiece(params) {
     this.strokeStyle = TOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function SPiece(params) {
@@ -101,6 +106,7 @@ function SPiece(params) {
     this.strokeStyle = SOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function ZPiece(params) {
@@ -110,6 +116,7 @@ function ZPiece(params) {
     this.strokeStyle = ZOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 function OPiece(params) {
@@ -119,6 +126,7 @@ function OPiece(params) {
     this.strokeStyle = OOUTLINE;
     this.orientation = params.orientation || UPRIGHT;
     this.ghost = params.ghost || false;
+    this.unusableHoldPiece = params.unusableHoldPiece || false; 
 }
 
 // Drawing
@@ -159,7 +167,7 @@ SingleSquare.prototype.draw = function(canvas) {
             ctx.fillStyle = BACKGROUND;
             ctx.strokeStyle = BACKGROUND;
     }
-    if (this.ghost) {
+    if (this.ghost || this.unusableHoldPiece) {
         ctx.fillStyle = GHOSTCOLOUR;
         ctx.strokeStyle = GHOSTCOLOUR;
     } if (this.erase) {
@@ -193,25 +201,29 @@ IPiece.prototype.draw = function(canvas) {
                 x: this.x,
                 y: this.y + tetris.unitSize,
                 piece: I,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + 3 * tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -327,25 +339,29 @@ LPiece.prototype.draw = function(canvas) {
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: L,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize,
                 piece: L,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -461,25 +477,29 @@ JPiece.prototype.draw = function(canvas) {
                 x: this.x, 
                 y: this.y, 
                 piece: J, 
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize,
                 piece: J,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + tetris.unitSize, 
                 piece: J,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: J,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -595,25 +615,29 @@ TPiece.prototype.draw = function(canvas) {
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: T,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -729,25 +753,29 @@ SPiece.prototype.draw = function(canvas) {
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: S,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y, 
                 piece: S,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -863,25 +891,29 @@ ZPiece.prototype.draw = function(canvas) {
                 x: this.x, 
                 y: this.y, 
                 piece: Z,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: Z,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             var square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
-                ghost: this.ghost
+                ghost: this.ghost,
+                unusableHoldPiece: this.unusableHoldPiece
             });
             square1.draw(canvas);
             square2.draw(canvas);
@@ -995,25 +1027,29 @@ OPiece.prototype.draw = function(canvas) {
         x: this.x + tetris.unitSize, 
         y: this.y, 
         piece: O,
-        ghost: this.ghost
+        ghost: this.ghost,
+        unusableHoldPiece: this.unusableHoldPiece
     });
     var square2 = new SingleSquare({
         x: this.x + 2 * tetris.unitSize, 
         y: this.y,
         piece: O,
-        ghost: this.ghost
+        ghost: this.ghost,
+        unusableHoldPiece: this.unusableHoldPiece
     });
     var square3 = new SingleSquare({
         x: this.x + tetris.unitSize, 
         y: this.y + tetris.unitSize,
         piece: O,
-        ghost: this.ghost
+        ghost: this.ghost,
+        unusableHoldPiece: this.unusableHoldPiece
     });
     var square4 = new SingleSquare({
         x: this.x + 2 * tetris.unitSize, 
         y: this.y + tetris.unitSize,
         piece: O,
-        ghost: this.ghost
+        ghost: this.ghost,
+        unusableHoldPiece: this.unusableHoldPiece
     });
     square1.draw(canvas);
     square2.draw(canvas);
@@ -1108,33 +1144,61 @@ function clearPieceInQueuePosition(canvas, pos) {
 }
 
 
-// drawPieceInHold(canvas, piececode) draws the corresponding 
-// piece in the hold box.
+// drawPieceInHold(canvas, piececode, cannotSpawnHeldPiece) 
+// draws the corresponding piece in the hold box.
 
-function drawPieceInHold(canvas, piececode) {
+function drawPieceInHold(canvas, piececode, cannotSpawnHeldPiece) {
     var piece;
     clearPieceInHold(canvas);
     switch (piececode) {
         case I:
-            piece = new IPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new IPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case L:
-            piece = new LPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new LPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case J:
-            piece = new JPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new JPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case T:
-            piece = new TPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new TPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case S:
-            piece = new SPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new SPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case Z:
-            piece = new ZPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new ZPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
         case O:
-            piece = new OPiece({x: tetris.unitSize, y: 3 * tetris.unitSize});
+            piece = new OPiece({
+                x: tetris.unitSize, 
+                y: 3 * tetris.unitSize,
+                unusableHoldPiece: cannotSpawnHeldPiece
+            });
             break;
     }
     piece.draw(canvas);
@@ -1211,43 +1275,66 @@ function start(key) {
 }
 
 
+// =================================================================
+// Page management: Updating the drawing of the board
+// =================================================================
 
-// Updates the board given a response from the server.
+// (Helper function) Updates the timer for timed drops and delayed locks.
+function updateTimer(body) {
+    if (body.timerUpdate.updateFallTimer) {
+        if (tetris.timer != null) {
+            clearTimeout(tetris.timer);
+            tetris.timer = null;
+        }
+        tetris.timer = setTimeout(
+            sendTimedFall, body.timerUpdate.requestNewUpdateIn);
 
-function updateBoard(response) {
-    var canvas = document.getElementById("tetris-board");
+    } else if (body.timerUpdate.updateLockTimer) {
+        if (tetris.timer != null) {
+            clearTimeout(tetris.timer);
+            tetris.timer = null;
+        }
+        tetris.timer = setTimeout(
+            sendTimedLock, body.timerUpdate.requestNewUpdateIn);
+    }
+}
 
-    var body = JSON.parse(response.body);
-
-    // Update the timer
-    // Draw the new piece in hold
+// (Helper function) Draw the new piece in the hold box.
+// body is the parsed body of the response from the server.
+function updateHoldPiece(canvas, body) {
     var hold = String(body.hold);
+    var cannotSpawnHeldPiece = body.sealHoldPiece;
     if (body.spawnedPiece) {    
         switch(hold) {
             case "I":
-                drawPieceInHold(canvas, I);
+                drawPieceInHold(canvas, I, cannotSpawnHeldPiece);
                 break;
             case "J":
-                drawPieceInHold(canvas, J);
+                drawPieceInHold(canvas, J, cannotSpawnHeldPiece);
                 break;
             case "L":
-                drawPieceInHold(canvas, L);
+                drawPieceInHold(canvas, L, cannotSpawnHeldPiece);
                 break;
             case "O":
-                drawPieceInHold(canvas, O);
+                drawPieceInHold(canvas, O, cannotSpawnHeldPiece);
                 break;
             case "S":
-                drawPieceInHold(canvas, S);
+                drawPieceInHold(canvas, S, cannotSpawnHeldPiece);
                 break;
             case "T":
-                drawPieceInHold(canvas, T);
+                drawPieceInHold(canvas, T, cannotSpawnHeldPiece);
                 break;
             case "Z":
-                drawPieceInHold(canvas, Z);
+                drawPieceInHold(canvas, Z, cannotSpawnHeldPiece);
                 break;
         }
     }
-    // Draw the new pieces in the next queue
+}
+
+
+// (Helper function) Draws the new pieces in the next queue.
+// body is the parsed body of the response from the server.
+function updateNextQueue(canvas, body) {
     var next = body.nextFivePieces;
     if (body.spawnedPiece) {
         for (var i = 0; i < next.length; i++) {
@@ -1276,8 +1363,11 @@ function updateBoard(response) {
             }
         }
     }
-    
-    // Erase the previous hard drop ghost and piece in play
+}
+
+// (Helper function) Erases the previous hard drop ghost and piece in 
+// play. 
+function erasePreviousGhostAndCopyOfFallingPiece(canvas) {
     if (tetris.previousSquaresOfHardDropGhost != null) {
         for (var i = 0; i < tetris.previousSquaresOfHardDropGhost.length; i++) {
             var ypix = 
@@ -1302,8 +1392,11 @@ function updateBoard(response) {
             sq.draw(canvas);
         }
     }
+}
 
-    // Draw the changes to the stack
+// (Helper function) Draws the changes to the stack. body is the 
+// parsed body of the response form the server.
+function updateTetrisStack(canvas, body) {
     var changes = body.changesToStack;
     for (var i = 0; i < changes.length; i++) {
         var ypix = (changes[i].row - 18) * tetris.unitSize;
@@ -1344,8 +1437,12 @@ function updateBoard(response) {
                 break;
         }
     }
+}
 
-    // Draw the hard drop ghost
+// (Helper function) Draws the new hard drop ghost.
+// body is the parsed body of the response from the server.
+// Also updates tetris.previousSquaresOfHardDropGhost.
+function updateNewHardDropGhost(canvas, body) {
     var ghost = body.squaresOfHardDropGhost;
     for (var i = 0; i < ghost.length; i++) {
         var ypix = (ghost[i].row - 18) * tetris.unitSize;
@@ -1354,8 +1451,13 @@ function updateBoard(response) {
         sq.draw(canvas);
     }
     tetris.previousSquaresOfHardDropGhost = ghost;
+}
 
-    // Draw the piece in play
+
+// (Helper function) Draws the new copy of the piece in play.
+// body is the parsed body of the response from the server.
+// Also updates tetris.previousSquaresOfPieceInPlay.
+function updateNewCopyOfPieceInPlay(canvas, body) {
     var name = String(body.pieceInPlay);
     var pieceSquares = body.squaresOfPieceInPlay;
     var pieceColour;
@@ -1392,6 +1494,21 @@ function updateBoard(response) {
 }
 
 
+// Updates the board given a response from the server.
+function updateBoard(response) {
+    var canvas = document.getElementById("tetris-board");
+    var body = JSON.parse(response.body);
+
+    updateTimer(body);
+    updateHoldPiece(canvas, body);
+    updateNextQueue(canvas, body);
+    erasePreviousGhostAndCopyOfFallingPiece(canvas);
+    updateTetrisStack(canvas, body);
+    updateNewHardDropGhost(canvas, body);
+    updateNewCopyOfPieceInPlay(canvas, body);
+}
+
+
 // Handles the animation loop.
 
 function updateFrame() {
@@ -1405,7 +1522,6 @@ function updateFrame() {
 // ========================================================================
 
 // Tells the server to start the game.
-
 function sendGameStart() {
     tetris.stompClient.send(
         "/app/start-new-game",
@@ -1415,8 +1531,27 @@ function sendGameStart() {
 }
 
 
-// Sends the hard drop command to the server.
+// Sends the trigger-timed-fall command to the server.
+function sendTimedFall() {
+    tetris.stompClient.send(
+        "/app/timed-fall",
+        {},
+        JSON.stringify({"keyCommand": "NOTHING"})
+    );
+}
 
+
+// Sends the trigger-delayed-lock command to the server.
+function sendTimedLock() {
+    tetris.stompClient.send(
+        "/app/timed-lock",
+        {},
+        JSON.stringify({"keyCommand": "NOTHING"})
+    );
+}
+
+
+// Sends the hard drop command to the server.
 function sendHardDrop() {
     tetris.stompClient.send(
         "/app/hard-drop",
@@ -1426,7 +1561,6 @@ function sendHardDrop() {
 }
 
 // Sends the soft drop command to the server.
-
 function sendSoftDrop() {
     tetris.stompClient.send(
         "/app/soft-drop",
@@ -1436,7 +1570,6 @@ function sendSoftDrop() {
 }
 
 // Sends the move-left command to the server.
-
 function sendLeft() {
     tetris.stompClient.send(
         "/app/move",
@@ -1446,7 +1579,6 @@ function sendLeft() {
 }
 
 // Sends the move-right command to the server.
-
 function sendRight() {
     tetris.stompClient.send(
         "/app/move",
@@ -1456,7 +1588,6 @@ function sendRight() {
 }
 
 // Sends the rotate-clockwise command to the server.
-
 function sendClockwise() {
     tetris.stompClient.send(
         "/app/rotate",
@@ -1466,7 +1597,6 @@ function sendClockwise() {
 }
 
 // Sends the rotate-counterclockwise command to the server.
-
 function sendCounterClockwise() {
     tetris.stompClient.send(
         "/app/rotate",
@@ -1476,7 +1606,6 @@ function sendCounterClockwise() {
 }
 
 // Sends the hold command to the server.
-
 function sendHold() {
     tetris.stompClient.send(
         "/app/hold",
