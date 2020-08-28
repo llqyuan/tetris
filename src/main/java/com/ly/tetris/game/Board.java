@@ -16,16 +16,6 @@ import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
-/*
-todo:
-
-* Need to figure out how to recognize bonuses like perfect clears,
-  Tspins.
-  - Tetris: Cleared 4 lines
-  - Perfect clear: Board is empty after clearing a line
-  - T spin: ? I should search up the Tetris Guideline algorithm
-*/
-
 public class Board {
     // ==============
     // Fields
