@@ -36,9 +36,4 @@ public class Square {
         Square other = (Square)o;
         return (this.occupiedBy == other.occupiedBy);
     }
-
-    // Returns true if this square is occupied and false otherwise.
-    public boolean isOccupied() {
-        return (occupiedBy != PieceName.NOTHING);
-    }
 }

@@ -18,7 +18,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage timedFall(EventMessage event) 
     throws Exception {
-        return game.gravityDrop(event);
+        return game.automaticFallOrLock(event);
     }
 
     // Receives a message from the browser to lock the piece, assuming 
@@ -27,7 +27,7 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage timedLock(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.automaticFallOrLock(event);
     }
 
     // Receives a message from the browser to start a new game.
@@ -45,16 +45,16 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage hardDropCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.hardDrop(event);
     }
 
-    // Receives a message from the browser to soft-drop the piece by 
-    // one square (player command).
-    @MessageMapping("/soft-drop")
+    // Receives a message from the browser to sonic-drop the 
+    // current piece (player command).
+    @MessageMapping("/sonic-drop")
     @SendTo("/topic/board-update")
-    public BoardUpdateMessage softDropCommand(EventMessage event)
+    public BoardUpdateMessage sonicDropCommand(EventMessage event)
     throws Exception {
-        return game.softDrop(event);
+        return game.sonicDrop(event);
     }
 
     // Receives a message from the browser to move the piece by 
@@ -76,7 +76,11 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage rotateCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        if (event.getKeyCommand() == KeyCommand.CLOCKWISE) {
+            return game.rotateClockwise(event);
+        } else {
+            return game.rotateCounterClockwise(event);
+        }
     }
 
     // Receives a message from the browser to hold the current 
@@ -85,6 +89,6 @@ public class PlayerController {
     @SendTo("/topic/board-update")
     public BoardUpdateMessage holdCommand(EventMessage event)
     throws Exception {
-        return new BoardUpdateMessage(event.getKeyCommand());
+        return game.hold(event);
     }
 }

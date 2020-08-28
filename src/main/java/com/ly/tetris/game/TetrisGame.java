@@ -6,23 +6,7 @@ import com.ly.tetris.infostructs.EventMessage;
 import com.ly.tetris.infostructs.TimerUpdateMessage;
 import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.PieceName;
-
-/* 
-Ideas for piece falling
-
-Idea 2:
-
-After certain actions, send a message to the browser that says to 
-send a new request after some delay. 
-
-When the block is in the air, tell the browser to send a 
-message to drop the block later (time determined by difficulty). 
-
-When the piece reaches the top of the stack, tell the browser to send a
-message to lock the block later. Upon certain actions (rotating, moving 
-left or right), tell the browser to reset the timer and restart it.
-
-*/
+import com.ly.tetris.infostructs.RotationDirection;
 
 public class TetrisGame {
 
@@ -59,6 +43,12 @@ public class TetrisGame {
     // Copy of board as of previous update.
     private Square[][] previousBoardCopy;
 
+    // True if a piece was previously held but no piece has 
+    // been locked between then and now (in which case the player 
+    // cannot spawn the currently held piece until the current 
+    // piece locks)
+    private boolean heldButNotLocked;
+
     public TetrisGame() {
         this.board = new Board();
         this.score = 0;
@@ -70,20 +60,7 @@ public class TetrisGame {
         this.width = this.previousBoardCopy[0].length;
         this.lockTime = 500;
         this.softDropTime = 100;
-    }
-
-    public TetrisGame(boolean debug) {
-        this.board = new Board();
-        this.score = 0;
-        this.difficulty = 1;
-        this.hold = PieceName.NOTHING;
-        // Read info from debug file to generate starting lineup?
-        this.next = new NextPiecesQueue();
-        this.previousBoardCopy = this.board.copyOfBoard();
-        this.height = this.previousBoardCopy.length;
-        this.width = this.previousBoardCopy[0].length;
-        this.lockTime = 500;
-        this.softDropTime = 100;
+        this.heldButNotLocked = false;
     }
 
     // ==================================================
@@ -93,6 +70,10 @@ public class TetrisGame {
     // Spawns the first piece at the start of the game.
     // Only the first needs to be explicitly spawned; the rest will 
     // spawn automatically after a piece is dropped.
+    // Requires:
+    // * No game is currently running
+    // Effects:
+    // * Spawns a new piece on this.board
     public BoardUpdateMessage startingPieceSpawn(EventMessage event) 
     throws Exception {
         if (!board.spawn(next.produceAndRemoveNextPieceInQueue())) {
@@ -101,6 +82,7 @@ public class TetrisGame {
         }
         return this.produceBoardUpdate(
             event, 
+            true,
             false, 
             true, 
             false, 
@@ -109,28 +91,246 @@ public class TetrisGame {
 
     // Moves the piece and returns information on the state of the 
     // resulting board.
-    // If the piece is on the ground, resets the lock timer.
+    // If the piece is on the ground afterward, resets the lock timer.
+    // If the piece is in the air afterward but was on the ground before,
+    // sets a fall timer.
+    // Effects:
+    // * May move the piece in play left on this.board
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
-        board.moveLeft();
+        boolean inAirBefore = board.pieceIsInAir();
+        boolean succeeded = board.moveLeft();
+        boolean inAirAfter = board.pieceIsInAir();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
+        }
         return this.produceBoardUpdate(
             event, 
-            false, 
             false,
             false, 
-            -1);
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
     }
 
     // Moves the piece and return information on the state of the 
     // resulting board.
-    // If the piece is on the ground, resets the lock timer.
+    // If the piece is on the ground afterward, resets the lock timer.
+    // If the piece is in the air afterward but was on the ground before,
+    // sets a fall timer.
+    // Effects:
+    // * May move the piece in play right on this.board
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
-        board.moveRight();
+        boolean inAirBefore = board.pieceIsInAir();
+        boolean succeeded = board.moveRight();
+        boolean inAirAfter = board.pieceIsInAir();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
+        }
+        return this.produceBoardUpdate(
+            event, 
+            false,
+            false, 
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
+    }
+
+    // Rotates the piece clockwise and returns information on the state
+    // of the resulting board.
+    // If the piece is on the ground afterward, resets the lock timer.
+    // If the piece is not on the ground afterward but was on the 
+    // ground before, cancels the lock timer and sets a new fall timer.
+    // Effects:
+    // * May rotate the piece in play on this.board
+    public BoardUpdateMessage rotateClockwise(EventMessage event)
+    throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
+        boolean succeeded = board.rotate(RotationDirection.CLOCKWISE);
+        boolean inAirAfter = board.pieceIsInAir();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
+        }
+        return this.produceBoardUpdate(
+            event, 
+            false,
+            false, 
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
+    }
+
+    // Rotates the piece clockwise and returns information on the state 
+    // of the resulting board.
+    // If the piece is on the ground afterwards, resets the lock timer.
+    // If the piece is not on the ground afterward but was on the 
+    // ground before, cancels the lock timer and sets a new fall timer.
+    // Effects:
+    // * May rotate the piece on this.board
+    public BoardUpdateMessage rotateCounterClockwise(EventMessage event)
+    throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
+        boolean succeeded = board.rotate(RotationDirection.COUNTERCLOCKWISE);
+        boolean inAirAfter = board.pieceIsInAir();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (!inAirAfter) {
+            if (succeeded) {
+                updateLockTimer = true;
+                requestNewUpdateIn = this.lockTime;
+            }
+        } else if (!inAirBefore) {
+            updateFallTimer = true;
+            requestNewUpdateIn = this.fallInterval();
+        }
+        return this.produceBoardUpdate(
+            event, 
+            false,
+            false, 
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
+    }
+
+    // Holds the piece. 
+    // Effects:
+    // * Holds the current piece on the board
+    // * Sets the fall timer for a newly spawned piece
+    public BoardUpdateMessage hold(EventMessage event)
+    throws Exception {
+        if (this.heldButNotLocked) {
+            return this.produceBoardUpdate(
+                event, 
+                false, 
+                false, 
+                false, 
+                false, 
+                -1);
+        }
+        PieceName putInHold = board.removePieceFromPlay();
+        PieceName spawnPiece;
+        if (hold == PieceName.NOTHING) {
+            spawnPiece = next.produceAndRemoveNextPieceInQueue();
+        } else {
+            spawnPiece = hold;
+        }
+        if (board.spawn(spawnPiece)) {
+            this.hold = putInHold;
+            this.heldButNotLocked = true;
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                false, 
+                true, 
+                false, 
+                this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                true, 
+                false, 
+                false, 
+                -1);
+        }
+    }
+
+    // Hard drops the piece (manual). Attempts to spawn a new piece.
+    // If the spawn was successful, sets the fall timer.
+    // Otherwise tells the browser to end the game.
+    // Effects:
+    // * Hard drops the current piece on the board
+    // * Resets the flag this.heldButNotLocked
+    // * May spawn a new piece on the board
+    public BoardUpdateMessage hardDrop(EventMessage event)
+    throws Exception {
+        board.hardDrop();
+        boolean spawnUnsuccessful = 
+            !board.spawn(next.produceAndRemoveNextPieceInQueue());
+        this.heldButNotLocked = false;
+        if (spawnUnsuccessful) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                false, 
+                -1);
+        } else if (board.pieceIsInAir()) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                true, 
+                false, 
+                this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                true, 
+                this.lockTime);
+        }
+    }
+
+    // Sonic-drops the piece.
+    // If the piece was in the air before, stop the fall timer 
+    // and set the lock timer.
+    // Otherwise does not update the timer.
+    // Effects:
+    // * May move the piece down on this.board
+    public BoardUpdateMessage sonicDrop(EventMessage event)
+    throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
+        board.sonicDrop();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (inAirBefore) {
+            updateLockTimer = true;
+            requestNewUpdateIn = this.lockTime;
+        }
         return this.produceBoardUpdate(
             event, 
             false, 
-            false,
-            false,
-            -1);
+            false, 
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
     }
 
     // Soft drops the piece by one row (manual). Ignore for 
@@ -141,6 +341,8 @@ public class TetrisGame {
     // stops the fall timer and starts the lock timer.
     // If the piece is on the ground both before and afterwards, 
     // updates neither timer.
+    // Effects:
+    // * May move the piece down on this.board
     public BoardUpdateMessage softDrop(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
@@ -162,10 +364,75 @@ public class TetrisGame {
         
         return this.produceBoardUpdate(
             event, 
+            false,
             false, 
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn);
+    }
+
+    // Locks the piece if it is on the ground, or soft-drops it 
+    // by one row if it is in the air (automatic).
+    public BoardUpdateMessage automaticFallOrLock(EventMessage event)
+    throws Exception {
+        if (board.pieceIsInAir()) {
+            return this.gravityDrop(event);
+        } else {
+            return this.automaticLock(event);
+        }
+    }
+
+
+    // =========================================================
+    // Private helper methods
+    // =========================================================
+
+    // Locks the piece on the ground (automatic, delayed lock).
+    // Spawns a new piece and sets the fall timer.
+    // Only appropriate to call if the piece is on the ground.
+    // Requires:
+    // * The piece in play is on the ground
+    // Effects:
+    // * Locks the current piece on the board
+    // * Resets the flag this.heldButNotLocked
+    // * Spawns a new piece on the board
+    private BoardUpdateMessage automaticLock(EventMessage event)
+    throws Exception {
+        if (board.pieceIsInAir()) {
+            throw new IllegalStateException(
+                "Called automaticLock() at an inappropriate time. " +
+                "The piece was in the air. gravityDrop() should have " +
+                "been called instead.");
+        }
+        board.hardDrop();
+        boolean spawnUnsuccessful = 
+            !board.spawn(next.produceAndRemoveNextPieceInQueue());
+        this.heldButNotLocked = false;
+        if (spawnUnsuccessful) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                false, 
+                -1);
+        } else if (board.pieceIsInAir()) {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                true, 
+                false, 
+                this.fallInterval());
+        } else {
+            return this.produceBoardUpdate(
+                event, 
+                true, 
+                spawnUnsuccessful, 
+                false, 
+                true, 
+                this.lockTime);
+        }
     }
 
     // Soft drops the piece by one row (automatic, due to gravity).
@@ -173,15 +440,16 @@ public class TetrisGame {
     // If the piece is on the ground afterwards, start a lock timer.
     // Only appropriate to call when the piece is in the air.
     // Requires:
-    // * There is a piece in play
     // * The piece in play is in the air
-    public BoardUpdateMessage gravityDrop(EventMessage event) 
+    // Effects:
+    // * Moves the piece down on this.board
+    private BoardUpdateMessage gravityDrop(EventMessage event) 
     throws Exception {
         if (!board.moveDown()) {
             throw new IllegalStateException(
                 "Called gravityDrop() at an inappropriate time. " +
                 "The piece was on the ground and unable to move down. " +
-                "[lock function] should be called instead.");
+                "automaticLock() should be called instead.");
         }
         boolean updateFallTimer;
         boolean updateLockTimer;
@@ -197,16 +465,12 @@ public class TetrisGame {
         }
         return this.produceBoardUpdate(
             event, 
+            false,
             false, 
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn);
     }
-
-
-    // =========================================================
-    // Private helper methods
-    // =========================================================
 
     // Returns a message detailing the state of the board.
     // This should be called once between each command from the 
@@ -222,6 +486,7 @@ public class TetrisGame {
     // * Updates previousBoardCopy
     private BoardUpdateMessage produceBoardUpdate(
         EventMessage event, 
+        boolean spawnedNewPiece,
         boolean spawnWasUnsuccessful,
         boolean updateFallTimer,
         boolean updateLockTimer, 
@@ -233,12 +498,12 @@ public class TetrisGame {
         ArrayList<LocationPosn> squaresOfHardDropGhost = 
             board.squaresOccupiedByHardDropGhost();
 
-        ArrayList<Square> changesToStack = new ArrayList<Square>();
+        ArrayList<Square> drawOnStack = new ArrayList<Square>();
         Square[][] boardCopy = board.copyOfBoard();
         for (int r = 0; r < this.height; r++) {
             for (int c = 0; c < this.width; c++) {
                 if (!(boardCopy[r][c].equals(previousBoardCopy[r][c]))) {
-                    changesToStack.add(boardCopy[r][c]);
+                    drawOnStack.add(boardCopy[r][c]);
                 }
             }
         }
@@ -257,9 +522,11 @@ public class TetrisGame {
                 inPlay,
                 squaresOfPieceInPlay,
                 squaresOfHardDropGhost,
-                changesToStack,
+                drawOnStack,
                 hold,
+                this.heldButNotLocked,
                 nextFivePieces,
+                spawnedNewPiece,
                 spawnWasUnsuccessful,
                 timerUpdate,
                 this.score,
@@ -268,7 +535,6 @@ public class TetrisGame {
         return message;
     }
 
-    // todo
     // Returns the interval between successive commands to 
     // automatically drop the piece by one block, depending on
     // the current difficulty.
@@ -295,8 +561,8 @@ public class TetrisGame {
         14: 11 (rounded down from ~11.439)
         15: 7 (rounded down from ~7.059)
 
-        Problem: latency will inflate the time for higher levels. Maybe 
-        omit higher levels?
+        Problem: higher levels would be less stable because of the connection
+        being swamped by automatic-drop requests
         */
         return 1000;
     }

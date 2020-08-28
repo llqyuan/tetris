@@ -3,26 +3,17 @@ package com.ly.tetris.infostructs;
 import java.util.ArrayList;
 import com.ly.tetris.game.Square;
 
-/*
-
-* location and type of piece in play, hard drop ghost
-* current tetris stack
-* piece in hold
-* next 5 pieces in the next queue
-* whether new spawn was unsuccessful
-* start or update a timer (fall timer, lock timer)
-
-*/
-
 public class BoardUpdateMessage {
 
     private PieceName pieceInPlay;
     private ArrayList<LocationPosn> squaresOfPieceInPlay;
     private ArrayList<LocationPosn> squaresOfHardDropGhost;
-    private ArrayList<Square> changesToStack;
+    private ArrayList<Square> drawOnStack;
 
     private PieceName hold;
+    private boolean sealHoldPiece;
     private ArrayList<PieceName> nextFivePieces;
+    private boolean spawnedPiece;
     private boolean spawnUnsuccessful;
     private TimerUpdateMessage timerUpdate;
     private int score;
@@ -33,40 +24,26 @@ public class BoardUpdateMessage {
         this.pieceInPlay = PieceName.NOTHING;
         this.squaresOfPieceInPlay = new ArrayList<LocationPosn>();
         this.squaresOfHardDropGhost = new ArrayList<LocationPosn>();
-        this.changesToStack = new ArrayList<Square>();
+        this.drawOnStack = new ArrayList<Square>();
         this.hold = PieceName.NOTHING;
+        this.sealHoldPiece = false;
         this.nextFivePieces = new ArrayList<PieceName>();
+        this.spawnedPiece = false;
         this.spawnUnsuccessful = false;
         this.timerUpdate = new TimerUpdateMessage();
         this.score = 0;
         this.acknowledge = KeyCommand.NOTHING;
     }
 
-    // temp, remove/modify
-    public BoardUpdateMessage(KeyCommand key) {
-        this.pieceInPlay = PieceName.NOTHING;
-        this.squaresOfPieceInPlay = new ArrayList<LocationPosn>();
-        squaresOfPieceInPlay.add(new LocationPosn(0, 0));
-        this.squaresOfHardDropGhost = new ArrayList<LocationPosn>();
-        squaresOfHardDropGhost.add(new LocationPosn(0, 0));
-        this.changesToStack = new ArrayList<Square>();
-        changesToStack.add(new Square(0, 0));
-        this.hold = PieceName.NOTHING;
-        this.nextFivePieces = new ArrayList<PieceName>();
-        nextFivePieces.add(PieceName.I);
-        this.spawnUnsuccessful = false;
-        this.timerUpdate = new TimerUpdateMessage();
-        this.score = 0;
-        this.acknowledge = key;
-    }
-
     public BoardUpdateMessage(
         PieceName pieceInPlay,
         ArrayList<LocationPosn> squaresOfPieceInPlay,
         ArrayList<LocationPosn> squaresOfHardDropGhost,
-        ArrayList<Square> changesToStack,
+        ArrayList<Square> drawOnStack,
         PieceName hold,
+        boolean sealHoldPiece,
         ArrayList<PieceName> nextFivePieces,
+        boolean spawnedPiece,
         boolean spawnUnsuccessful,
         TimerUpdateMessage timerUpdate,
         int score,
@@ -75,9 +52,11 @@ public class BoardUpdateMessage {
         this.pieceInPlay = pieceInPlay;
         this.squaresOfPieceInPlay = squaresOfPieceInPlay;
         this.squaresOfHardDropGhost = squaresOfHardDropGhost;
-        this.changesToStack = changesToStack;
+        this.drawOnStack = drawOnStack;
         this.hold = hold;
+        this.sealHoldPiece = sealHoldPiece;
         this.nextFivePieces = nextFivePieces;
+        this.spawnedPiece = spawnedPiece;
         this.spawnUnsuccessful = spawnUnsuccessful;
         this.timerUpdate = timerUpdate;
         this.score = score;
@@ -96,16 +75,24 @@ public class BoardUpdateMessage {
         return squaresOfHardDropGhost;
     }
 
-    public ArrayList<Square> getChangesToStack() {
-        return changesToStack;
+    public ArrayList<Square> getDrawOnStack() {
+        return drawOnStack;
     }
 
     public PieceName getHold() {
         return hold;
     }
 
+    public boolean getSealHoldPiece() {
+        return sealHoldPiece;
+    }
+
     public ArrayList<PieceName> getNextFivePieces() {
         return nextFivePieces;
+    }
+
+    public boolean getSpawnedPiece() {
+        return spawnedPiece;
     }
 
     public boolean getSpawnUnsuccessful() {
