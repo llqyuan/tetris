@@ -1149,7 +1149,7 @@ function clearPieceInQueuePosition(canvas, pos) {
 
 function drawPieceInHold(canvas, piececode, cannotSpawnHeldPiece) {
     var piece;
-    clearPieceInHold(canvas);
+    clearPieceInHold();
     switch (piececode) {
         case I:
             piece = new IPiece({
@@ -1205,9 +1205,10 @@ function drawPieceInHold(canvas, piececode, cannotSpawnHeldPiece) {
 }
 
 
-// clearPieceInHold(canvas) erases the piece in the hold box.
+// clearPieceInHold() erases the piece in the hold box.
 
-function clearPieceInHold(canvas) {
+function clearPieceInHold() {
+    var canvas = document.getElementById("tetris-board");
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = BACKGROUND;
     ctx.fillRect(tetris.unitSize - 2, 3 * tetris.unitSize - 2, 
@@ -1276,17 +1277,15 @@ function connect() {
 
 function start(key) {
     switch (key) {
-        case 68:
-            alert("Debug mode");
-            break;
         default:
             document.getElementById("start-overlay").style.display = "none";
             document.getElementById("game-over-overlay").style.display = "none";
             $('#tetris-theme').trigger("play");
-            tetris.gameActive = true;
-            sendGameStart();
-            updateFrame();
             clearBoard();
+            clearPieceInHold();
+            sendGameStart();
+            tetris.gameActive = true;
+            updateFrame();
     }
 }
 
@@ -1410,15 +1409,31 @@ function erasePreviousGhostAndCopyOfFallingPiece(canvas) {
     }
 }
 
-// (Helper function) Draws the changes to the stack. body is the 
-// parsed body of the response form the server.
+/* 
+(Helper function) Draws the squares of the Tetris 
+stack detailed in body.drawOnStack.
+Comments:
+  Two ways to update the display of the Tetris 
+  stack were considered: drawing only the changes, 
+  and redrawing the entire board. Drawing only the 
+  changes results in significantly smaller messages 
+  sent to the browser. Redrawing the entire board
+  enables recovery from/correction of graphical glitches 
+  resulting from messages to the browser being received 
+  out of order. (Aside: problems caused by messages being 
+  received out of order aren't restricted 
+  to graphics. For instance, if piece B is spawned following 
+  piece A, delayed messaging could lead to a command from the 
+  browser intended for piece A instead being received 
+  by the program while piece B is in play).
+*/
 function updateTetrisStack(canvas, body) {
-    var changes = body.changesToStack;
-    for (var i = 0; i < changes.length; i++) {
-        var ypix = (changes[i].row - 18) * tetris.unitSize;
-        var xpix = (changes[i].col + 7) * tetris.unitSize;
+    var redraw = body.drawOnStack;
+    for (var i = 0; i < redraw.length; i++) {
+        var ypix = (redraw[i].row - 18) * tetris.unitSize;
+        var xpix = (redraw[i].col + 7) * tetris.unitSize;
         var sq;
-        switch(String(changes[i].occupiedBy)) {
+        switch(String(redraw[i].occupiedBy)) {
             case "I":
                 sq = new SingleSquare({x: xpix, y: ypix, piece: I});
                 sq.draw(canvas);
@@ -1455,7 +1470,7 @@ function updateTetrisStack(canvas, body) {
     }
 }
 
-// (Helper function) Draws the new hard drop ghost.
+// (Helper function) (Re)draws the new hard drop ghost.
 // body is the parsed body of the response from the server.
 // Also updates tetris.previousSquaresOfHardDropGhost.
 function updateNewHardDropGhost(canvas, body) {
@@ -1588,11 +1603,11 @@ function sendHardDrop() {
 }
 
 // Sends the soft drop command to the server.
-function sendSoftDrop() {
+function sendSonicDrop() {
     tetris.stompClient.send(
-        "/app/soft-drop",
+        "/app/sonic-drop",
         {},
-        JSON.stringify({"keyCommand": "SOFTDROP"})
+        JSON.stringify({"keyCommand": "SONICDROP"})
     );
 }
 
@@ -1659,6 +1674,8 @@ $(function() {
             switch(event.which) {
                 case 40:
                     event.preventDefault();
+                    sendSonicDrop();
+                    /*
                     var stop = setInterval(
                         function() { 
                             sendSoftDrop(); 
@@ -1669,6 +1686,7 @@ $(function() {
                         function(e) { 
                             clearInterval(stop); 
                         });
+                        */
                     break;
                 case 32:
                     event.preventDefault();

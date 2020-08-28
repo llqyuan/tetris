@@ -48,13 +48,13 @@ public class PlayerController {
         return game.hardDrop(event);
     }
 
-    // Receives a message from the browser to soft-drop the piece by 
-    // one square (player command).
-    @MessageMapping("/soft-drop")
+    // Receives a message from the browser to sonic-drop the 
+    // current piece (player command).
+    @MessageMapping("/sonic-drop")
     @SendTo("/topic/board-update")
-    public BoardUpdateMessage softDropCommand(EventMessage event)
+    public BoardUpdateMessage sonicDropCommand(EventMessage event)
     throws Exception {
-        return game.softDrop(event);
+        return game.sonicDrop(event);
     }
 
     // Receives a message from the browser to move the piece by 

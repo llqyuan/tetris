@@ -8,23 +8,6 @@ import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
-/* 
-Ideas for piece falling
-
-Idea 2:
-
-After certain actions, send a message to the browser that says to 
-send a new request after some delay. 
-
-When the block is in the air, tell the browser to send a 
-message to drop the block later (time determined by difficulty). 
-
-When the piece reaches the top of the stack, tell the browser to send a
-message to lock the block later. Upon certain actions (rotating, moving 
-left or right), tell the browser to reset the timer and restart it.
-
-*/
-
 public class TetrisGame {
 
     // Game board.
@@ -71,21 +54,6 @@ public class TetrisGame {
         this.score = 0;
         this.difficulty = 1;
         this.hold = PieceName.NOTHING;
-        this.next = new NextPiecesQueue();
-        this.previousBoardCopy = this.board.copyOfBoard();
-        this.height = this.previousBoardCopy.length;
-        this.width = this.previousBoardCopy[0].length;
-        this.lockTime = 500;
-        this.softDropTime = 100;
-        this.heldButNotLocked = false;
-    }
-
-    public TetrisGame(boolean debug) {
-        this.board = new Board();
-        this.score = 0;
-        this.difficulty = 1;
-        this.hold = PieceName.NOTHING;
-        // Read info from debug file to generate starting lineup?
         this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
         this.height = this.previousBoardCopy.length;
@@ -338,6 +306,33 @@ public class TetrisGame {
         }
     }
 
+    // Sonic-drops the piece.
+    // If the piece was in the air before, stop the fall timer 
+    // and set the lock timer.
+    // Otherwise does not update the timer.
+    // Effects:
+    // * May move the piece down on this.board
+    public BoardUpdateMessage sonicDrop(EventMessage event)
+    throws Exception {
+        boolean inAirBefore = board.pieceIsInAir();
+        board.sonicDrop();
+
+        boolean updateFallTimer = false;
+        boolean updateLockTimer = false;
+        int requestNewUpdateIn = -1;
+        if (inAirBefore) {
+            updateLockTimer = true;
+            requestNewUpdateIn = this.lockTime;
+        }
+        return this.produceBoardUpdate(
+            event, 
+            false, 
+            false, 
+            updateFallTimer, 
+            updateLockTimer, 
+            requestNewUpdateIn);
+    }
+
     // Soft drops the piece by one row (manual). Ignore for 
     // certain levels (where a piece's fall from softdropping is 
     // slower than the fall from gravity alone).
@@ -503,12 +498,12 @@ public class TetrisGame {
         ArrayList<LocationPosn> squaresOfHardDropGhost = 
             board.squaresOccupiedByHardDropGhost();
 
-        ArrayList<Square> changesToStack = new ArrayList<Square>();
+        ArrayList<Square> drawOnStack = new ArrayList<Square>();
         Square[][] boardCopy = board.copyOfBoard();
         for (int r = 0; r < this.height; r++) {
             for (int c = 0; c < this.width; c++) {
                 if (!(boardCopy[r][c].equals(previousBoardCopy[r][c]))) {
-                    changesToStack.add(boardCopy[r][c]);
+                    drawOnStack.add(boardCopy[r][c]);
                 }
             }
         }
@@ -527,7 +522,7 @@ public class TetrisGame {
                 inPlay,
                 squaresOfPieceInPlay,
                 squaresOfHardDropGhost,
-                changesToStack,
+                drawOnStack,
                 hold,
                 this.heldButNotLocked,
                 nextFivePieces,
@@ -540,7 +535,6 @@ public class TetrisGame {
         return message;
     }
 
-    // todo
     // Returns the interval between successive commands to 
     // automatically drop the piece by one block, depending on
     // the current difficulty.
@@ -567,8 +561,8 @@ public class TetrisGame {
         14: 11 (rounded down from ~11.439)
         15: 7 (rounded down from ~7.059)
 
-        Problem: latency will inflate the time for higher levels. Maybe 
-        omit higher levels?
+        Problem: higher levels would be less stable because of the connection
+        being swamped by automatic-drop requests
         */
         return 1000;
     }

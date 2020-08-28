@@ -3,23 +3,12 @@ package com.ly.tetris.infostructs;
 import java.util.ArrayList;
 import com.ly.tetris.game.Square;
 
-/*
-
-* location and type of piece in play, hard drop ghost
-* current tetris stack
-* piece in hold
-* next 5 pieces in the next queue
-* whether new spawn was unsuccessful
-* start or update a timer (fall timer, lock timer)
-
-*/
-
 public class BoardUpdateMessage {
 
     private PieceName pieceInPlay;
     private ArrayList<LocationPosn> squaresOfPieceInPlay;
     private ArrayList<LocationPosn> squaresOfHardDropGhost;
-    private ArrayList<Square> changesToStack;
+    private ArrayList<Square> drawOnStack;
 
     private PieceName hold;
     private boolean sealHoldPiece;
@@ -35,7 +24,7 @@ public class BoardUpdateMessage {
         this.pieceInPlay = PieceName.NOTHING;
         this.squaresOfPieceInPlay = new ArrayList<LocationPosn>();
         this.squaresOfHardDropGhost = new ArrayList<LocationPosn>();
-        this.changesToStack = new ArrayList<Square>();
+        this.drawOnStack = new ArrayList<Square>();
         this.hold = PieceName.NOTHING;
         this.sealHoldPiece = false;
         this.nextFivePieces = new ArrayList<PieceName>();
@@ -50,7 +39,7 @@ public class BoardUpdateMessage {
         PieceName pieceInPlay,
         ArrayList<LocationPosn> squaresOfPieceInPlay,
         ArrayList<LocationPosn> squaresOfHardDropGhost,
-        ArrayList<Square> changesToStack,
+        ArrayList<Square> drawOnStack,
         PieceName hold,
         boolean sealHoldPiece,
         ArrayList<PieceName> nextFivePieces,
@@ -63,7 +52,7 @@ public class BoardUpdateMessage {
         this.pieceInPlay = pieceInPlay;
         this.squaresOfPieceInPlay = squaresOfPieceInPlay;
         this.squaresOfHardDropGhost = squaresOfHardDropGhost;
-        this.changesToStack = changesToStack;
+        this.drawOnStack = drawOnStack;
         this.hold = hold;
         this.sealHoldPiece = sealHoldPiece;
         this.nextFivePieces = nextFivePieces;
@@ -86,8 +75,8 @@ public class BoardUpdateMessage {
         return squaresOfHardDropGhost;
     }
 
-    public ArrayList<Square> getChangesToStack() {
-        return changesToStack;
+    public ArrayList<Square> getDrawOnStack() {
+        return drawOnStack;
     }
 
     public PieceName getHold() {

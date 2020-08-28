@@ -4,7 +4,7 @@ public enum KeyCommand {
     LEFT,
     RIGHT,
     HARDDROP,
-    SOFTDROP,
+    SONICDROP,
     COUNTERCLOCKWISE,
     CLOCKWISE,
     HOLD,

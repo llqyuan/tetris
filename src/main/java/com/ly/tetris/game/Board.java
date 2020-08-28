@@ -19,17 +19,11 @@ import com.ly.tetris.infostructs.RotationDirection;
 /*
 todo:
 
-* Need to figure out where to clear lines. In hardDrop, returning number of 
-  lines cleared, so TetrisGame can determine how many points to award?
-
 * Need to figure out how to recognize bonuses like perfect clears,
   Tspins.
   - Tetris: Cleared 4 lines
   - Perfect clear: Board is empty after clearing a line
   - T spin: ? I should search up the Tetris Guideline algorithm
-
-Functions:
-
 */
 
 public class Board {
@@ -156,7 +150,7 @@ public class Board {
         ArrayList<LocationPosn> occupied = new ArrayList<LocationPosn>();
         for (int row = 0; row < 40; row++) {
             for (int col = 0; col < 10; col++) {
-                if (theBoard[row][col].isOccupied()) {
+                if (theBoard[row][col].occupiedBy != PieceName.NOTHING) {
                     occupied.add(new LocationPosn(row, col));
                 }
             }
@@ -224,6 +218,8 @@ public class Board {
 
     // Hard drops the current piece and removes it from play.
     // Returns the number of lines cleared.
+    // Requires:
+    // * there is a piece in play
     // Effects: 
     // * Modifies the board.
     // * Removes the current piece in play from play, after which 
@@ -239,6 +235,16 @@ public class Board {
                 "Tried to hard-drop a nonexistent piece.");
         }
     } 
+
+
+    // Sonic-drops the current piece, if one is in play.
+    // Effects:
+    // * Modifies the board
+    public void sonicDrop() {
+        if (inPlay != null) {
+            movePieceToBottom();
+        }
+    }
 
     // Attempts to spawn the new piece and update hard drop location.
     // Returns true if piece has room to spawn and false otherwise.
@@ -541,7 +547,7 @@ public class Board {
         for (int r = 0; r < 40; r++) {
             boolean rowIsFull = true;
             for (int c = 0; c < 10; c++) {
-                if (!theBoard[r][c].isOccupied()) {
+                if (theBoard[r][c].occupiedBy == PieceName.NOTHING) {
                     rowIsFull = false;
                     break;
                 }
@@ -557,14 +563,14 @@ public class Board {
     // Copies the rows above copyDownTo one row down.
     // Intended for use in this.clearLines() only.
     // Requires:
-    // * 20 <= copyDownTo < 40
+    // * 16 <= copyDownTo < 40
     // Effects:
     // * Modifies the board
     private void copyRowsAboveOneRowDown(int copyDownTo) 
     throws IllegalArgumentException {
-        if (!(20 <= copyDownTo && copyDownTo < 40)) {
+        if (!(16 <= copyDownTo && copyDownTo < 40)) {
             throw new IllegalArgumentException(
-                "Expected copyDownTo to be between 20 and 39 " +
+                "Expected copyDownTo to be between 16 and 39 " +
                 "inclusive, got xxx."
                 .replaceFirst("xxx", Integer.toString(copyDownTo)));
         }
@@ -613,7 +619,7 @@ public class Board {
                     .replaceFirst("yyy", Integer.toString(posn.col)));
             }
 
-            if (theBoard[posn.row][posn.col].isOccupied()) {
+            if (theBoard[posn.row][posn.col].occupiedBy != PieceName.NOTHING) {
                 return false;
             }
 
