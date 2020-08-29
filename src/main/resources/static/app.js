@@ -1611,7 +1611,7 @@ The message disappears after 1000 milliseconds.
 */
 function drawMessageOnRow(canvas, message, r) {
     var ctx = canvas.getContext("2d");
-    
+
     switch(r) {
         case 0:
             clearTimeout(tetris.message.row0);
@@ -1683,6 +1683,7 @@ function drawMessageOnRow(canvas, message, r) {
 * tspins and back-to-back tspins
 * tetrises and back-to-back tetrises
 * perfect clears
+* line clear combos
 */
 function drawMessages(canvas, body) {
     var tspinMessage = "T-SPIN";
