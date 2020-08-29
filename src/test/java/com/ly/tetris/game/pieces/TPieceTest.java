@@ -322,6 +322,62 @@ public class TPieceTest {
         this.isPermutation(expected, actual);
     }
 
+    @Test
+    public void 
+    squaresAdjacentToCenterAreCorrectWhenUpright() {
+        ArrayList<LocationPosn> actual = piece.adjacentToCenter();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        expected.add(new LocationPosn(18 + 0, 3 + 0));
+        expected.add(new LocationPosn(18 + 0, 3 + 2));
+        expected.add(new LocationPosn(18 + 2, 3 + 0));
+        expected.add(new LocationPosn(18 + 2, 3 + 1));
+        expected.add(new LocationPosn(18 + 2, 3 + 2));
+        this.isPermutation(expected, actual);
+    }
+
+    @Test
+    public void
+    squaresAdjacentToCenterAreCorrectWhenOnLeft() {
+        piece.rotateCounterClockwise();
+        ArrayList<LocationPosn> actual = piece.adjacentToCenter();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        expected.add(new LocationPosn(18 + 0, 3 + 0));
+        expected.add(new LocationPosn(18 + 0, 3 + 2));
+        expected.add(new LocationPosn(18 + 1, 3 + 2));
+        expected.add(new LocationPosn(18 + 2, 3 + 0));
+        expected.add(new LocationPosn(18 + 2, 3 + 2));
+        this.isPermutation(expected, actual);
+    }
+
+    @Test
+    public void 
+    squaresAdjacentToCenterAreCorrectWhenOnRight() {
+        piece.rotateClockwise();
+        ArrayList<LocationPosn> actual = piece.adjacentToCenter();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        expected.add(new LocationPosn(18 + 0, 3 + 0));
+        expected.add(new LocationPosn(18 + 0, 3 + 2));
+        expected.add(new LocationPosn(18 + 1, 3 + 0));
+        expected.add(new LocationPosn(18 + 2, 3 + 0));
+        expected.add(new LocationPosn(18 + 2, 3 + 2));
+        this.isPermutation(expected, actual);
+    }
+
+    @Test
+    public void
+    squaresAdjacentToCenterAreCorrectWhenUpsideDown() {
+        piece.rotateClockwise();
+        piece.rotateClockwise();
+        ArrayList<LocationPosn> actual = piece.adjacentToCenter();
+        ArrayList<LocationPosn> expected = new ArrayList<LocationPosn>();
+        expected.add(new LocationPosn(18 + 0, 3 + 0));
+        expected.add(new LocationPosn(18 + 0, 3 + 1));
+        expected.add(new LocationPosn(18 + 0, 3 + 2));
+        expected.add(new LocationPosn(18 + 2, 3 + 0));
+        expected.add(new LocationPosn(18 + 2, 3 + 2));
+        this.isPermutation(expected, actual);
+    }
+
     // =====================
     // Private helper methods
     // =====================

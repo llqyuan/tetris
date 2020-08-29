@@ -5,6 +5,7 @@ tetris.gameActive = false;
 tetris.timer = null;
 tetris.previousSquaresOfPieceInPlay = null;
 tetris.previousSquaresOfHardDropGhost = null;
+tetris.message = {};
 
 const I = 1;
 const L = 2;
@@ -1525,6 +1526,135 @@ function updateNewCopyOfPieceInPlay(canvas, body) {
 }
 
 
+/*
+(Helper function for drawMessages) Erases the message on row r.
+*/
+function eraseMessageOnRow(canvas, r) {
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = BACKGROUND;
+    ctx.fillRect(
+        tetris.unitSize - 2, 
+        (9 + r) * tetris.unitSize + Math.floor(tetris.unitSize / 3), 
+        5 * tetris.unitSize + 4,
+        tetris.unitSize);
+}
+
+
+/* 
+(Helper function for drawMessages) Draws the message on row r.
+*/
+function drawMessageOnRow(canvas, message, r) {
+    switch(r) {
+        case 0:
+            clearTimeout(tetris.message.row0);
+            break;
+        case 1:
+            clearTimeout(tetris.message.row1);
+            break;
+        case 2:
+            clearTimeout(tetris.message.row2);
+            break;
+        case 3:
+            clearTimeout(tetris.message.row3);
+            break;
+    }
+ 
+    var ctx = canvas.getContext("2d");
+    eraseMessageOnRow(canvas, r);
+    ctx.strokeStyle = "#000000";
+    ctx.font = "{}px Arial".replace("{}", Math.floor((2 * tetris.unitSize) / 3));
+    ctx.strokeText(
+        message, 
+        tetris.unitSize,
+        (10 + r) * tetris.unitSize);
+    
+    switch(r) {
+        case 0:
+            tetris.message.row0 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 0);
+                },
+                1000);
+            break;
+        case 1:
+            tetris.message.row1 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 1);
+                },
+                1000);
+            break;
+        case 2:
+            tetris.message.row2 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 2);
+                },
+                1000);
+            break;
+        case 3:
+            tetris.message.row3 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 3);
+                },
+                1000);
+            break;
+    }
+}
+
+/*
+(Helper function) Draws messages. Informs the player of
+* tspins and back-to-back tspins
+* tetrises and back-to-back tetrises
+* perfect clears
+*/
+function drawMessages(canvas, body) {
+    var tspinMessage = "T-SPIN";
+    var singleMessage = "SINGLE";
+    var doubleMessage = "DOUBLE";
+    var tripleMessage = "TRIPLE";
+    var tetrisMessage = "TETRIS";
+    var backtobackMessage = "B2B";
+    var allClearMessage = "ALL CLEAR"
+    var tspinRow = 0;
+    var linesRow = 1;
+    var backtobackRow = 2;
+    var allClearRow = 3;
+
+    var isTSpin = body.lineClearInfo.tspin;
+    var linesCleared = body.lineClearInfo.linesCleared;
+    var backtobacks = body.lineClearInfo.consecBackToBacks;
+    var isPerfectClear = body.lineClearInfo.perfectClear;
+
+    if (isTSpin) {
+        drawMessageOnRow(canvas, tspinMessage, tspinRow);
+        switch(linesCleared) {
+            case 1:
+                drawMessageOnRow(canvas, singleMessage, linesRow);
+                break;
+            case 2:
+                drawMessageOnRow(canvas, doubleMessage, linesRow);
+                break;
+            case 3:
+                drawMessageOnRow(canvas, tripleMessage, linesRow);
+                break;
+        }
+
+    } else if (linesCleared == 4) {
+        drawMessageOnRow(canvas, tetrisMessage, linesRow);
+    }
+
+    if (linesCleared > 0 && backtobacks >= 2) {
+        drawMessageOnRow(
+            canvas, 
+            backtobackMessage + " x" + String(backtobacks - 1),
+            backtobackRow);
+    }
+
+    if (isPerfectClear) {
+        drawMessageOnRow(canvas, allClearMessage, allClearRow);
+    }
+}
+
+
 // Updates the board given a response from the server.
 function updateBoard(response) {
     var canvas = document.getElementById("tetris-board");
@@ -1547,6 +1677,7 @@ function updateBoard(response) {
         updateTetrisStack(canvas, body);
         updateNewHardDropGhost(canvas, body);
         updateNewCopyOfPieceInPlay(canvas, body);
+        drawMessages(canvas, body);
     }
 }
 

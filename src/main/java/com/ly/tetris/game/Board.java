@@ -69,7 +69,7 @@ public class Board {
     }
 
     // =================
-    // Public interface
+    // Public interface: Status of board
     // =================
 
     // Returns a copy of the board. The copy does not contain 
@@ -159,6 +159,52 @@ public class Board {
             return false;
         }
     }
+
+    /* 
+    Returns true if the piece in play is a T and at least three squares 
+    adjacent to the center are occupied on the board, and false otherwise.
+    */
+    public boolean pieceIsTAndThreeAdjacentToCenterAreOccupied() {
+        if (inPlay == null || inPlay.name() != PieceName.T) {
+            return false;
+        }
+        TPiece tPieceInPlay = (TPiece)inPlay;
+        ArrayList<LocationPosn> listOfAdjacentSquares = 
+            tPieceInPlay.adjacentToCenter();
+        
+        int squaresOccupied = 0;
+        ListIterator<LocationPosn> iterAdjacent = 
+            listOfAdjacentSquares.listIterator();
+        while (iterAdjacent.hasNext()) {
+            LocationPosn adj = iterAdjacent.next();
+            if (adj.row < 0 || adj.row >= 40 || adj.col < 0 || adj.col >= 10) {
+                continue;
+            }
+            if (theBoard[adj.row][adj.col].occupiedBy != PieceName.NOTHING) {
+                squaresOccupied += 1;
+            }
+        }
+        return squaresOccupied >= 3;
+    }
+
+    /* 
+    Returns true if the board is empty and false otherwise.
+    */
+    public boolean isEmpty() {
+        for (int r = 0; r < 40; r++) {
+            for (int c = 0; c < 10; c++) {
+                if (theBoard[r][c].occupiedBy != PieceName.NOTHING) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    // =====================================
+    // Public interface: Modifying the board
+    // =====================================
 
     // Removes the piece from play. Returns the name of the piece 
     // in play, or NOTHING if no piece was in play.

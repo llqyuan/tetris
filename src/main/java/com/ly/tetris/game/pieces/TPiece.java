@@ -2,6 +2,7 @@ package com.ly.tetris.game.pieces;
 
 import java.util.ArrayList;
 
+import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
@@ -101,6 +102,24 @@ public class TPiece extends Piece {
             }
         }
         return occupied;
+    }
+
+    /*
+    Returns the positions (relative to the absolute position) of squares that 
+    are adjacent to the center of the piece. May include coordinates that 
+    would be out of bounds; it is the responsibility of 
+    Board to check that each posn is a valid position on the board.
+    */
+    public ArrayList<LocationPosn> adjacentToCenter() {
+        ArrayList<LocationPosn> adjacent = new ArrayList<LocationPosn>();
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                if ( (!(r == 1 && c == 1)) && (!localFieldOccupied[r][c]) ) {
+                    adjacent.add(absolutePosition.add(new OffsetPosn(r, c)));
+                }
+            }
+        }
+        return adjacent;
     }
 
     // ======================

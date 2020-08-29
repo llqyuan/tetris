@@ -12,7 +12,7 @@ public abstract class Piece {
     // The absolute position of the piece. It represents the upper left 
     // corner of the piece's local field of occupied squares (shape of 
     // field depends on the piece -- eg. 4x4 for I, 3x3 for L)
-    private LocationPosn absolutePosition = null;
+    protected LocationPosn absolutePosition = null;
 
     // The orientation of the piece.
     private PieceOrientation orientation = PieceOrientation.UPRIGHT;

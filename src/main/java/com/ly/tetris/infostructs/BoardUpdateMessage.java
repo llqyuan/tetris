@@ -17,6 +17,7 @@ public class BoardUpdateMessage {
     private boolean spawnUnsuccessful;
     private TimerUpdateMessage timerUpdate;
     private int score;
+    private LineClearMessage lineClearInfo;
 
     private KeyCommand acknowledge;
 
@@ -32,6 +33,7 @@ public class BoardUpdateMessage {
         this.spawnUnsuccessful = false;
         this.timerUpdate = new TimerUpdateMessage();
         this.score = 0;
+        this.lineClearInfo = new LineClearMessage();
         this.acknowledge = KeyCommand.NOTHING;
     }
 
@@ -47,6 +49,7 @@ public class BoardUpdateMessage {
         boolean spawnUnsuccessful,
         TimerUpdateMessage timerUpdate,
         int score,
+        LineClearMessage lineClearInfo,
         KeyCommand key
     ) {
         this.pieceInPlay = pieceInPlay;
@@ -60,6 +63,7 @@ public class BoardUpdateMessage {
         this.spawnUnsuccessful = spawnUnsuccessful;
         this.timerUpdate = timerUpdate;
         this.score = score;
+        this.lineClearInfo = lineClearInfo;
         this.acknowledge = key;
     }
 
@@ -105,6 +109,10 @@ public class BoardUpdateMessage {
 
     public int getScore() {
         return score;
+    }
+
+    public LineClearMessage getLineClearInfo() {
+        return lineClearInfo;
     }
 
     public KeyCommand getAcknowledge() {
