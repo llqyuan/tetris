@@ -105,7 +105,7 @@ public class TPiece extends Piece {
     }
 
     /*
-    Returns the positions (relative to the absolute position) of squares that 
+    Returns the positions of squares on the board that 
     are adjacent to the center of the piece. May include coordinates that 
     would be out of bounds; it is the responsibility of 
     Board to check that each posn is a valid position on the board.
