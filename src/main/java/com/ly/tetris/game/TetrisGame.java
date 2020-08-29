@@ -53,7 +53,10 @@ public class TetrisGame {
 
     // Number of consecutive line clears that were tspins or 
     // tetrises. 
-    private int consecBackToBacks;
+    private int consecTetrisOrTSpin;
+
+    // Number of consecutive piece-locks that cleared lines.
+    private int combo;
 
     // Last successful movement. Should be NOTHING immediately 
     // after a piece is spawned, and before its first movement.
@@ -71,7 +74,8 @@ public class TetrisGame {
         this.lockTime = 500;
         this.softDropTime = 100;
         this.heldButNotLocked = false;
-        this.consecBackToBacks = 0;
+        this.consecTetrisOrTSpin = 0;
+        this.combo = 0;
         this.lastSuccessfulMovement = Movement.NOTHING;
     }
 
@@ -261,6 +265,7 @@ public class TetrisGame {
     // Holds the piece. 
     // Effects:
     // * Holds the current piece on the board
+    // * Sets this.heldButNotLocked to true
     // * Sets the fall timer for a newly spawned piece
     public BoardUpdateMessage hold(EventMessage event)
     throws Exception {
@@ -555,7 +560,9 @@ public class TetrisGame {
     /* 
     Drops the piece and returns the calculated LineClearMessage.
     Effects:
-    * Modifies the board by hard-dropping the piece
+    * Hard-drops the piece
+    * Modifies the flag this.consecTetrisOrTSpin
+    * Modifies the flag this.consecLineClears
     */
     private LineClearMessage hardDropAndCalculateBonuses()
     throws Exception {
@@ -563,14 +570,19 @@ public class TetrisGame {
         int linesCleared = board.hardDrop();
         boolean isPerfectClear = board.isEmpty();
         if (linesCleared == 4 || isTSpin) {
-            this.consecBackToBacks += 1;
+            this.consecTetrisOrTSpin += 1;
+            this.combo += 1;
         } else if (linesCleared > 0) {
-            this.consecBackToBacks = 0;
+            this.consecTetrisOrTSpin = 0;
+            this.combo += 1;
+        } else {
+            this.combo = 0;
         }
         return new LineClearMessage(
             isTSpin, 
             linesCleared, 
-            this.consecBackToBacks, 
+            this.consecTetrisOrTSpin, 
+            this.combo,
             isPerfectClear);
     }
 

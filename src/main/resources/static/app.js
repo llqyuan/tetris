@@ -1542,6 +1542,7 @@ function eraseMessageOnRow(canvas, r) {
 
 /* 
 (Helper function for drawMessages) Draws the message on row r.
+The message disappears after 1000 milliseconds.
 */
 function drawMessageOnRow(canvas, message, r) {
     switch(r) {
@@ -1557,11 +1558,15 @@ function drawMessageOnRow(canvas, message, r) {
         case 3:
             clearTimeout(tetris.message.row3);
             break;
+        case 4:
+            clearTimeout(tetris.message.row4);
+            break;
     }
  
     var ctx = canvas.getContext("2d");
     eraseMessageOnRow(canvas, r);
     ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
     ctx.font = "{}px Arial".replace("{}", Math.floor((2 * tetris.unitSize) / 3));
     ctx.strokeText(
         message, 
@@ -1597,6 +1602,13 @@ function drawMessageOnRow(canvas, message, r) {
                 },
                 1000);
             break;
+        case 4:
+            tetris.message.row4 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 4);
+                },
+                1000);
+            break;
     }
 }
 
@@ -1614,15 +1626,18 @@ function drawMessages(canvas, body) {
     var tetrisMessage = "TETRIS";
     var backtobackMessage = "B2B";
     var allClearMessage = "ALL CLEAR"
+    var comboMessage = "COMBO";
     var tspinRow = 0;
     var linesRow = 1;
     var backtobackRow = 2;
     var allClearRow = 3;
+    var comboRow = 4;
 
     var isTSpin = body.lineClearInfo.tspin;
     var linesCleared = body.lineClearInfo.linesCleared;
-    var backtobacks = body.lineClearInfo.consecBackToBacks;
+    var backtobacks = body.lineClearInfo.consecTetrisOrTSpin;
     var isPerfectClear = body.lineClearInfo.perfectClear;
+    var combo = body.lineClearInfo.combo;
 
     if (isTSpin) {
         drawMessageOnRow(canvas, tspinMessage, tspinRow);
@@ -1651,6 +1666,13 @@ function drawMessages(canvas, body) {
 
     if (isPerfectClear) {
         drawMessageOnRow(canvas, allClearMessage, allClearRow);
+    }
+
+    if (combo >= 2) {
+        drawMessageOnRow(
+            canvas, 
+            String(combo - 1) + " " + comboMessage, 
+            comboRow);
     }
 }
 
