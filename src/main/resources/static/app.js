@@ -64,83 +64,99 @@ const BACKGROUND = "#efefef";
 
 // Piece classes
 
-function SingleSquare(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.piece = params.piece || -1;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
-    this.erase = params.erase || false;
+class SingleSquare {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.piece = params.piece || -1;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+        this.erase = params.erase || false;
+    }
 }
 
-function IPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = ICOLOUR;
-    this.strokeStyle = IOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class IPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = ICOLOUR;
+        this.strokeStyle = IOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function LPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = LCOLOUR;
-    this.strokeStyle = LOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class LPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = LCOLOUR;
+        this.strokeStyle = LOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function JPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = JCOLOUR;
-    this.strokeStyle = JOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class JPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = JCOLOUR;
+        this.strokeStyle = JOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function TPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = TCOLOUR;
-    this.strokeStyle = TOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class TPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = TCOLOUR;
+        this.strokeStyle = TOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function SPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = SCOLOUR;
-    this.strokeStyle = SOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class SPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = SCOLOUR;
+        this.strokeStyle = SOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function ZPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = ZCOLOUR;
-    this.strokeStyle = ZOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class ZPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = ZCOLOUR;
+        this.strokeStyle = ZOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
-function OPiece(params) {
-    this.x = params.x || 0;
-    this.y = params.y || 0;
-    this.fillStyle = OCOLOUR;
-    this.strokeStyle = OOUTLINE;
-    this.orientation = params.orientation || UPRIGHT;
-    this.ghost = params.ghost || false;
-    this.unusableHoldPiece = params.unusableHoldPiece || false; 
+class OPiece {
+    constructor(params) {
+        this.x = params.x || 0;
+        this.y = params.y || 0;
+        this.fillStyle = OCOLOUR;
+        this.strokeStyle = OOUTLINE;
+        this.orientation = params.orientation || UPRIGHT;
+        this.ghost = params.ghost || false;
+        this.unusableHoldPiece = params.unusableHoldPiece || false; 
+    }
 }
 
 // Drawing
@@ -201,6 +217,10 @@ SingleSquare.prototype.draw = function(canvas) {
 }
 
 IPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
     if (this.ghost) {
         ctx.fillStyle = GHOSTCOLOUR;
@@ -211,28 +231,28 @@ IPiece.prototype.draw = function(canvas) {
     }
     switch (this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x,
                 y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 3 * tetris.unitSize,
                 y: this.y + tetris.unitSize,
                 piece: I,
@@ -245,25 +265,25 @@ IPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: I,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 3 * tetris.unitSize,
                 piece: I,
@@ -275,25 +295,25 @@ IPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: I,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 3 * tetris.unitSize,
                 piece: I,
@@ -305,25 +325,25 @@ IPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: I,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: I,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 3 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: I,
@@ -338,6 +358,10 @@ IPiece.prototype.draw = function(canvas) {
 }
 
 LPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -349,28 +373,28 @@ LPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize,
                 piece: L,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
@@ -383,25 +407,25 @@ LPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x,
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: L,
@@ -413,25 +437,25 @@ LPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: L,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: L,
@@ -443,25 +467,25 @@ LPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: L,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: L,
@@ -476,6 +500,10 @@ LPiece.prototype.draw = function(canvas) {
 }
 
 JPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -487,28 +515,28 @@ JPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y, 
                 piece: J, 
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize,
                 piece: J,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: J,
@@ -521,25 +549,25 @@ JPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: J, 
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: J,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: J,
@@ -551,25 +579,25 @@ JPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: J, 
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y,
                 piece: J,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + 2 * tetris.unitSize, 
                 piece: J,
@@ -581,25 +609,25 @@ JPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: J, 
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize,
                 y: this.y + tetris.unitSize, 
                 piece: J,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: J,
@@ -614,6 +642,10 @@ JPiece.prototype.draw = function(canvas) {
 }
 
 TPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -625,28 +657,28 @@ TPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: T,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
@@ -659,25 +691,25 @@ TPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: T,
@@ -689,25 +721,25 @@ TPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: T,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize,
                 piece: T,
@@ -719,25 +751,25 @@ TPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize,
                 y: this.y + tetris.unitSize, 
                 piece: T,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: T,
@@ -752,6 +784,10 @@ TPiece.prototype.draw = function(canvas) {
 }
 
 SPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -763,28 +799,28 @@ SPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: S,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y, 
                 piece: S,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
@@ -797,25 +833,25 @@ SPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x,
                 y: this.y,
                 piece: S,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: S,
@@ -827,25 +863,25 @@ SPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: S,
@@ -857,25 +893,25 @@ SPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize,
                 y: this.y + tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: S,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize,
                 y: this.y + 2 * tetris.unitSize, 
                 piece: S,
@@ -890,6 +926,10 @@ SPiece.prototype.draw = function(canvas) {
 }
 
 ZPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -901,28 +941,28 @@ ZPiece.prototype.draw = function(canvas) {
     }
     switch(this.orientation) {
         case UPRIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y, 
                 piece: Z,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y,
                 piece: Z,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost,
                 unusableHoldPiece: this.unusableHoldPiece
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
@@ -935,25 +975,25 @@ ZPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case LEFT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
@@ -965,25 +1005,25 @@ ZPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case RIGHT:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
@@ -995,25 +1035,25 @@ ZPiece.prototype.draw = function(canvas) {
             square4.draw(canvas);
             break;
         case UPSIDEDOWN:
-            var square1 = new SingleSquare({
+            square1 = new SingleSquare({
                 x: this.x, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square2 = new SingleSquare({
+            square2 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square3 = new SingleSquare({
+            square3 = new SingleSquare({
                 x: this.x + tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
                 ghost: this.ghost
             });
-            var square4 = new SingleSquare({
+            square4 = new SingleSquare({
                 x: this.x + 2 * tetris.unitSize, 
                 y: this.y + 2 * tetris.unitSize, 
                 piece: Z,
@@ -1028,6 +1068,10 @@ ZPiece.prototype.draw = function(canvas) {
 }
 
 OPiece.prototype.draw = function(canvas) {
+    var square1;
+    var square2;
+    var square3;
+    var square4;
     var ctx = canvas.getContext("2d");
 
     if (this.ghost) {
@@ -1037,28 +1081,28 @@ OPiece.prototype.draw = function(canvas) {
         ctx.fillStyle = this.fillStyle;
         ctx.strokeStyle = this.strokeStyle;
     }
-    var square1 = new SingleSquare({
+    square1 = new SingleSquare({
         x: this.x + tetris.unitSize, 
         y: this.y, 
         piece: O,
         ghost: this.ghost,
         unusableHoldPiece: this.unusableHoldPiece
     });
-    var square2 = new SingleSquare({
+    square2 = new SingleSquare({
         x: this.x + 2 * tetris.unitSize, 
         y: this.y,
         piece: O,
         ghost: this.ghost,
         unusableHoldPiece: this.unusableHoldPiece
     });
-    var square3 = new SingleSquare({
+    square3 = new SingleSquare({
         x: this.x + tetris.unitSize, 
         y: this.y + tetris.unitSize,
         piece: O,
         ghost: this.ghost,
         unusableHoldPiece: this.unusableHoldPiece
     });
-    var square4 = new SingleSquare({
+    square4 = new SingleSquare({
         x: this.x + 2 * tetris.unitSize, 
         y: this.y + tetris.unitSize,
         piece: O,
@@ -1443,10 +1487,12 @@ Comments:
 */
 function updateTetrisStack(canvas, body) {
     var redraw = body.drawOnStack;
+    var ypix;
+    var xpix;
+    var sq;
     for (var i = 0; i < redraw.length; i++) {
-        var ypix = (redraw[i].row - 18) * tetris.unitSize;
-        var xpix = (redraw[i].col + 7) * tetris.unitSize;
-        var sq;
+        ypix = (redraw[i].row - 18) * tetris.unitSize;
+        xpix = (redraw[i].col + 7) * tetris.unitSize;
         switch(String(redraw[i].occupiedBy)) {
             case "I":
                 sq = new SingleSquare({x: xpix, y: ypix, piece: I});
@@ -1489,10 +1535,13 @@ function updateTetrisStack(canvas, body) {
 // Also updates tetris.previousSquaresOfHardDropGhost.
 function updateNewHardDropGhost(canvas, body) {
     var ghost = body.squaresOfHardDropGhost;
+    var ypix;
+    var xpix;
+    var sq;
     for (var i = 0; i < ghost.length; i++) {
-        var ypix = (ghost[i].row - 18) * tetris.unitSize;
-        var xpix = (ghost[i].col + 7) * tetris.unitSize;
-        var sq = new SingleSquare({x: xpix, y: ypix, ghost: true});
+        ypix = (ghost[i].row - 18) * tetris.unitSize;
+        xpix = (ghost[i].col + 7) * tetris.unitSize;
+        sq = new SingleSquare({x: xpix, y: ypix, ghost: true});
         sq.draw(canvas);
     }
     tetris.previousSquaresOfHardDropGhost = ghost;
@@ -1506,6 +1555,9 @@ function updateNewCopyOfPieceInPlay(canvas, body) {
     var name = String(body.pieceInPlay);
     var pieceSquares = body.squaresOfPieceInPlay;
     var pieceColour;
+    var ypix;
+    var xpix;
+    var sq;
     switch(name) {
         case "I":
             pieceColour = I;
@@ -1530,9 +1582,9 @@ function updateNewCopyOfPieceInPlay(canvas, body) {
             break;
     }
     for (var i = 0; i < pieceSquares.length; i++) {
-        var ypix = (pieceSquares[i].row - 18) * tetris.unitSize;
-        var xpix = (pieceSquares[i].col + 7) * tetris.unitSize;
-        var sq = new SingleSquare({x: xpix, y: ypix, piece: pieceColour});
+        ypix = (pieceSquares[i].row - 18) * tetris.unitSize;
+        xpix = (pieceSquares[i].col + 7) * tetris.unitSize;
+        sq = new SingleSquare({x: xpix, y: ypix, piece: pieceColour});
         sq.draw(canvas);
     }
     tetris.previousSquaresOfPieceInPlay = pieceSquares;
@@ -1558,6 +1610,8 @@ function eraseMessageOnRow(canvas, r) {
 The message disappears after 1000 milliseconds.
 */
 function drawMessageOnRow(canvas, message, r) {
+    var ctx = canvas.getContext("2d");
+    
     switch(r) {
         case 0:
             clearTimeout(tetris.message.row0);
@@ -1575,8 +1629,7 @@ function drawMessageOnRow(canvas, message, r) {
             clearTimeout(tetris.message.row4);
             break;
     }
- 
-    var ctx = canvas.getContext("2d");
+
     eraseMessageOnRow(canvas, r);
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
