@@ -20,6 +20,19 @@ const LEFT = 2;
 const RIGHT = 3;
 const UPSIDEDOWN = 4;
 
+/* =========================================================================
+
+Sections:
+
+1. Drawing pieces
+2. Drawing things on the board
+3. Page management:
+  a. General
+  b. Updating the drawing of the board
+  c. Sending commands to the server
+
+========================================================================= */
+
 // ========================================================================
 // Drawing pieces
 // ========================================================================
