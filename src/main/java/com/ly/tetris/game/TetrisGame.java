@@ -105,7 +105,7 @@ public class TetrisGame {
             true, 
             false, 
             this.fallInterval(),
-            new LineClearMessage());
+            null);
     }
 
     // Moves the piece and returns information on the state of the 
@@ -143,7 +143,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Moves the piece and return information on the state of the 
@@ -181,7 +181,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Rotates the piece clockwise and returns information on the state
@@ -220,7 +220,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Rotates the piece clockwise and returns information on the state 
@@ -259,7 +259,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Holds the piece. 
@@ -277,7 +277,7 @@ public class TetrisGame {
                 false, 
                 false, 
                 -1,
-                new LineClearMessage());
+                null);
         }
         PieceName putInHold = board.removePieceFromPlay();
         PieceName spawnPiece;
@@ -296,7 +296,7 @@ public class TetrisGame {
                 true, 
                 false, 
                 this.fallInterval(),
-                new LineClearMessage());
+                null);
         } else {
             return this.produceBoardUpdate(
                 event, 
@@ -305,7 +305,7 @@ public class TetrisGame {
                 false, 
                 false, 
                 -1,
-                new LineClearMessage());
+                null);
         }
     }
 
@@ -382,7 +382,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Soft drops the piece by one row (manual). Ignore for 
@@ -425,7 +425,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
     // Locks the piece if it is on the ground, or soft-drops it 
@@ -538,7 +538,7 @@ public class TetrisGame {
             updateFallTimer, 
             updateLockTimer, 
             requestNewUpdateIn,
-            new LineClearMessage());
+            null);
     }
 
 
@@ -569,7 +569,7 @@ public class TetrisGame {
         boolean isTSpin = validTSpinIfLockedNow();
         int linesCleared = board.hardDrop();
         boolean isPerfectClear = board.isEmpty();
-        if (linesCleared == 4 || isTSpin) {
+        if (linesCleared == 4 || (isTSpin && linesCleared > 0)) {
             this.consecTetrisOrTSpin += 1;
             this.combo += 1;
         } else if (linesCleared > 0) {

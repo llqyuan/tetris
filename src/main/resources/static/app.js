@@ -1700,46 +1700,55 @@ function drawMessages(canvas, body) {
     var allClearRow = 3;
     var comboRow = 4;
 
-    var isTSpin = body.lineClearInfo.tspin;
-    var linesCleared = body.lineClearInfo.linesCleared;
-    var backtobacks = body.lineClearInfo.consecTetrisOrTSpin;
-    var isPerfectClear = body.lineClearInfo.perfectClear;
-    var combo = body.lineClearInfo.combo;
+    var isTSpin;
+    var linesCleared;
+    var backtobacks;
+    var isPerfectClear;
+    var combo;
+    
+    if (body.lineClearInfo != null) {
 
-    if (isTSpin) {
-        drawMessageOnRow(canvas, tspinMessage, tspinRow);
-        switch(linesCleared) {
-            case 1:
-                drawMessageOnRow(canvas, singleMessage, linesRow);
-                break;
-            case 2:
-                drawMessageOnRow(canvas, doubleMessage, linesRow);
-                break;
-            case 3:
-                drawMessageOnRow(canvas, tripleMessage, linesRow);
-                break;
+        isTSpin = body.lineClearInfo.tspin;
+        linesCleared = body.lineClearInfo.linesCleared;
+        backtobacks = body.lineClearInfo.consecTetrisOrTSpin;
+        isPerfectClear = body.lineClearInfo.perfectClear;
+        combo = body.lineClearInfo.combo;
+        
+        if (isTSpin) {
+            drawMessageOnRow(canvas, tspinMessage, tspinRow);
+            switch(linesCleared) {
+                case 1:
+                    drawMessageOnRow(canvas, singleMessage, linesRow);
+                    break;
+                case 2:
+                    drawMessageOnRow(canvas, doubleMessage, linesRow);
+                    break;
+                case 3:
+                    drawMessageOnRow(canvas, tripleMessage, linesRow);
+                    break;
+            }
+
+        } else if (linesCleared == 4) {
+            drawMessageOnRow(canvas, tetrisMessage, linesRow);
         }
 
-    } else if (linesCleared == 4) {
-        drawMessageOnRow(canvas, tetrisMessage, linesRow);
-    }
+        if (linesCleared > 0 && backtobacks >= 2) {
+            drawMessageOnRow(
+                canvas, 
+                backtobackMessage + " x" + String(backtobacks - 1),
+                backtobackRow);
+        }
 
-    if (linesCleared > 0 && backtobacks >= 2) {
-        drawMessageOnRow(
-            canvas, 
-            backtobackMessage + " x" + String(backtobacks - 1),
-            backtobackRow);
-    }
+        if (isPerfectClear) {
+            drawMessageOnRow(canvas, allClearMessage, allClearRow);
+        }
 
-    if (isPerfectClear) {
-        drawMessageOnRow(canvas, allClearMessage, allClearRow);
-    }
-
-    if (combo >= 2) {
-        drawMessageOnRow(
-            canvas, 
-            String(combo - 1) + " " + comboMessage, 
-            comboRow);
+        if (combo >= 2) {
+            drawMessageOnRow(
+                canvas, 
+                String(combo - 1) + " " + comboMessage, 
+                comboRow);
+        }
     }
 }
 
@@ -1793,7 +1802,7 @@ function sendGameStart() {
 }
 
 
-// Sends the trigger-timed-fall command to the server.
+// Sends the automatic-timed-fall command to the server.
 function sendTimedFall() {
     tetris.stompClient.send(
         "/app/timed-fall",
@@ -1803,7 +1812,7 @@ function sendTimedFall() {
 }
 
 
-// Sends the trigger-delayed-lock command to the server.
+// Sends the automatic-delayed-lock command to the server.
 function sendTimedLock() {
     tetris.stompClient.send(
         "/app/timed-lock",
@@ -1822,7 +1831,7 @@ function sendHardDrop() {
     );
 }
 
-// Sends the soft drop command to the server.
+// Sends the sonic drop command to the server.
 function sendSonicDrop() {
     tetris.stompClient.send(
         "/app/sonic-drop",
