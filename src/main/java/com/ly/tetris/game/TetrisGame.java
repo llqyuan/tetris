@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
 import com.ly.tetris.infostructs.TimerUpdateMessage;
+import com.ly.tetris.infostructs.LineClearMessage;
 import com.ly.tetris.infostructs.LocationPosn;
+import com.ly.tetris.infostructs.Movement;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
@@ -49,6 +51,17 @@ public class TetrisGame {
     // piece locks)
     private boolean heldButNotLocked;
 
+    // Number of consecutive line clears that were tspins or 
+    // tetrises. 
+    private int consecTetrisOrTSpin;
+
+    // Number of consecutive piece-locks that cleared lines.
+    private int combo;
+
+    // Last successful movement. Should be NOTHING immediately 
+    // after a piece is spawned, and before its first movement.
+    private Movement lastSuccessfulMovement;
+
     public TetrisGame() {
         this.board = new Board();
         this.score = 0;
@@ -61,6 +74,9 @@ public class TetrisGame {
         this.lockTime = 500;
         this.softDropTime = 100;
         this.heldButNotLocked = false;
+        this.consecTetrisOrTSpin = 0;
+        this.combo = 0;
+        this.lastSuccessfulMovement = Movement.NOTHING;
     }
 
     // ==================================================
@@ -74,19 +90,22 @@ public class TetrisGame {
     // * No game is currently running
     // Effects:
     // * Spawns a new piece on this.board
+    // * Sets the last successful movement to NOTHING
     public BoardUpdateMessage startingPieceSpawn(EventMessage event) 
     throws Exception {
         if (!board.spawn(next.produceAndRemoveNextPieceInQueue())) {
             throw new IllegalStateException(
                 "Unable to spawn a new piece at the start of the game.");
         }
+        this.lastSuccessfulMovement = Movement.NOTHING;
         return this.produceBoardUpdate(
             event, 
             true,
             false, 
             true, 
             false, 
-            this.fallInterval());
+            this.fallInterval(),
+            null);
     }
 
     // Moves the piece and returns information on the state of the 
@@ -96,9 +115,13 @@ public class TetrisGame {
     // sets a fall timer.
     // Effects:
     // * May move the piece in play left on this.board
+    // * If the piece moved, sets the last successful movement to LEFT
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveLeft();
+        if (succeeded) {
+            this.lastSuccessfulMovement = Movement.LEFT;
+        }
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
@@ -119,7 +142,8 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Moves the piece and return information on the state of the 
@@ -129,9 +153,13 @@ public class TetrisGame {
     // sets a fall timer.
     // Effects:
     // * May move the piece in play right on this.board
+    // * If the piece moved, sets the last successful movement to RIGHT
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveRight();
+        if (succeeded) {
+            this.lastSuccessfulMovement = Movement.RIGHT;
+        }
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
@@ -152,7 +180,8 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Rotates the piece clockwise and returns information on the state
@@ -162,10 +191,14 @@ public class TetrisGame {
     // ground before, cancels the lock timer and sets a new fall timer.
     // Effects:
     // * May rotate the piece in play on this.board
+    // * If the piece rotated, sets the last successful movement to ROTATE
     public BoardUpdateMessage rotateClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.rotate(RotationDirection.CLOCKWISE);
+        if (succeeded) {
+            this.lastSuccessfulMovement = Movement.ROTATE;
+        }
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
@@ -186,7 +219,8 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Rotates the piece clockwise and returns information on the state 
@@ -196,10 +230,14 @@ public class TetrisGame {
     // ground before, cancels the lock timer and sets a new fall timer.
     // Effects:
     // * May rotate the piece on this.board
+    // * If the piece rotated, sets the last successful movement to ROTATE
     public BoardUpdateMessage rotateCounterClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.rotate(RotationDirection.COUNTERCLOCKWISE);
+        if (succeeded) {
+            this.lastSuccessfulMovement = Movement.ROTATE;
+        }
         boolean inAirAfter = board.pieceIsInAir();
 
         boolean updateFallTimer = false;
@@ -220,12 +258,14 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Holds the piece. 
     // Effects:
     // * Holds the current piece on the board
+    // * Sets this.heldButNotLocked to true
     // * Sets the fall timer for a newly spawned piece
     public BoardUpdateMessage hold(EventMessage event)
     throws Exception {
@@ -236,7 +276,8 @@ public class TetrisGame {
                 false, 
                 false, 
                 false, 
-                -1);
+                -1,
+                null);
         }
         PieceName putInHold = board.removePieceFromPlay();
         PieceName spawnPiece;
@@ -254,7 +295,8 @@ public class TetrisGame {
                 false, 
                 true, 
                 false, 
-                this.fallInterval());
+                this.fallInterval(),
+                null);
         } else {
             return this.produceBoardUpdate(
                 event, 
@@ -262,7 +304,8 @@ public class TetrisGame {
                 true, 
                 false, 
                 false, 
-                -1);
+                -1,
+                null);
         }
     }
 
@@ -275,7 +318,8 @@ public class TetrisGame {
     // * May spawn a new piece on the board
     public BoardUpdateMessage hardDrop(EventMessage event)
     throws Exception {
-        board.hardDrop();
+        // board.hardDrop();
+        LineClearMessage lineClearInfo = this.hardDropAndCalculateBonuses();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
@@ -286,7 +330,8 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 false, 
                 false, 
-                -1);
+                -1,
+                lineClearInfo);
         } else if (board.pieceIsInAir()) {
             return this.produceBoardUpdate(
                 event, 
@@ -294,7 +339,8 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 true, 
                 false, 
-                this.fallInterval());
+                this.fallInterval(),
+                lineClearInfo);
         } else {
             return this.produceBoardUpdate(
                 event, 
@@ -302,7 +348,8 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 false, 
                 true, 
-                this.lockTime);
+                this.lockTime,
+                lineClearInfo);
         }
     }
 
@@ -312,10 +359,14 @@ public class TetrisGame {
     // Otherwise does not update the timer.
     // Effects:
     // * May move the piece down on this.board
+    // * If the piece moved down, sets the last successful movement to DOWN
     public BoardUpdateMessage sonicDrop(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         board.sonicDrop();
+        if (inAirBefore) {
+            this.lastSuccessfulMovement = Movement.DOWN;
+        }
 
         boolean updateFallTimer = false;
         boolean updateLockTimer = false;
@@ -330,7 +381,8 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Soft drops the piece by one row (manual). Ignore for 
@@ -343,11 +395,15 @@ public class TetrisGame {
     // updates neither timer.
     // Effects:
     // * May move the piece down on this.board
+    // * If the piece moved down, sets the last successful movement to DOWN
     public BoardUpdateMessage softDrop(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         if (this.softDropTime < this.fallInterval()) {
-            board.moveDown();
+            boolean successful = board.moveDown();
+            if (successful) {
+                this.lastSuccessfulMovement = Movement.DOWN;
+            }
         }
         boolean inAirAfter = board.pieceIsInAir();
 
@@ -368,14 +424,20 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
     }
 
     // Locks the piece if it is on the ground, or soft-drops it 
     // by one row if it is in the air (automatic).
+    // Effects:
+    // * Locks the piece or soft-drops it by one row
+    // * If the piece moved down by one row, sets the last successful movement 
+    //   to DOWN
     public BoardUpdateMessage automaticFallOrLock(EventMessage event)
     throws Exception {
         if (board.pieceIsInAir()) {
+            this.lastSuccessfulMovement = Movement.DOWN;
             return this.gravityDrop(event);
         } else {
             return this.automaticLock(event);
@@ -404,7 +466,8 @@ public class TetrisGame {
                 "The piece was in the air. gravityDrop() should have " +
                 "been called instead.");
         }
-        board.hardDrop();
+        // board.hardDrop();
+        LineClearMessage lineClearInfo = this.hardDropAndCalculateBonuses();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
@@ -415,23 +478,28 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 false, 
                 false, 
-                -1);
+                -1,
+                lineClearInfo);
         } else if (board.pieceIsInAir()) {
+            this.lastSuccessfulMovement = Movement.NOTHING;
             return this.produceBoardUpdate(
                 event, 
                 true, 
                 spawnUnsuccessful, 
                 true, 
                 false, 
-                this.fallInterval());
+                this.fallInterval(),
+                lineClearInfo);
         } else {
+            this.lastSuccessfulMovement = Movement.NOTHING;
             return this.produceBoardUpdate(
                 event, 
                 true, 
                 spawnUnsuccessful, 
                 false, 
                 true, 
-                this.lockTime);
+                this.lockTime,
+                lineClearInfo);
         }
     }
 
@@ -469,7 +537,53 @@ public class TetrisGame {
             false, 
             updateFallTimer, 
             updateLockTimer, 
-            requestNewUpdateIn);
+            requestNewUpdateIn,
+            null);
+    }
+
+
+    /* 
+    Returns true if all of the below are true, or false otherwise:
+    1. The piece in play is T
+    2. The last successful movement was a rotation
+    3. At least three squares adjacent to the center of the T
+       are occupied on the board
+    */
+    private boolean validTSpinIfLockedNow() {
+        boolean lastWasRotation = 
+            this.lastSuccessfulMovement == Movement.ROTATE;
+        boolean threeAreOccupied = 
+            board.pieceIsTAndThreeAdjacentToCenterAreOccupied();
+        return lastWasRotation && threeAreOccupied;
+    }
+
+    /* 
+    Drops the piece and returns the calculated LineClearMessage.
+    Effects:
+    * Hard-drops the piece
+    * Modifies the flag this.consecTetrisOrTSpin
+    * Modifies the flag this.consecLineClears
+    */
+    private LineClearMessage hardDropAndCalculateBonuses()
+    throws Exception {
+        boolean isTSpin = validTSpinIfLockedNow();
+        int linesCleared = board.hardDrop();
+        boolean isPerfectClear = board.isEmpty();
+        if (linesCleared == 4 || (isTSpin && linesCleared > 0)) {
+            this.consecTetrisOrTSpin += 1;
+            this.combo += 1;
+        } else if (linesCleared > 0) {
+            this.consecTetrisOrTSpin = 0;
+            this.combo += 1;
+        } else {
+            this.combo = 0;
+        }
+        return new LineClearMessage(
+            isTSpin, 
+            linesCleared, 
+            this.consecTetrisOrTSpin, 
+            this.combo,
+            isPerfectClear);
     }
 
     // Returns a message detailing the state of the board.
@@ -490,7 +604,8 @@ public class TetrisGame {
         boolean spawnWasUnsuccessful,
         boolean updateFallTimer,
         boolean updateLockTimer, 
-        int requestNewUpdateIn) 
+        int requestNewUpdateIn,
+        LineClearMessage lineClearInfo) 
     {
         PieceName inPlay = board.pieceInPlay();
         ArrayList<LocationPosn> squaresOfPieceInPlay = 
@@ -530,6 +645,7 @@ public class TetrisGame {
                 spawnWasUnsuccessful,
                 timerUpdate,
                 this.score,
+                lineClearInfo,
                 event.getKeyCommand()
             );
         return message;
