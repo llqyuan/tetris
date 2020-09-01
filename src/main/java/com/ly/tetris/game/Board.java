@@ -201,6 +201,19 @@ public class Board {
         return true;
     }
 
+    /*
+    Returns the number of lines that the piece would drop by if it were 
+    hard-dropped (or sonic-dropped) now.
+    */
+    public int distanceOfPieceToBottom() throws IllegalStateException {
+        if (inPlay == null) {
+            throw new IllegalStateException(
+                "Can't get the distance for a nonexistent piece.");
+        }
+        int currentRow = inPlay.getAbsolutePosition().row;
+        return dropToRow - currentRow;
+    }
+
 
     // =====================================
     // Public interface: Modifying the board

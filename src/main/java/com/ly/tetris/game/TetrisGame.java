@@ -18,8 +18,8 @@ public class TetrisGame {
     // Score.
     private int score;
 
-    // Level (1-15)
-    private int difficulty;
+    // Level (1-15 valid)
+    private int level;
 
     // Hold piece
     private PieceName hold;
@@ -52,10 +52,13 @@ public class TetrisGame {
     private boolean heldButNotLocked;
 
     // Number of consecutive line clears that were tspins or 
-    // tetrises. 
+    // tetrises. Starts at -1, so that the first Tetris or T-spin 
+    // increases this to 0.
     private int consecTetrisOrTSpin;
 
     // Number of consecutive piece-locks that cleared lines.
+    // Starts at -1, so that dropping the first line-clearing 
+    // piece increases this to 0.
     private int combo;
 
     // Last successful movement. Should be NOTHING immediately 
@@ -65,7 +68,7 @@ public class TetrisGame {
     public TetrisGame() {
         this.board = new Board();
         this.score = 0;
-        this.difficulty = 1;
+        this.level = 1;
         this.hold = PieceName.NOTHING;
         this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
@@ -74,8 +77,8 @@ public class TetrisGame {
         this.lockTime = 500;
         this.softDropTime = 100;
         this.heldButNotLocked = false;
-        this.consecTetrisOrTSpin = 0;
-        this.combo = 0;
+        this.consecTetrisOrTSpin = -1;
+        this.combo = -1;
         this.lastSuccessfulMovement = Movement.NOTHING;
     }
 
@@ -314,15 +317,18 @@ public class TetrisGame {
     // Otherwise tells the browser to end the game.
     // Effects:
     // * Hard drops the current piece on the board
+    // * Updates the score
     // * Resets the flag this.heldButNotLocked
     // * May spawn a new piece on the board
     public BoardUpdateMessage hardDrop(EventMessage event)
     throws Exception {
         // board.hardDrop();
+        int distanceDropped = board.distanceOfPieceToBottom();
         LineClearMessage lineClearInfo = this.hardDropAndCalculateBonuses();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
+        this.updateScore(lineClearInfo, false, true, 0, distanceDropped);
         if (spawnUnsuccessful) {
             return this.produceBoardUpdate(
                 event, 
@@ -358,10 +364,12 @@ public class TetrisGame {
     // and set the lock timer.
     // Otherwise does not update the timer.
     // Effects:
+    // * Updates the score
     // * May move the piece down on this.board
     // * If the piece moved down, sets the last successful movement to DOWN
     public BoardUpdateMessage sonicDrop(EventMessage event)
     throws Exception {
+        int distanceDropped = board.distanceOfPieceToBottom();
         boolean inAirBefore = board.pieceIsInAir();
         board.sonicDrop();
         if (inAirBefore) {
@@ -375,6 +383,8 @@ public class TetrisGame {
             updateLockTimer = true;
             requestNewUpdateIn = this.lockTime;
         }
+        this.updateScore(
+            new LineClearMessage(), true, false, distanceDropped, 0);
         return this.produceBoardUpdate(
             event, 
             false, 
@@ -385,7 +395,7 @@ public class TetrisGame {
             null);
     }
 
-    // Soft drops the piece by one row (manual). Ignore for 
+    // [unused] Soft drops the piece by one row (manual). Ignore for 
     // certain levels (where a piece's fall from softdropping is 
     // slower than the fall from gravity alone).
     // If the piece is in the air afterwards, resets the fall timer.
@@ -455,6 +465,7 @@ public class TetrisGame {
     // Requires:
     // * The piece in play is on the ground
     // Effects:
+    // * Updates the score
     // * Locks the current piece on the board
     // * Resets the flag this.heldButNotLocked
     // * Spawns a new piece on the board
@@ -471,6 +482,7 @@ public class TetrisGame {
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
+        this.updateScore(lineClearInfo, false, false, 0, 0);
         if (spawnUnsuccessful) {
             return this.produceBoardUpdate(
                 event, 
@@ -573,10 +585,10 @@ public class TetrisGame {
             this.consecTetrisOrTSpin += 1;
             this.combo += 1;
         } else if (linesCleared > 0) {
-            this.consecTetrisOrTSpin = 0;
+            this.consecTetrisOrTSpin = -1;
             this.combo += 1;
         } else {
-            this.combo = 0;
+            this.combo = -1;
         }
         return new LineClearMessage(
             isTSpin, 
@@ -584,6 +596,102 @@ public class TetrisGame {
             this.consecTetrisOrTSpin, 
             this.combo,
             isPerfectClear);
+    }
+
+
+    /*
+    Updates the score. Scoring mimics that of recent Tetris Guideline-adherent
+    games as closely as possible.
+    The value of distanceSonicDropped does not matter if sonicDropped is false.
+    The value of distanceHardDropped does not matter if hardDropped is false.
+    
+    Requires:
+    * lineClearInfo is not null
+    Effects:
+    * Modifies this.score
+    */
+    private void updateScore(
+        LineClearMessage lineClearInfo, 
+        boolean sonicDropped,
+        boolean hardDropped,
+        int distanceSonicDropped,
+        int distanceHardDropped)
+    throws NullPointerException
+    {
+        if (lineClearInfo == null) {
+            throw new NullPointerException("lineClearInfo is null.");
+        }
+
+        int addToScore = 0;
+
+        final int lines = lineClearInfo.getLinesCleared();
+        final int backToBacks = lineClearInfo.getConsecTetrisOrTSpin();
+        final int combo = lineClearInfo.getCombo();
+        final boolean isTSpin = lineClearInfo.getTSpin();
+        
+        if (!isTSpin) {
+            switch (lines) {
+                case 1:
+                    addToScore += 100 * this.level;
+                    break;
+                case 2:
+                    addToScore += 300 * this.level;
+                    break;
+                case 3:
+                    addToScore += 500 * this.level;
+                    break;
+                case 4:
+                    if (backToBacks >= 1) {
+                        addToScore += 1200 * this.level;
+                    } else {
+                        addToScore += 800 * this.level;
+                    }
+                    break;
+            }
+
+        } else if (backToBacks >= 1) {
+            switch (lines) {
+                case 0:
+                    addToScore += 600 * this.level;
+                case 1:
+                    addToScore += 1200 * this.level;
+                    break;
+                case 2:
+                    addToScore += 1800 * this.level;
+                    break;
+                case 3:
+                    addToScore += 2400 * this.level;
+                    break;
+            }
+
+        } else {
+            switch (lines) {
+                case 0:
+                    addToScore += 400 * this.level;
+                case 1:
+                    addToScore += 800 * this.level;
+                    break;
+                case 2:
+                    addToScore += 1200 * this.level;
+                    break;
+                case 3:
+                    addToScore += 1600 * this.level;
+                    break;
+            }
+        }
+    
+        if (combo >= 1) {
+            addToScore += 50 * combo;
+        }
+
+        if (sonicDropped) {
+            addToScore += distanceSonicDropped;
+
+        } else if (hardDropped) {
+            addToScore += distanceHardDropped;
+        }
+
+        this.score += addToScore;
     }
 
     // Returns a message detailing the state of the board.
@@ -651,35 +759,36 @@ public class TetrisGame {
         return message;
     }
 
-    // Returns the interval between successive commands to 
-    // automatically drop the piece by one block, depending on
-    // the current difficulty.
+    /*
+    Returns the interval between successive commands to 
+    automatically drop the piece by one block, depending on
+    the current level.
+
+    Formula from Tetris Worlds for time spent per row in 
+    milliseconds:
+
+    1000 * (0.8 - 0.007 (Level - 1)) ^ (Level - 1) 
+
+    1: 1000
+    2: 793
+    3: 618 (rounded up from 617.796)
+    4: 473 (rounded up from ~472.73)
+    5: 355 (rounded down from ~355.196)
+    6: 262 (rounded down from ~262.004)
+    7: 190 (rounded up from ~189.68)
+    8: 135 (rounded up from ~134.735)
+    9: 94 (rounded up from ~93.882)
+    10: 64 (rounded down from ~64.158)
+    11: 43 (rounded up from ~42.976)
+    12: 28 (rounded down from ~28.218)
+    13: 18 (rounded down from ~18.153)
+    14: 11 (rounded down from ~11.439)
+    15: 7 (rounded down from ~7.059)
+
+    Problem: higher levels would be less stable because of the connection
+    being swamped by automatic-drop requests
+    */
     private int fallInterval() {
-        /*
-        Formula from Tetris Worlds for time spent per row in 
-        milliseconds:
-
-        1000 * (0.8 - 0.007 (Level - 1)) ^ (Level - 1) 
-
-        1: 1000
-        2: 793
-        3: 618 (rounded up from 617.796)
-        4: 473 (rounded up from ~472.73)
-        5: 355 (rounded down from ~355.196)
-        6: 262 (rounded down from ~262.004)
-        7: 190 (rounded up from ~189.68)
-        8: 135 (rounded up from ~134.735)
-        9: 94 (rounded up from ~93.882)
-        10: 64 (rounded down from ~64.158)
-        11: 43 (rounded up from ~42.976)
-        12: 28 (rounded down from ~28.218)
-        13: 18 (rounded down from ~18.153)
-        14: 11 (rounded down from ~11.439)
-        15: 7 (rounded down from ~7.059)
-
-        Problem: higher levels would be less stable because of the connection
-        being swamped by automatic-drop requests
-        */
         return 1000;
     }
 }

@@ -1732,10 +1732,10 @@ function drawMessages(canvas, body) {
             drawMessageOnRow(canvas, tetrisMessage, linesRow);
         }
 
-        if (linesCleared > 0 && backtobacks >= 2) {
+        if (linesCleared > 0 && backtobacks >= 1) {
             drawMessageOnRow(
                 canvas, 
-                backtobackMessage + " x" + String(backtobacks - 1),
+                backtobackMessage + " x" + String(backtobacks),
                 backtobackRow);
         }
 
@@ -1743,13 +1743,19 @@ function drawMessages(canvas, body) {
             drawMessageOnRow(canvas, allClearMessage, allClearRow);
         }
 
-        if (combo >= 2) {
+        if (combo >= 1) {
             drawMessageOnRow(
                 canvas, 
-                String(combo - 1) + " " + comboMessage, 
+                String(combo) + " " + comboMessage, 
                 comboRow);
         }
     }
+}
+/*
+(Helper function) Updates the score.
+*/
+function showMostRecentScore(body) {
+    
 }
 
 
