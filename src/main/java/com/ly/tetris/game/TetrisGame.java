@@ -688,7 +688,7 @@ public class TetrisGame {
             addToScore += distanceSonicDropped;
 
         } else if (hardDropped) {
-            addToScore += distanceHardDropped;
+            addToScore += 2 * distanceHardDropped;
         }
 
         this.score += addToScore;

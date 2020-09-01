@@ -21,6 +21,11 @@ body {
     overflow: hidden;
 }
 
+#score {
+    position: relative;
+    margin: auto;
+}
+
 #start-overlay {
     position: fixed;
     display: block;
@@ -49,6 +54,9 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
+    background-color: #ffffff;
+    display: inline-block;
+    padding: 10px;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
