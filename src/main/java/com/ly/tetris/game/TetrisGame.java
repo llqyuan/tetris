@@ -444,6 +444,7 @@ public class TetrisGame {
     // * Locks the piece or soft-drops it by one row
     // * If the piece moved down by one row, sets the last successful movement 
     //   to DOWN
+    // * Updates the score
     public BoardUpdateMessage automaticFallOrLock(EventMessage event)
     throws Exception {
         if (board.pieceIsInAir()) {
