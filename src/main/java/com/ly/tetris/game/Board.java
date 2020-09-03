@@ -22,6 +22,7 @@ Board manages the status of the game board.
 The following responsibilities are delegated to Board:
 
  * Maintaining a list of squares that are occupied by the Tetris stack
+ * Storing the piece in play
  * Determining whether an attempted move of the piece in play 
    is legal
  * Storing the relative location of the hard drop ghost
