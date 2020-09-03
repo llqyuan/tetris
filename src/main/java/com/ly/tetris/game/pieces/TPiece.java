@@ -7,6 +7,10 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
+/*
+TPiece implements Piece as appropriate for a T tetromino.
+*/
+
 public class TPiece extends Piece {
     // A 3x3 grid, representing the field around the piece. 
     // The upper left corner is (0,0). 
@@ -115,7 +119,8 @@ public class TPiece extends Piece {
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
                 if ( (!(r == 1 && c == 1)) && (!localFieldOccupied[r][c]) ) {
-                    adjacent.add(absolutePosition.add(new OffsetPosn(r, c)));
+                    adjacent.add(
+                        this.getAbsolutePosition().add(new OffsetPosn(r, c)));
                 }
             }
         }

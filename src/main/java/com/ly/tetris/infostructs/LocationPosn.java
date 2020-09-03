@@ -1,6 +1,11 @@
 package com.ly.tetris.infostructs;
 
-// Position used to describe the location of a piece.
+
+/*
+LocationPosn implements Posn for 2-dimensional positions describing the 
+position of a piece.
+*/
+
 public class LocationPosn extends Posn {
     // Constructor
     public LocationPosn(int r, int c) {

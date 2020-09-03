@@ -10,6 +10,20 @@ import com.ly.tetris.infostructs.Movement;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
+/*
+TetrisGame maintains the state of the game as a whole. 
+It manages the game's internal decisions.
+
+The following responsibilities are delegated to TetrisGame:
+ * Storing and updating the score 
+ * Storing and updating the level
+ * Storing and updating the status of the hold piece, including whether 
+   or not it can be switched out
+ * Determining whether the criteria for combos and bonuses have been met
+ * Determining the length of time between consecutive gravity-related piece drops
+ * Creating BoardUpdateMessages to communicate with the controller
+*/
+
 public class TetrisGame {
 
     // Game board.
@@ -18,7 +32,7 @@ public class TetrisGame {
     // Score.
     private int score;
 
-    // Level (1-15 valid)
+    // Level (1-15 valid, 1 used; see documentation for fallInterval())
     private int level;
 
     // Hold piece
@@ -444,6 +458,7 @@ public class TetrisGame {
     // * Locks the piece or soft-drops it by one row
     // * If the piece moved down by one row, sets the last successful movement 
     //   to DOWN
+    // * If the piece was locked, resets the flag this.heldButNotLocked
     // * Updates the score
     public BoardUpdateMessage automaticFallOrLock(EventMessage event)
     throws Exception {
@@ -705,6 +720,7 @@ public class TetrisGame {
     // * updateFallTimer, updateLockTimer, and requestNewUpdateIn 
     //   are as described in TimerUpdateMessage and are meant to 
     //   be passed to a TimerUpdateMessage constructor.
+    // * lineClearInfo is the message produced by hardDropAndCalculateBonuses
     // Effects:
     // * Updates previousBoardCopy
     private BoardUpdateMessage produceBoardUpdate(

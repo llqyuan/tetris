@@ -7,8 +7,14 @@ import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
 import com.ly.tetris.infostructs.KeyCommand;
 
+
+/*
+Implements the Controller portion of the Model-View-Controller 
+design pattern.
+*/
+
 @Controller
-public class PlayerController {
+public class TetrisController {
 
     private TetrisGame game;
     

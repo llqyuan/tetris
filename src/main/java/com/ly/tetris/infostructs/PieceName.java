@@ -1,7 +1,10 @@
 package com.ly.tetris.infostructs;
 
 
-// Names of pieces.
+/*
+PieceName lists the names of the tetrominoes.
+*/
+
 public enum PieceName{
     I,
     O,
