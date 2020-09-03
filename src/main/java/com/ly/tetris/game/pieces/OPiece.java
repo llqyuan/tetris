@@ -6,6 +6,10 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
+/*
+OPiece implements Piece as appropriate for an O tetromino.
+*/
+
 public class OPiece extends Piece {
     // A grid 4 units wide and 3 units tall, representing the field 
     // around the piece. The upper left corner is (0,0). 

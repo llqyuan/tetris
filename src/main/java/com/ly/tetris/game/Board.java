@@ -16,6 +16,21 @@ import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
+
+/*
+Board manages the status of the game board.
+The following responsibilities are delegated to Board:
+
+ * Maintaining a list of squares that are occupied by the Tetris stack
+ * Determining whether an attempted move of the piece in play 
+   is legal
+ * Storing the relative location of the hard drop ghost
+ * Checking 2/3 of the criteria for determining that a T-spin was 
+   performed, which require information that is only directly 
+   accessible by Board. The method is intended to be a helper for the 
+   T-spin-check method in TetrisGame
+*/
+
 public class Board {
     // ==============
     // Fields

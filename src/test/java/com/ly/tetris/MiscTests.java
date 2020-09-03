@@ -6,21 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.OffsetPosn;
-import com.ly.tetris.game.pieces.IPiece;
 
 public class MiscTests {
-    @Test
-    public void absolutePositionOfPieceNotModifiableThroughGetter() {
-        IPiece piece = new IPiece();
-        LocationPosn before = piece.getAbsolutePosition();
-        before.row += 1;
-        before.col -= 1;
-        LocationPosn after = piece.getAbsolutePosition();
-        assertNotEquals(
-            before, after, 
-            "Absolute position was modified " +
-            "through getAbsolutePosition().");
-    }
 
     @Test
     public void twoEqualPosnsAreEqual() {

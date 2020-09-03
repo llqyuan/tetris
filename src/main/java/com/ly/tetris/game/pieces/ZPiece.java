@@ -6,6 +6,10 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
+/*
+ZPiece implements Piece as appropriate for a Z tetromino.
+*/
+
 public class ZPiece extends Piece {
     // A 3x3 grid, representing the field around the piece. 
     // The upper left corner is (0,0). 

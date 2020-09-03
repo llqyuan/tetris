@@ -1,5 +1,11 @@
 package com.ly.tetris.infostructs;
 
+
+/*
+EventMessage contains information on player commands, 
+sent to the controller by the browser.
+*/
+
 public class EventMessage {
     private KeyCommand keyCommand;
     

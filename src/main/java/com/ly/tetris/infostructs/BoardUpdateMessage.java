@@ -3,6 +3,12 @@ package com.ly.tetris.infostructs;
 import java.util.ArrayList;
 import com.ly.tetris.game.Square;
 
+
+/*
+BoardUpdateMessage contains information on the status of the game,
+sent to the browser by the controller.
+*/
+
 public class BoardUpdateMessage {
 
     private PieceName pieceInPlay;

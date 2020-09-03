@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.ListIterator;
 import com.ly.tetris.infostructs.PieceName;
 
+
+/*
+NextPiecesQueue controls the flow of the queue of pieces to spawn.
+It automatically refills its queue if there are too few in it.
+*/
+
 public class NextPiecesQueue {
     private ArrayList<PieceName> next;
 

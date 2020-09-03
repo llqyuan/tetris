@@ -1,6 +1,10 @@
 package com.ly.tetris.infostructs;
 
-// 2-dimensional position.
+
+/*
+Posn defines the implementation for a 2-dimensional position.
+*/
+
 public abstract class Posn {
     public int row;
     public int col;

@@ -1,6 +1,11 @@
 package com.ly.tetris.infostructs;
 
-// Position used to describe an offset to a LocationPosn.
+
+/*
+OffsetPosn implements Posn for a 2-dimensional position used to 
+describe an offset to a LocationPosn.
+*/
+
 public class OffsetPosn extends Posn {
     // Constructor
     public OffsetPosn(int r, int c) {

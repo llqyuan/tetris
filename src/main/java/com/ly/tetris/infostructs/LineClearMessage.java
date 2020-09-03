@@ -1,5 +1,11 @@
 package com.ly.tetris.infostructs;
 
+
+/*
+LineClearMessage contains information on the number of lines cleared when 
+a piece is locked.
+*/
+
 public class LineClearMessage {
     private boolean tspin;
     private int lines;

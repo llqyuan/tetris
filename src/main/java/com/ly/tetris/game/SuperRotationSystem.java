@@ -6,17 +6,20 @@ import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
 /*
+
+SuperRotationSystem determines the list of wall kicks to use 
+for an attempted rotation, following the Super Rotation System.
     
 Interpret language from Tetris wiki:
 
 Rotation state:
-* "spawn state": upright
-* "right": right
-* "state resulting from two successive rotations": upside down
-* "left": left
+ * "spawn state": UPRIGHT
+ * "right": RIGHT
+ * "state resulting from two successive rotations": UPSIDEDOWN
+ * "left": LEFT
 
 Wall kick direction:
-* (x, y) in coordinates is equivalent to (-y, x) for a OffsetPosn.
+ * (x, y) in coordinates is equivalent to (-y, x) for a OffsetPosn.
 
 */
 

@@ -2,6 +2,11 @@ package com.ly.tetris.game;
 
 import com.ly.tetris.infostructs.PieceName;
 
+
+/*
+Square stores the information of a single square on the board.
+*/
+
 public class Square {
     // Contains the name of the piece that's occupying this square.
     public PieceName occupiedBy;

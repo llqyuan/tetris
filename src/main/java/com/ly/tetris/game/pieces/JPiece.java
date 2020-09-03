@@ -6,6 +6,10 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
+/*
+JPiece implements Piece as appropriate for a J tetromino.
+*/
+
 public class JPiece extends Piece {
     // A 3x3 grid, representing the field around the piece. 
     // The upper left corner is (0,0). 
