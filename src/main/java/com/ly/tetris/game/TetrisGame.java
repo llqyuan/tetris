@@ -704,6 +704,7 @@ public class TetrisGame {
     // * updateFallTimer, updateLockTimer, and requestNewUpdateIn 
     //   are as described in TimerUpdateMessage and are meant to 
     //   be passed to a TimerUpdateMessage constructor.
+    // * lineClearInfo is the message produced by hardDropAndCalculateBonuses
     // Effects:
     // * Updates previousBoardCopy
     private BoardUpdateMessage produceBoardUpdate(

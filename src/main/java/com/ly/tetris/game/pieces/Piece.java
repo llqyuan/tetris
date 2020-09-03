@@ -7,15 +7,29 @@ import com.ly.tetris.infostructs.LocationPosn;
 import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
+import com.ly.tetris.infostructs.RotationDirection;
+
+/*
+Piece defines the implementation for the 7 Tetris pieces. The following 
+responsibilities are delegated to the piece classes:
+
+ * Storing the shape of the piece
+ * Storing the location and orientation of the piece
+ * Determining the new shape of the piece after rotation
+*/
 
 public abstract class Piece {
     // The absolute position of the piece. It represents the upper left 
     // corner of the piece's local field of occupied squares (shape of 
     // field depends on the piece -- eg. 4x4 for I, 3x3 for L)
-    protected LocationPosn absolutePosition = null;
+    private LocationPosn absolutePosition = null;
 
     // The orientation of the piece.
     private PieceOrientation orientation = PieceOrientation.UPRIGHT;
+
+    // ===================================================
+    // Public interface
+    // ===================================================
 
     // Constructor. Sets absolute position to (r, c)
     public Piece(int r, int c, PieceOrientation o) {
@@ -28,22 +42,13 @@ public abstract class Piece {
         return this.nameOfPiece();
     }
 
-    // Getter for the piece's absolute position. 
-    // (Returns a copy, so the client can't modify it)
-    public final LocationPosn getAbsolutePosition() {
-        return new LocationPosn(absolutePosition);
-    }
-
-    // Sets the piece's absolute position to posn.
-    // Requires: posn is not null
-    public final void setAbsolutePosition(LocationPosn posn) 
-    throws NullPointerException 
-    {
-        if (posn == null) {
-            throw new NullPointerException("Passed posn is null.");
-        }
-        absolutePosition.row = posn.row;
-        absolutePosition.col = posn.col;
+    /* 
+    Move the piece down by diffr and right by diffc.
+    Effects:
+    * Modifies the piece
+    */
+    public final void movePieceBy(int diffr, int diffc) {
+        absolutePosition = absolutePosition.add(new OffsetPosn(diffr, diffc));
     }
 
     // Rotate the piece counterclockwise by 90 degrees.
@@ -134,7 +139,7 @@ public abstract class Piece {
         }
     }
 
-    // Returns an arraylist of posns that will be occupied on the board 
+    // Returns an arraylist of posns that would be occupied on the board 
     // if the piece were to be rotated clockwise.
     public final ArrayList<LocationPosn> squaresOccupiedIfRotatedClockwise() {
         ArrayList<LocationPosn> absoluteOccupied = new ArrayList<LocationPosn>();
@@ -146,7 +151,7 @@ public abstract class Piece {
         return absoluteOccupied;
     }
 
-    // Returns an arraylist of posns that will be occupied on the board 
+    // Returns an arraylist of posns that would be occupied on the board 
     // if the piece were to be rotated counterclockwise.
     public final ArrayList<LocationPosn> squaresOccupiedIfRotatedCounterClockwise() {
         ArrayList<LocationPosn> absoluteOccupied = new ArrayList<LocationPosn>();
@@ -159,8 +164,50 @@ public abstract class Piece {
         return absoluteOccupied;
     }
 
+    /*
+    Returns an arraylist of posns that would be occupied on the board 
+    if the piece were to be moved down by diffr and right by diffc.
+    */
+    public final ArrayList<LocationPosn> 
+    squaresOccupiedIfMoved(int diffr, int diffc) {
+        ArrayList<LocationPosn> occupiedBeforeMove = 
+            this.squaresOccupiedNow();
+        return this.offsetList(occupiedBeforeMove, new OffsetPosn(diffr, diffc));
+    }
+
+    /*
+    Returns an arraylist of posns that would be occupied on the board 
+    if the piece were to be moved down by diffr, right by diffc, 
+    and rotated in the direction rotateInDirection.
+    */
+    public final ArrayList<LocationPosn>
+    squaresOccupiedIfMovedAndRotated(
+        int diffr, 
+        int diffc, 
+        RotationDirection rotateInDirection)
+    {
+        ArrayList<LocationPosn> occupiedIfRotated;
+        if (rotateInDirection == RotationDirection.CLOCKWISE) {
+            occupiedIfRotated = this.squaresOccupiedIfRotatedClockwise();
+        } else {
+            occupiedIfRotated = this.squaresOccupiedIfRotatedCounterClockwise();
+        }
+        ArrayList<LocationPosn> occupiedIfMovedAndRotated = 
+            this.offsetList(occupiedIfRotated, new OffsetPosn(diffr, diffc));
+        return occupiedIfMovedAndRotated;
+    }
+
     // ========================================
-    // Helper methods
+    // Interface provided only for child classes
+    // ========================================
+
+    // Returns a copy of the position of the piece.
+    protected final LocationPosn getAbsolutePosition() {
+        return new LocationPosn(absolutePosition);
+    }
+
+    // ========================================
+    // Private/protected helper methods
     // ========================================
 
     // Returns the name of the piece. (Protected virtual helper)
@@ -180,14 +227,26 @@ public abstract class Piece {
     protected abstract ArrayList<OffsetPosn> occupiedNow();
 
     // Returns an arraylist of posns, representing squares relative to 
-    // the piece's absolute position, that will be occupied if the 
+    // the piece's absolute position, that would be occupied if the 
     // piece were to be rotated clockwise.
     // (Protected virtual helper)
     protected abstract ArrayList<OffsetPosn> occupiedIfRotatedClockwise();
 
     // Returns an arraylist of posns, representing squares relative to 
-    // the piece's absolute position, that will be occupied if the 
+    // the piece's absolute position, that would be occupied if the 
     // piece were to be rotated counterclockwise.
     // (Protected virtual helper)
     protected abstract ArrayList<OffsetPosn> occupiedIfRotatedCounterClockwise();
+
+    // Returns a list obtained from original by applying an offset 
+    // of offsetBy to each entry.
+    private ArrayList<LocationPosn> 
+    offsetList(ArrayList<LocationPosn> original, OffsetPosn offsetBy) {
+        ArrayList<LocationPosn> offset  = new ArrayList<LocationPosn>();
+        ListIterator<LocationPosn> iterOriginal = original.listIterator();
+        while (iterOriginal.hasNext()) {
+            offset.add(iterOriginal.next().add(offsetBy));
+        }
+        return offset;
+    }
 }

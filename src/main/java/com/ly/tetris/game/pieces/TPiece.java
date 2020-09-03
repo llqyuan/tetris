@@ -115,7 +115,8 @@ public class TPiece extends Piece {
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
                 if ( (!(r == 1 && c == 1)) && (!localFieldOccupied[r][c]) ) {
-                    adjacent.add(absolutePosition.add(new OffsetPosn(r, c)));
+                    adjacent.add(
+                        this.getAbsolutePosition().add(new OffsetPosn(r, c)));
                 }
             }
         }

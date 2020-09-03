@@ -31,11 +31,9 @@ public class Board {
     // new one.
     private Piece inPlay;
 
-    // (drowToRow, [current column]) is where the piece currently 
-    // in play would be on the board if dropped.
-    // Should be correct at the beginning and end of every 
-    // public function if a piece is in play.
-    private int dropToRow;
+    // The number of squares that the piece would drop by 
+    // if it were hard-dropped now.
+    private int hardDropPieceBy;
 
     // ================
     // Constructors
@@ -123,13 +121,9 @@ public class Board {
     public ArrayList<LocationPosn> squaresOccupiedByHardDropGhost() {
         if (inPlay == null) {
             return new ArrayList<LocationPosn>();
+        } else {
+            return inPlay.squaresOccupiedIfMoved(hardDropPieceBy, 0);
         }
-        LocationPosn posnOfPieceInPlay = inPlay.getAbsolutePosition();
-        OffsetPosn offset = 
-            new OffsetPosn(this.dropToRow - posnOfPieceInPlay.row, 0);
-        ArrayList<LocationPosn> squaresOccupiedByGhost = 
-            this.offsetList(inPlay.squaresOccupiedNow(), offset);
-        return squaresOccupiedByGhost;
     }
 
     // Returns the (row, col) coordinates of the squares on the board 
@@ -151,12 +145,12 @@ public class Board {
     // Returns true if there is a piece in play and it is in the 
     // air, and false otherwise.
     // Requires:
-    // * dropToRow is up to date
+    // * hardDropPieceBy is up to date
     public boolean pieceIsInAir() {
-        if (inPlay != null) {
-            return dropToRow > inPlay.getAbsolutePosition().row;
-        } else {
+        if (inPlay == null) {
             return false;
+        } else {
+            return hardDropPieceBy > 0;
         }
     }
 
@@ -204,14 +198,16 @@ public class Board {
     /*
     Returns the number of lines that the piece would drop by if it were 
     hard-dropped (or sonic-dropped) now.
+
+    Requires:
+    * There is a piece in play (otherwise hardDropPieceBy would be invalid)
     */
     public int distanceOfPieceToBottom() throws IllegalStateException {
         if (inPlay == null) {
             throw new IllegalStateException(
                 "Can't get the distance for a nonexistent piece.");
         }
-        int currentRow = inPlay.getAbsolutePosition().row;
-        return dropToRow - currentRow;
+        return hardDropPieceBy;
     }
 
 
@@ -223,6 +219,7 @@ public class Board {
     // in play, or NOTHING if no piece was in play.
     // Effects:
     // * Removes the current piece from play, if there was one.
+    // * hardDropPieceBy becomes invalid until a new piece is spawned.
     public PieceName removePieceFromPlay() {
         PieceName piece = PieceName.NOTHING;
         if (inPlay != null) {
@@ -238,7 +235,7 @@ public class Board {
     // * there is a piece in play
     // Effects:
     // * May modify board
-    // * Updates dropToRow if the piece was successfully moved
+    // * Updates hardDropPieceBy if the piece was successfully moved
     public boolean moveLeft() throws IllegalStateException {
         return this.moveDirection(0, -1);
     }
@@ -249,7 +246,7 @@ public class Board {
     // * there is a piece in play
     // Effects:
     // * May modify the board
-    // * Updates dropToRow if the piece was successfully moved
+    // * Updates hardDropPieceBy if the piece was successfully moved
     public boolean moveRight() throws IllegalStateException {
         return this.moveDirection(0, 1);
     }
@@ -260,7 +257,7 @@ public class Board {
     // * there is a piece in play
     // Effects:
     // * May modify the board
-    // * Updates dropToRow if the piece was successfully moved
+    // * Updates hardDropPieceBy if the piece was successfully moved
     public boolean moveDown() throws IllegalStateException {
         return this.moveDirection(1, 0);
     }
@@ -273,6 +270,7 @@ public class Board {
     // * Modifies the board.
     // * Removes the current piece in play from play, after which 
     //   no piece will be falling.
+    // * hardDropPieceBy becomes invalid until a new piece is spawned.
     public int hardDrop() throws IllegalStateException {
         if (inPlay != null) {
             movePieceToBottom();
@@ -289,6 +287,7 @@ public class Board {
     // Sonic-drops the current piece, if one is in play.
     // Effects:
     // * Modifies the board
+    // * Updates hardDropPieceBy
     public void sonicDrop() {
         if (inPlay != null) {
             movePieceToBottom();
@@ -302,7 +301,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * Updates dropToRow if the piece is successfully spawned
+    // * Updates hardDropPieceBy if the piece is successfully spawned
     public boolean spawn(PieceName piece) 
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -338,7 +337,7 @@ public class Board {
         }
         if (this.pieceCanOccupyCurrentLocation(newlySpawned)) {
             inPlay = newlySpawned;
-            this.updateDropToRow();
+            this.updateHardDropPieceBy();
             return true;
         } else {
             return false;
@@ -354,7 +353,7 @@ public class Board {
     // * piece is not NOTHING
     // Effects:
     // * May modify the board by spawning a new piece
-    // * Updates dropToRow if the piece is successfully spawned
+    // * Updates hardDropPieceBy if the piece is successfully spawned
     public boolean spawn(PieceName piece, int r, int c)
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -390,7 +389,7 @@ public class Board {
         }
         if (this.pieceCanOccupyCurrentLocation(newlySpawned)) {
             inPlay = newlySpawned;
-            this.updateDropToRow();
+            this.updateHardDropPieceBy();
             return true;
         } else {
             return false;
@@ -405,7 +404,7 @@ public class Board {
     // * the piece in play is not null.
     // Effects: 
     // * May modify the board.
-    // * Updates dropToRow if the piece is successfully rotated
+    // * Updates hardDropPieceBy if the piece is successfully rotated
     public boolean rotate(RotationDirection direction) 
     throws NullPointerException, IllegalStateException
     {
@@ -414,22 +413,17 @@ public class Board {
 
         if (inPlay == null) {
             throw new NullPointerException(
-                "Tried to rotate a nonexistent falling piece.");
+                "Tried to rotate a nonexistent piece.");
         }
 
-        ArrayList<LocationPosn> occupiedBeforeKick;
         ArrayList<OffsetPosn> tryOffsets;
         if (direction == RotationDirection.CLOCKWISE) {
-            occupiedBeforeKick = 
-                inPlay.squaresOccupiedIfRotatedClockwise();
             tryOffsets = SuperRotationSystem.kicksToAttempt(
                 inPlay.name(), 
                 inPlay.orientationNow(), 
                 inPlay.orientationIfRotatedClockwise()
             );
         } else {
-            occupiedBeforeKick = 
-                inPlay.squaresOccupiedIfRotatedCounterClockwise();
             tryOffsets = SuperRotationSystem.kicksToAttempt(
                 inPlay.name(), 
                 inPlay.orientationNow(), 
@@ -443,20 +437,21 @@ public class Board {
         while (iterTryOffset.hasNext()) {
 
             OffsetPosn offset = iterTryOffset.next();
-            ArrayList<LocationPosn> occupiedAfterKick = 
-                this.offsetList(occupiedBeforeKick, offset);
+            ArrayList<LocationPosn> occupiedAfterRotateAndKick = 
+                inPlay.squaresOccupiedIfMovedAndRotated(
+                    offset.row, offset.col, direction);
 
-            if (occupiedAfterKick.size() != 4) {
+            if (occupiedAfterRotateAndKick.size() != 4) {
                 throw new IllegalStateException(
                     ("Piece occupies xxx squares after rotating and " + 
                     "wall-kicking, expected 4.")
                     .replaceFirst(
                         "xxx", 
-                        Integer.toString(occupiedAfterKick.size())));
+                        Integer.toString(occupiedAfterRotateAndKick.size())));
             }
 
-            if (this.posnsInRange(occupiedAfterKick) && 
-                this.squaresAreFree(occupiedAfterKick)) 
+            if (this.posnsInRange(occupiedAfterRotateAndKick) && 
+                this.squaresAreFree(occupiedAfterRotateAndKick)) 
             {
                 validRotation = true;
                 useOffset = offset;
@@ -471,10 +466,8 @@ public class Board {
             } else {
                 inPlay.performRotationCounterClockwise();
             }
-            LocationPosn locationAfterKick = 
-                inPlay.getAbsolutePosition().add(useOffset);
-            inPlay.setAbsolutePosition(locationAfterKick);
-            this.updateDropToRow();
+            inPlay.movePieceBy(useOffset.row, useOffset.col);
+            this.updateHardDropPieceBy();
             return true;
 
         } else {
@@ -494,20 +487,20 @@ public class Board {
         return (0 <= p.row && p.row < 40 && 0 <= p.col && p.col < 10);
     }
 
-    // Updates the hard drop location of the piece in play.
+    // Updates the flag hardDropPieceBy.
     // Requires:
     // * There is a piece in play
     // Effects: 
     // * Modifies the board
-    // * Updates dropToRow
-    private void updateDropToRow() throws NullPointerException {
+    // * Updates hardDropPieceBy
+    private void updateHardDropPieceBy() throws NullPointerException {
         if (inPlay == null) {
             throw new NullPointerException("Piece in play is null.");
         }
         OffsetPosn oneRowDown = new OffsetPosn(1, 0);
         ArrayList<LocationPosn> occupiedBeforeMove = inPlay.squaresOccupiedNow();
 
-        int updatedDropToRow = inPlay.getAbsolutePosition().row;
+        int updatedHardDropBy = 0;
         ArrayList<LocationPosn> occupiedOneRowDown = 
             this.offsetList(occupiedBeforeMove, oneRowDown);
 
@@ -515,11 +508,11 @@ public class Board {
                 && 
                this.squaresAreFree(occupiedOneRowDown))
         {
-            updatedDropToRow += 1;
+            updatedHardDropBy += 1;
             occupiedOneRowDown = 
                 this.offsetList(occupiedOneRowDown, oneRowDown);
         }
-        this.dropToRow = updatedDropToRow;
+        this.hardDropPieceBy = updatedHardDropBy;
     }
 
     // Attempts to move the piece by diffr rows down and diffc cols right.
@@ -528,24 +521,21 @@ public class Board {
     // * there is a piece in play
     // Effects:
     // * May modify the board by moving the piece in play
-    // * Updates dropToRow if the piece was successfully moved
+    // * Updates hardDropPieceBy if the piece was successfully moved
     private boolean moveDirection(int diffr, int diffc) 
     throws IllegalStateException {
         if (inPlay == null) {
             throw new IllegalStateException(
                 "Tried to move a nonexistent piece.");
         }
-        OffsetPosn offset = new OffsetPosn(diffr, diffc);
         ArrayList<LocationPosn> occupiedAfterMove = 
-            this.offsetList(inPlay.squaresOccupiedNow(), offset);
+            inPlay.squaresOccupiedIfMoved(diffr, diffc);
         
         if (this.posnsInRange(occupiedAfterMove) && 
             this.squaresAreFree(occupiedAfterMove))
         {
-            LocationPosn locationAfterMove = 
-                inPlay.getAbsolutePosition().add(offset);
-            inPlay.setAbsolutePosition(locationAfterMove);
-            this.updateDropToRow();
+            inPlay.movePieceBy(diffr, diffc);
+            this.updateHardDropPieceBy();
             return true;
 
         } else {
@@ -555,14 +545,13 @@ public class Board {
 
     // Moves the current piece to the bottom of the board
     // Requires:
-    // * dropToRow is up to date
+    // * hardDropPieceBy is up to date
     // Effects:
     // * Modifies the board.
+    // * Updates the flag hardDropPieceBy.
     private void movePieceToBottom() {
-        LocationPosn locationOfPiece = inPlay.getAbsolutePosition();
-        LocationPosn bottom = new LocationPosn(
-            this.dropToRow, locationOfPiece.col);
-        inPlay.setAbsolutePosition(bottom);
+        inPlay.movePieceBy(hardDropPieceBy, 0);
+        this.hardDropPieceBy = 0;
     }
 
     // Locks the current piece and sets inPlay to null. 
@@ -574,7 +563,7 @@ public class Board {
     // * all squares occupied are free
     // Effects:
     // * Modifies the board.
-    // * inPlay becomes null, and dropToRow becomes invalid until 
+    // * inPlay becomes null, and hardDropPieceBy becomes invalid until 
     //   a new piece is spawned
     private void lockPiece() {
         ArrayList<LocationPosn> occupied = inPlay.squaresOccupiedNow();
