@@ -21,9 +21,6 @@ The following responsibilities are delegated to TetrisGame:
    or not it can be switched out
  * Determining whether the criteria for combos and bonuses have been met
  * Determining the length of time between consecutive gravity-related piece drops
- * The flow of decisions for attempting to spawn new pieces, 
-   including when a piece fails to spawn due to the board having no room 
-   for it
  * Creating BoardUpdateMessages to communicate with the controller
 */
 
