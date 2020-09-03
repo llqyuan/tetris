@@ -1347,6 +1347,20 @@ function start(key) {
     }
 }
 
+// Update the page after the game has ended. finalScore is the 
+// score at the end of the game.
+function end(finalScore) {
+    document.getElementById("game-over-overlay").style.display = "block";
+    $('#tetris-theme').trigger("pause");
+    tetris.gameActive = false;
+    if (tetris.timer != null) {
+        clearTimeout(tetris.timer);
+    }
+    tetris.timer = null;
+    $("#final-score").empty();
+    $("#final-score").html("<p> Final score: " + String(finalScore) + "</p>");
+}
+
 
 // =================================================================
 // Page management: Updating the drawing of the board
@@ -1732,10 +1746,10 @@ function drawMessages(canvas, body) {
             drawMessageOnRow(canvas, tetrisMessage, linesRow);
         }
 
-        if (linesCleared > 0 && backtobacks >= 2) {
+        if (linesCleared > 0 && backtobacks >= 1) {
             drawMessageOnRow(
                 canvas, 
-                backtobackMessage + " x" + String(backtobacks - 1),
+                backtobackMessage + " x" + String(backtobacks),
                 backtobackRow);
         }
 
@@ -1743,13 +1757,20 @@ function drawMessages(canvas, body) {
             drawMessageOnRow(canvas, allClearMessage, allClearRow);
         }
 
-        if (combo >= 2) {
+        if (combo >= 1) {
             drawMessageOnRow(
                 canvas, 
-                String(combo - 1) + " " + comboMessage, 
+                String(combo) + " " + comboMessage, 
                 comboRow);
         }
     }
+}
+/*
+(Helper function) Updates the score.
+*/
+function showMostRecentScore(body) {
+    $("#score").empty();
+    $("#score").html("<p> Score: " + String(body.score) + "</p>");
 }
 
 
@@ -1759,13 +1780,7 @@ function updateBoard(response) {
     var body = JSON.parse(response.body);
 
     if (body.spawnUnsuccessful) {
-        document.getElementById("game-over-overlay").style.display = "block";
-        $('#tetris-theme').trigger("pause");
-        tetris.gameActive = false;
-        if (tetris.timer != null) {
-            clearTimeout(tetris.timer);
-        }
-        tetris.timer = null;
+        end(body.score);
 
     } else {
         updateTimer(body);
@@ -1776,6 +1791,7 @@ function updateBoard(response) {
         updateNewHardDropGhost(canvas, body);
         updateNewCopyOfPieceInPlay(canvas, body);
         drawMessages(canvas, body);
+        showMostRecentScore(body);
     }
 }
 
