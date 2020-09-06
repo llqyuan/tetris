@@ -4,6 +4,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
+import com.ly.tetris.infostructs.KeyCommand;
 import com.ly.tetris.infostructs.TimerUpdateMessage;
 import com.ly.tetris.infostructs.LineClearMessage;
 import com.ly.tetris.infostructs.LocationPosn;
@@ -84,10 +85,10 @@ public class TetrisGame {
     // after a piece is spawned, and before its first movement.
     private Movement lastSuccessfulMovement;
 
-    public TetrisGame() {
+    public TetrisGame(int level) {
         this.board = new Board();
         this.score = 0;
-        this.level = 1;
+        this.level = Math.min(5, Math.max(level, 1));
         this.hold = PieceName.NOTHING;
         this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
@@ -114,7 +115,7 @@ public class TetrisGame {
     // Effects:
     // * Spawns a new piece on this.board
     // * Sets the last successful movement to NOTHING
-    public BoardUpdateMessage startingPieceSpawn(EventMessage event) 
+    public BoardUpdateMessage startingPieceSpawn() 
     throws Exception {
         if (!board.spawn(next.produceAndRemoveNextPieceInQueue())) {
             throw new IllegalStateException(
@@ -122,7 +123,7 @@ public class TetrisGame {
         }
         this.lastSuccessfulMovement = Movement.NOTHING;
         return this.produceBoardUpdate(
-            event, 
+            null, 
             true,
             false, 
             true, 
@@ -719,14 +720,15 @@ public class TetrisGame {
     // Returns a message detailing the state of the board.
     // This should be called once between each command from the 
     // player. 
-    // * event should be the message from the controller. 
+    // * event should be the message from the controller; can be null
     // * spawnWasUnsuccessful should be true if the game attempted 
     //   to spawn a new piece but failed due 
     //   to not having room.
     // * updateFallTimer, updateLockTimer, and requestNewUpdateIn 
     //   are as described in TimerUpdateMessage and are meant to 
     //   be passed to a TimerUpdateMessage constructor.
-    // * lineClearInfo is the message produced by hardDropAndCalculateBonuses
+    // * lineClearInfo is the message produced by hardDropAndCalculateBonuses;
+    //   can be null
     // Effects:
     // * Updates previousBoardCopy
     private BoardUpdateMessage produceBoardUpdate(
@@ -763,6 +765,11 @@ public class TetrisGame {
                 updateLockTimer, 
                 requestNewUpdateIn);
 
+        KeyCommand acknowledge = KeyCommand.NOTHING;
+        if (event != null) {
+            acknowledge = event.getKeyCommand();
+        }
+
         BoardUpdateMessage message = 
             new BoardUpdateMessage(
                 inPlay,
@@ -777,7 +784,7 @@ public class TetrisGame {
                 timerUpdate,
                 this.score,
                 lineClearInfo,
-                event.getKeyCommand()
+                acknowledge
             );
         return message;
     }
@@ -812,6 +819,17 @@ public class TetrisGame {
     being swamped by automatic-drop requests
     */
     private int fallInterval() {
-        return 1000;
+        switch(this.level) {
+            case 1:
+                return 1000;
+            case 2:
+                return 793;
+            case 3:
+                return 618;
+            case 4:
+                return 473;
+            default:
+                return 355;
+        }
     }
 }

@@ -1333,20 +1333,18 @@ function connect() {
 }
 
 
-// Update the page after the game has started
+// Update the page after the game has started. level is 
+// the integer level that the player will be starting at.
 
-function start(key) {
-    switch (key) {
-        default:
-            document.getElementById("start-overlay").style.display = "none";
-            document.getElementById("game-over-overlay").style.display = "none";
-            $('#tetris-theme').trigger("play");
-            clearBoard();
-            clearPieceInHold();
-            sendGameStart();
-            tetris.gameActive = true;
-            updateFrame();
-    }
+function start(level) {
+    document.getElementById("start-overlay").style.display = "none";
+    document.getElementById("game-over-overlay").style.display = "none";
+    $('#tetris-theme').trigger("play");
+    clearBoard();
+    clearPieceInHold();
+    sendGameStart(level);
+    tetris.gameActive = true;
+    updateFrame();
 }
 
 // Update the page after the game has ended. finalScore is the 
@@ -1810,12 +1808,17 @@ function updateFrame() {
 // Page management: Sending commands to the server
 // ========================================================================
 
-// Tells the server to start the game.
-function sendGameStart() {
+// Tells the server to start the game. level is the integer
+// level that the player will be starting at. 
+function sendGameStart(level) {
+    var startWithLevel = level;
+    if (level == null) {
+        startWithLevel = 1;
+    }
     tetris.stompClient.send(
         "/app/start-new-game",
         {},
-        JSON.stringify({"keyCommand": "NOTHING"})
+        JSON.stringify({"level": startWithLevel})
     );
 }
 
@@ -1908,32 +1911,62 @@ $(function() {
         connect(); 
         initCanvas(); 
     });
-    $( document ).on("click", function() {
+    $( "#start" ).on("click", function() {
+        var selectedLevel = document.getElementById("level-select").value;
+
         if (!tetris.gameActive) {
-            start();
+            switch(String(selectedLevel)) {
+                case "1":
+                    start(1);
+                    break;
+                case "2":
+                    start(2);
+                    break;
+                case "3":
+                    start(3);
+                    break;
+                case "4":
+                    start(4);
+                    break;
+                case "5":
+                    start(5);
+                    break;
+                default:
+                    start(1);
+            }
+        }
+    });
+    $( "#restart" ).on("click", function() {
+        var selectedLevel = document.getElementById("restart-level-select").value;
+
+        if (!tetris.gameActive) {
+            switch(String(selectedLevel)) {
+                case "1":
+                    start(1);
+                    break;
+                case "2":
+                    start(2);
+                    break;
+                case "3":
+                    start(3);
+                    break;
+                case "4":
+                    start(4);
+                    break;
+                case "5":
+                    start(5);
+                    break;
+                default:
+                    start(1);
+            }
         }
     });
     $( document ).keydown(function(event) {
-        if (!tetris.gameActive) {
-            start(event.which);
-
-        } else {
+        if (tetris.gameActive) {
             switch(event.which) {
                 case 40:
                     event.preventDefault();
                     sendSonicDrop();
-                    /*
-                    var stop = setInterval(
-                        function() { 
-                            sendSoftDrop(); 
-                        }, 
-                        250);
-                    $(window).on(
-                        "keyup", 
-                        function(e) { 
-                            clearInterval(stop); 
-                        });
-                        */
                     break;
                 case 32:
                     event.preventDefault();

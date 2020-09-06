@@ -5,6 +5,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
+import com.ly.tetris.infostructs.GameStartMessage;
 import com.ly.tetris.infostructs.KeyCommand;
 
 
@@ -39,10 +40,10 @@ public class TetrisController {
     // Receives a message from the browser to start a new game.
     @MessageMapping("/start-new-game")
     @SendTo("/topic/board-update")
-    public BoardUpdateMessage startNewGame(EventMessage event) 
+    public BoardUpdateMessage startNewGame(GameStartMessage message) 
     throws Exception {
-        game = new TetrisGame();
-        return game.startingPieceSpawn(event);
+        game = new TetrisGame(message.getLevel());
+        return game.startingPieceSpawn();
     }
 
     // Receives a message from the browser to hard-drop the piece 
