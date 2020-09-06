@@ -2,8 +2,8 @@ package com.ly.tetris.infostructs;
 
 
 /*
-LineClearMessage contains information on the number of lines cleared when 
-a piece is locked.
+LineClearMessage contains information on the changes to the board when a 
+line is cleared.
 */
 
 public class LineClearMessage {
@@ -12,6 +12,7 @@ public class LineClearMessage {
     private int consecTetrisOrTSpin;
     private int combo;
     private boolean perfectClear;
+    private boolean levelUp;
 
     public LineClearMessage() {
         tspin = false;
@@ -19,6 +20,7 @@ public class LineClearMessage {
         consecTetrisOrTSpin = 0;
         combo = 0;
         perfectClear = false;
+        levelUp = false;
     }
 
     public LineClearMessage(
@@ -26,13 +28,15 @@ public class LineClearMessage {
         int lines, 
         int consecTetrisOrTSpin,
         int combo,
-        boolean perfectClear) 
+        boolean perfectClear,
+        boolean levelUp) 
     {
         this.tspin = tspin;
         this.lines = lines;
         this.consecTetrisOrTSpin = consecTetrisOrTSpin;
         this.combo = combo;
         this.perfectClear = perfectClear;
+        this.levelUp = levelUp;
     }
 
     public boolean getTSpin() {
@@ -53,5 +57,9 @@ public class LineClearMessage {
 
     public boolean getPerfectClear() {
         return perfectClear;
+    }
+
+    public boolean getLevelUp() {
+        return levelUp;
     }
 }

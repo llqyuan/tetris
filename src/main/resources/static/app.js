@@ -1348,15 +1348,12 @@ function start(level) {
 }
 
 // Update the page after the game has ended. finalScore is the 
-// score at the end of the game.
+// integer score at the end of the game.
 function end(finalScore) {
     document.getElementById("game-over-overlay").style.display = "block";
     $('#tetris-theme').trigger("pause");
     tetris.gameActive = false;
-    if (tetris.timer != null) {
-        clearTimeout(tetris.timer);
-    }
-    tetris.timer = null;
+    clearTimeout(tetris.timer);
     $("#final-score").empty();
     $("#final-score").html("<p> Final score: " + String(finalScore) + "</p>");
 }
@@ -1547,7 +1544,7 @@ function updateTetrisStack(canvas, body) {
 // (Helper function) (Re)draws the new hard drop ghost.
 // body is the parsed body of the response from the server.
 // Also updates tetris.previousSquaresOfHardDropGhost.
-function updateNewHardDropGhost(canvas, body) {
+function drawNewHardDropGhost(canvas, body) {
     var ghost = body.squaresOfHardDropGhost;
     var ypix;
     var xpix;
@@ -1565,7 +1562,7 @@ function updateNewHardDropGhost(canvas, body) {
 // (Helper function) Draws the new copy of the piece in play.
 // body is the parsed body of the response from the server.
 // Also updates tetris.previousSquaresOfPieceInPlay.
-function updateNewCopyOfPieceInPlay(canvas, body) {
+function drawNewCopyOfPieceInPlay(canvas, body) {
     var name = String(body.pieceInPlay);
     var pieceSquares = body.squaresOfPieceInPlay;
     var pieceColour;
@@ -1642,6 +1639,9 @@ function drawMessageOnRow(canvas, message, r) {
         case 4:
             clearTimeout(tetris.message.row4);
             break;
+        case 5:
+            clearTimeout(tetris.message.row5);
+            break;
     }
 
     eraseMessageOnRow(canvas, r);
@@ -1689,6 +1689,13 @@ function drawMessageOnRow(canvas, message, r) {
                 },
                 1000);
             break;
+        case 5:
+            tetris.message.row5 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 5);
+                },
+                1000);
+            break;
     }
 }
 
@@ -1700,7 +1707,7 @@ function drawMessageOnRow(canvas, message, r) {
 * line clear combos
 */
 function drawMessages(canvas, body) {
-    var tspinMessage = "T-SPIN";
+    var tspinMessage = "T-SPIN ";
     var singleMessage = "SINGLE";
     var doubleMessage = "DOUBLE";
     var tripleMessage = "TRIPLE";
@@ -1708,17 +1715,20 @@ function drawMessages(canvas, body) {
     var backtobackMessage = "B2B";
     var allClearMessage = "ALL CLEAR"
     var comboMessage = "COMBO";
+    var levelUpMessage = "LEVEL UP!";
     var tspinRow = 0;
     var linesRow = 1;
     var backtobackRow = 2;
     var allClearRow = 3;
     var comboRow = 4;
+    var levelUpRow = 5;
 
     var isTSpin;
     var linesCleared;
     var backtobacks;
     var isPerfectClear;
     var combo;
+    var levelUp;
     
     if (body.lineClearInfo != null) {
 
@@ -1727,19 +1737,24 @@ function drawMessages(canvas, body) {
         backtobacks = body.lineClearInfo.consecTetrisOrTSpin;
         isPerfectClear = body.lineClearInfo.perfectClear;
         combo = body.lineClearInfo.combo;
+        levelUp = body.lineClearInfo.levelUp;
         
         if (isTSpin) {
-            drawMessageOnRow(canvas, tspinMessage, tspinRow);
             switch(linesCleared) {
                 case 1:
-                    drawMessageOnRow(canvas, singleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + singleMessage, tspinRow);
                     break;
                 case 2:
-                    drawMessageOnRow(canvas, doubleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + doubleMessage, tspinRow);
                     break;
                 case 3:
-                    drawMessageOnRow(canvas, tripleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + tripleMessage, tspinRow);
                     break;
+                default:
+                    drawMessageOnRow(canvas, tspinMessage, tspinRow);
             }
 
         } else if (linesCleared == 4) {
@@ -1762,6 +1777,10 @@ function drawMessages(canvas, body) {
                 canvas, 
                 String(combo) + " " + comboMessage, 
                 comboRow);
+        }
+
+        if (levelUp) {
+            drawMessageOnRow(canvas, levelUpMessage, levelUpRow);
         }
     }
 }
@@ -1788,8 +1807,8 @@ function updateBoard(response) {
         updateNextQueue(canvas, body);
         erasePreviousGhostAndCopyOfFallingPiece(canvas);
         updateTetrisStack(canvas, body);
-        updateNewHardDropGhost(canvas, body);
-        updateNewCopyOfPieceInPlay(canvas, body);
+        drawNewHardDropGhost(canvas, body);
+        drawNewCopyOfPieceInPlay(canvas, body);
         drawMessages(canvas, body);
         showMostRecentScore(body);
     }
