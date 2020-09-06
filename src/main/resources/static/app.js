@@ -1321,22 +1321,40 @@ function initCanvas() {
 
 function connect() {
     var socket = new SockJS("/tetris");
+    if (tetris.stompClient !== null) {
+        tetris.stompClient.disconnect();
+        console.log("Disconnected from existing connection.");
+        tetris.stompClient = null;
+    }
     tetris.stompClient = Stomp.over(socket);
-    tetris.stompClient.connect({}, function (frame) {
-        console.log("Connected: " + frame);
-        tetris.stompClient.subscribe(
-            "/topic/board-update", 
-            function (response) {
-                updateBoard(response);
-            });
-    });
+    return new Promise(function(resolve) {
+        tetris.stompClient.connect({}, function (frame) {
+            console.log("Connected: " + frame);
+            tetris.stompClient.subscribe(
+                "/topic/board-update", 
+                function (response) {
+                    updateBoard(response);
+                });
+            resolve("Connected.");
+        });
+    })
+}
+
+
+// disconnect() disconnects from the server.
+function disconnect() {
+    if (tetris.stompClient !== null) {
+        tetris.stompClient.disconnect();
+        tetris.stompClient = null;
+    }
 }
 
 
 // Update the page after the game has started. level is 
 // the integer level that the player will be starting at.
 
-function start(level) {
+async function start(level) {
+    await connect();
     document.getElementById("start-overlay").style.display = "none";
     document.getElementById("game-over-overlay").style.display = "none";
     $('#tetris-theme').trigger("play");
@@ -1356,6 +1374,7 @@ function end(finalScore) {
     clearTimeout(tetris.timer);
     $("#final-score").empty();
     $("#final-score").html("<p> Final score: " + String(finalScore) + "</p>");
+    disconnect();
 }
 
 
@@ -1927,7 +1946,6 @@ function sendHold() {
 
 $(function() {
     $( "#tetris-board" ).ready(function() { 
-        connect(); 
         initCanvas(); 
     });
     $( "#start" ).on("click", function() {
