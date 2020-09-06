@@ -1321,46 +1321,60 @@ function initCanvas() {
 
 function connect() {
     var socket = new SockJS("/tetris");
+    if (tetris.stompClient !== null) {
+        tetris.stompClient.disconnect();
+        console.log("Disconnected from existing connection.");
+        tetris.stompClient = null;
+    }
     tetris.stompClient = Stomp.over(socket);
-    tetris.stompClient.connect({}, function (frame) {
-        console.log("Connected: " + frame);
-        tetris.stompClient.subscribe(
-            "/topic/board-update", 
-            function (response) {
-                updateBoard(response);
-            });
-    });
+    return new Promise(function(resolve) {
+        tetris.stompClient.connect({}, function (frame) {
+            console.log("Connected: " + frame);
+            tetris.stompClient.subscribe(
+                "/topic/board-update", 
+                function (response) {
+                    updateBoard(response);
+                });
+            resolve("Connected.");
+        });
+    })
 }
 
 
-// Update the page after the game has started
-
-function start(key) {
-    switch (key) {
-        default:
-            document.getElementById("start-overlay").style.display = "none";
-            document.getElementById("game-over-overlay").style.display = "none";
-            $('#tetris-theme').trigger("play");
-            clearBoard();
-            clearPieceInHold();
-            sendGameStart();
-            tetris.gameActive = true;
-            updateFrame();
+// disconnect() disconnects from the server.
+function disconnect() {
+    if (tetris.stompClient !== null) {
+        tetris.stompClient.disconnect();
+        tetris.stompClient = null;
     }
 }
 
+
+// Update the page after the game has started. level is 
+// the integer level that the player will be starting at.
+
+async function start(level) {
+    await connect();
+    document.getElementById("start-overlay").style.display = "none";
+    document.getElementById("game-over-overlay").style.display = "none";
+    $('#tetris-theme').trigger("play");
+    clearBoard();
+    clearPieceInHold();
+    sendGameStart(level);
+    tetris.gameActive = true;
+    updateFrame();
+}
+
 // Update the page after the game has ended. finalScore is the 
-// score at the end of the game.
+// integer score at the end of the game.
 function end(finalScore) {
     document.getElementById("game-over-overlay").style.display = "block";
     $('#tetris-theme').trigger("pause");
     tetris.gameActive = false;
-    if (tetris.timer != null) {
-        clearTimeout(tetris.timer);
-    }
-    tetris.timer = null;
+    clearTimeout(tetris.timer);
     $("#final-score").empty();
     $("#final-score").html("<p> Final score: " + String(finalScore) + "</p>");
+    disconnect();
 }
 
 
@@ -1549,7 +1563,7 @@ function updateTetrisStack(canvas, body) {
 // (Helper function) (Re)draws the new hard drop ghost.
 // body is the parsed body of the response from the server.
 // Also updates tetris.previousSquaresOfHardDropGhost.
-function updateNewHardDropGhost(canvas, body) {
+function drawNewHardDropGhost(canvas, body) {
     var ghost = body.squaresOfHardDropGhost;
     var ypix;
     var xpix;
@@ -1567,7 +1581,7 @@ function updateNewHardDropGhost(canvas, body) {
 // (Helper function) Draws the new copy of the piece in play.
 // body is the parsed body of the response from the server.
 // Also updates tetris.previousSquaresOfPieceInPlay.
-function updateNewCopyOfPieceInPlay(canvas, body) {
+function drawNewCopyOfPieceInPlay(canvas, body) {
     var name = String(body.pieceInPlay);
     var pieceSquares = body.squaresOfPieceInPlay;
     var pieceColour;
@@ -1644,6 +1658,9 @@ function drawMessageOnRow(canvas, message, r) {
         case 4:
             clearTimeout(tetris.message.row4);
             break;
+        case 5:
+            clearTimeout(tetris.message.row5);
+            break;
     }
 
     eraseMessageOnRow(canvas, r);
@@ -1691,6 +1708,13 @@ function drawMessageOnRow(canvas, message, r) {
                 },
                 1000);
             break;
+        case 5:
+            tetris.message.row5 = setTimeout(
+                function() {
+                    eraseMessageOnRow(canvas, 5);
+                },
+                1000);
+            break;
     }
 }
 
@@ -1702,7 +1726,7 @@ function drawMessageOnRow(canvas, message, r) {
 * line clear combos
 */
 function drawMessages(canvas, body) {
-    var tspinMessage = "T-SPIN";
+    var tspinMessage = "T-SPIN ";
     var singleMessage = "SINGLE";
     var doubleMessage = "DOUBLE";
     var tripleMessage = "TRIPLE";
@@ -1710,17 +1734,20 @@ function drawMessages(canvas, body) {
     var backtobackMessage = "B2B";
     var allClearMessage = "ALL CLEAR"
     var comboMessage = "COMBO";
+    var levelUpMessage = "LEVEL UP!";
     var tspinRow = 0;
     var linesRow = 1;
     var backtobackRow = 2;
     var allClearRow = 3;
     var comboRow = 4;
+    var levelUpRow = 5;
 
     var isTSpin;
     var linesCleared;
     var backtobacks;
     var isPerfectClear;
     var combo;
+    var levelUp;
     
     if (body.lineClearInfo != null) {
 
@@ -1729,19 +1756,24 @@ function drawMessages(canvas, body) {
         backtobacks = body.lineClearInfo.consecTetrisOrTSpin;
         isPerfectClear = body.lineClearInfo.perfectClear;
         combo = body.lineClearInfo.combo;
+        levelUp = body.lineClearInfo.levelUp;
         
         if (isTSpin) {
-            drawMessageOnRow(canvas, tspinMessage, tspinRow);
             switch(linesCleared) {
                 case 1:
-                    drawMessageOnRow(canvas, singleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + singleMessage, tspinRow);
                     break;
                 case 2:
-                    drawMessageOnRow(canvas, doubleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + doubleMessage, tspinRow);
                     break;
                 case 3:
-                    drawMessageOnRow(canvas, tripleMessage, linesRow);
+                    drawMessageOnRow(
+                        canvas, tspinMessage + tripleMessage, tspinRow);
                     break;
+                default:
+                    drawMessageOnRow(canvas, tspinMessage, tspinRow);
             }
 
         } else if (linesCleared == 4) {
@@ -1764,6 +1796,10 @@ function drawMessages(canvas, body) {
                 canvas, 
                 String(combo) + " " + comboMessage, 
                 comboRow);
+        }
+
+        if (levelUp) {
+            drawMessageOnRow(canvas, levelUpMessage, levelUpRow);
         }
     }
 }
@@ -1790,8 +1826,8 @@ function updateBoard(response) {
         updateNextQueue(canvas, body);
         erasePreviousGhostAndCopyOfFallingPiece(canvas);
         updateTetrisStack(canvas, body);
-        updateNewHardDropGhost(canvas, body);
-        updateNewCopyOfPieceInPlay(canvas, body);
+        drawNewHardDropGhost(canvas, body);
+        drawNewCopyOfPieceInPlay(canvas, body);
         drawMessages(canvas, body);
         showMostRecentScore(body);
     }
@@ -1810,12 +1846,17 @@ function updateFrame() {
 // Page management: Sending commands to the server
 // ========================================================================
 
-// Tells the server to start the game.
-function sendGameStart() {
+// Tells the server to start the game. level is the integer
+// level that the player will be starting at. 
+function sendGameStart(level) {
+    var startWithLevel = level;
+    if (level == null) {
+        startWithLevel = 1;
+    }
     tetris.stompClient.send(
         "/app/start-new-game",
         {},
-        JSON.stringify({"keyCommand": "NOTHING"})
+        JSON.stringify({"level": startWithLevel})
     );
 }
 
@@ -1905,35 +1946,64 @@ function sendHold() {
 
 $(function() {
     $( "#tetris-board" ).ready(function() { 
-        connect(); 
         initCanvas(); 
     });
-    $( document ).on("click", function() {
+    $( "#start" ).on("click", function() {
+        var selectedLevel = document.getElementById("level-select").value;
+
         if (!tetris.gameActive) {
-            start();
+            switch(String(selectedLevel)) {
+                case "1":
+                    start(1);
+                    break;
+                case "2":
+                    start(2);
+                    break;
+                case "3":
+                    start(3);
+                    break;
+                case "4":
+                    start(4);
+                    break;
+                case "5":
+                    start(5);
+                    break;
+                default:
+                    start(1);
+            }
+        }
+    });
+    $( "#restart" ).on("click", function() {
+        var selectedLevel = document.getElementById("restart-level-select").value;
+
+        if (!tetris.gameActive) {
+            switch(String(selectedLevel)) {
+                case "1":
+                    start(1);
+                    break;
+                case "2":
+                    start(2);
+                    break;
+                case "3":
+                    start(3);
+                    break;
+                case "4":
+                    start(4);
+                    break;
+                case "5":
+                    start(5);
+                    break;
+                default:
+                    start(1);
+            }
         }
     });
     $( document ).keydown(function(event) {
-        if (!tetris.gameActive) {
-            start(event.which);
-
-        } else {
+        if (tetris.gameActive) {
             switch(event.which) {
                 case 40:
                     event.preventDefault();
                     sendSonicDrop();
-                    /*
-                    var stop = setInterval(
-                        function() { 
-                            sendSoftDrop(); 
-                        }, 
-                        250);
-                    $(window).on(
-                        "keyup", 
-                        function(e) { 
-                            clearInterval(stop); 
-                        });
-                        */
                     break;
                 case 32:
                     event.preventDefault();

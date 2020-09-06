@@ -36,8 +36,7 @@
 
     <div id="start-overlay">
         <div class="player-message">
-            <h1> (Click anywhere to start) </h1>
-            <h3> Controls: </h3>
+            <h2> Controls: </h2>
             <p> 
                 LEFT / RIGHT: Move piece
             </p>
@@ -53,6 +52,17 @@
             <p>
                 C / SHIFT: Hold
             </p>
+            <form>
+                <label for="level-select">Select level:</label>
+                <select id="level-select" name="level-select" selected="1">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button class="start-button" id="start" type="button">Start</button>
+            </form>
         </div>
     </div>
 
@@ -60,7 +70,17 @@
         <div class="player-message">
             <h2> Game over! </h2>
             <div id="final-score"></div>
-            <p> Click anywhere to start a new game.</p>
+            <form>
+                <label for="restart-level-select">Restart with level:</label>
+                <select id="restart-level-select" name="restart-level-select" selected="1">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button class="start-button" id="restart" type="button">Start</button>
+            </form>
         </div>
     </div>
 

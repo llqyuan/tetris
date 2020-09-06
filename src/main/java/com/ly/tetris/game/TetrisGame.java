@@ -4,6 +4,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
+import com.ly.tetris.infostructs.KeyCommand;
 import com.ly.tetris.infostructs.TimerUpdateMessage;
 import com.ly.tetris.infostructs.LineClearMessage;
 import com.ly.tetris.infostructs.LocationPosn;
@@ -27,14 +28,19 @@ The following responsibilities are delegated to TetrisGame:
 
 public class TetrisGame {
 
+    // =================================================
+    // Fields
+    // =================================================
+
     // Game board.
     private Board board;
 
     // Score.
     private int score;
 
-    // Level (1-15 valid, 1 used; see documentation for fallInterval())
+    // Level (1-15 valid, 1-5 used; see documentation for fallInterval())
     private int level;
+    private final int maxlevel = 5;
 
     // Hold piece
     private PieceName hold;
@@ -84,10 +90,24 @@ public class TetrisGame {
     // after a piece is spawned, and before its first movement.
     private Movement lastSuccessfulMovement;
 
-    public TetrisGame() {
+    // Number of lines cleared since the start of the level.
+    // Reset when a new level has been reached.
+    private int linesClearedThisLevel;
+
+    // Number of lines required to advance to the next level.
+    private final int linesToLevelUp;
+
+    // ==================================================
+    // Public interface
+    // ==================================================
+
+    /*
+    Constructor. Sets the level to level.
+    */
+    public TetrisGame(int level) {
         this.board = new Board();
         this.score = 0;
-        this.level = 1;
+        this.level = Math.min(this.maxlevel, Math.max(level, 1));
         this.hold = PieceName.NOTHING;
         this.next = new NextPiecesQueue();
         this.previousBoardCopy = this.board.copyOfBoard();
@@ -100,11 +120,9 @@ public class TetrisGame {
         this.consecTetrisOrTSpin = -1;
         this.combo = -1;
         this.lastSuccessfulMovement = Movement.NOTHING;
+        this.linesClearedThisLevel = 0;
+        this.linesToLevelUp = 10;
     }
-
-    // ==================================================
-    // Public interface
-    // ==================================================
 
     // Spawns the first piece at the start of the game.
     // Only the first needs to be explicitly spawned; the rest will 
@@ -114,7 +132,7 @@ public class TetrisGame {
     // Effects:
     // * Spawns a new piece on this.board
     // * Sets the last successful movement to NOTHING
-    public BoardUpdateMessage startingPieceSpawn(EventMessage event) 
+    public BoardUpdateMessage startingPieceSpawn() 
     throws Exception {
         if (!board.spawn(next.produceAndRemoveNextPieceInQueue())) {
             throw new IllegalStateException(
@@ -122,7 +140,7 @@ public class TetrisGame {
         }
         this.lastSuccessfulMovement = Movement.NOTHING;
         return this.produceBoardUpdate(
-            event, 
+            null, 
             true,
             false, 
             true, 
@@ -344,7 +362,7 @@ public class TetrisGame {
     throws Exception {
         // board.hardDrop();
         int distanceDropped = board.distanceOfPieceToBottom();
-        LineClearMessage lineClearInfo = this.hardDropAndCalculateBonuses();
+        LineClearMessage lineClearInfo = this.hardDropAndCalculateRewards();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
@@ -500,7 +518,7 @@ public class TetrisGame {
                 "been called instead.");
         }
         // board.hardDrop();
-        LineClearMessage lineClearInfo = this.hardDropAndCalculateBonuses();
+        LineClearMessage lineClearInfo = this.hardDropAndCalculateRewards();
         boolean spawnUnsuccessful = 
             !board.spawn(next.produceAndRemoveNextPieceInQueue());
         this.heldButNotLocked = false;
@@ -597,8 +615,9 @@ public class TetrisGame {
     * Hard-drops the piece
     * Modifies the flag this.consecTetrisOrTSpin
     * Modifies the flag this.consecLineClears
+    * Updates this.linesClearedThisLevel and this.level
     */
-    private LineClearMessage hardDropAndCalculateBonuses()
+    private LineClearMessage hardDropAndCalculateRewards()
     throws Exception {
         boolean isTSpin = validTSpinIfLockedNow();
         int linesCleared = board.hardDrop();
@@ -612,12 +631,22 @@ public class TetrisGame {
         } else {
             this.combo = -1;
         }
+        this.linesClearedThisLevel += linesCleared;
+        boolean leveledUp = false;
+        if (this.level < this.maxlevel && 
+            this.linesClearedThisLevel >= this.linesToLevelUp) 
+        {
+            leveledUp = true;
+            this.level += 1;
+            this.linesClearedThisLevel -= this.linesToLevelUp;
+        }
         return new LineClearMessage(
             isTSpin, 
             linesCleared, 
             this.consecTetrisOrTSpin, 
             this.combo,
-            isPerfectClear);
+            isPerfectClear,
+            leveledUp);
     }
 
 
@@ -719,14 +748,15 @@ public class TetrisGame {
     // Returns a message detailing the state of the board.
     // This should be called once between each command from the 
     // player. 
-    // * event should be the message from the controller. 
+    // * event should be the message from the controller; can be null
     // * spawnWasUnsuccessful should be true if the game attempted 
     //   to spawn a new piece but failed due 
     //   to not having room.
     // * updateFallTimer, updateLockTimer, and requestNewUpdateIn 
     //   are as described in TimerUpdateMessage and are meant to 
     //   be passed to a TimerUpdateMessage constructor.
-    // * lineClearInfo is the message produced by hardDropAndCalculateBonuses
+    // * lineClearInfo is the message produced by hardDropAndCalculateRewards;
+    //   can be null
     // Effects:
     // * Updates previousBoardCopy
     private BoardUpdateMessage produceBoardUpdate(
@@ -763,6 +793,11 @@ public class TetrisGame {
                 updateLockTimer, 
                 requestNewUpdateIn);
 
+        KeyCommand acknowledge = KeyCommand.NOTHING;
+        if (event != null) {
+            acknowledge = event.getKeyCommand();
+        }
+
         BoardUpdateMessage message = 
             new BoardUpdateMessage(
                 inPlay,
@@ -777,7 +812,7 @@ public class TetrisGame {
                 timerUpdate,
                 this.score,
                 lineClearInfo,
-                event.getKeyCommand()
+                acknowledge
             );
         return message;
     }
@@ -812,6 +847,17 @@ public class TetrisGame {
     being swamped by automatic-drop requests
     */
     private int fallInterval() {
-        return 1000;
+        switch(this.level) {
+            case 1:
+                return 1000;
+            case 2:
+                return 793;
+            case 3:
+                return 618;
+            case 4:
+                return 473;
+            default:
+                return 355;
+        }
     }
 }

@@ -38,6 +38,12 @@ body {
     background-color: #ac4dacd7;
 }
 
+.start-button {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
 #game-over-overlay {
     position: fixed;
     display: none;
