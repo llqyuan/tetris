@@ -457,15 +457,6 @@ public class Board {
                 inPlay.squaresOccupiedIfMovedAndRotated(
                     offset.row, offset.col, direction);
 
-            if (occupiedAfterRotateAndKick.size() != 4) {
-                throw new IllegalStateException(
-                    ("Piece occupies xxx squares after rotating and " + 
-                    "wall-kicking, expected 4.")
-                    .replaceFirst(
-                        "xxx", 
-                        Integer.toString(occupiedAfterRotateAndKick.size())));
-            }
-
             if (this.posnsInRange(occupiedAfterRotateAndKick) && 
                 this.squaresAreFree(occupiedAfterRotateAndKick)) 
             {
