@@ -1,5 +1,6 @@
 package com.ly.tetris.game;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
@@ -56,6 +57,10 @@ public class TetrisGame {
     // piece.
     private final int softDropTime;
 
+    // Time before the first gravityDrop when a piece 
+    // is spawned.
+    private final int spawnDropTime;
+
     // Copy of board as of previous update.
     private Square[][] previousBoardCopy;
 
@@ -90,6 +95,7 @@ public class TetrisGame {
         this.width = this.previousBoardCopy[0].length;
         this.lockTime = 500;
         this.softDropTime = 100;
+        this.spawnDropTime = 100;
         this.heldButNotLocked = false;
         this.consecTetrisOrTSpin = -1;
         this.combo = -1;
@@ -121,7 +127,7 @@ public class TetrisGame {
             false, 
             true, 
             false, 
-            this.fallInterval(),
+            Math.min(this.fallInterval(), this.spawnDropTime),
             null);
     }
 
@@ -312,7 +318,7 @@ public class TetrisGame {
                 false, 
                 true, 
                 false, 
-                this.fallInterval(),
+                Math.min(this.fallInterval(), this.spawnDropTime),
                 null);
         } else {
             return this.produceBoardUpdate(
@@ -359,7 +365,7 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 true, 
                 false, 
-                this.fallInterval(),
+                Math.min(this.fallInterval(), this.spawnDropTime),
                 lineClearInfo);
         } else {
             return this.produceBoardUpdate(
@@ -516,7 +522,7 @@ public class TetrisGame {
                 spawnUnsuccessful, 
                 true, 
                 false, 
-                this.fallInterval(),
+                Math.min(this.fallInterval(), this.spawnDropTime),
                 lineClearInfo);
         } else {
             this.lastSuccessfulMovement = Movement.NOTHING;

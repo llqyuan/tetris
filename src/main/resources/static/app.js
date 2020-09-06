@@ -1947,6 +1947,7 @@ $(function() {
                     event.preventDefault();
                     sendRight();
                     break;
+                case 38:
                 case 88:
                     event.preventDefault();
                     sendClockwise();
@@ -1955,6 +1956,7 @@ $(function() {
                     event.preventDefault();
                     sendCounterClockwise();
                     break;
+                case 16:
                 case 67:
                     event.preventDefault();
                     sendHold();
