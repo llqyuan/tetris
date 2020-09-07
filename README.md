@@ -26,7 +26,7 @@ Call `mvn spring-boot:run` from the terminal to start the program. Once it is ru
 * Pieces spawn on the 21st and 22nd rows, above the field, and move down by one square immediately after spawning.
 * Scoring system mimics that of recent Tetris Guideline-adherent games.
 * A Game Over occurs when a newly spawned piece overlaps with an existing block on the board.
-* Pieces lock down after 0.5 seconds on the stack. Rotating or moving the piece resets the lock timer indefinitely (Infinite Placement Lock Down).
+* Pieces lock down after 0.5 seconds on the stack. Rotating or moving the piece while on the stack resets the lock timer up to 15 times (Extended Placement Lock Down).
 * The active piece may be placed in the Hold box, after which it will be greyed-out and unusable until a piece is locked.
 * The Next Queue previews the upcoming 5 pieces.
 * Piece generation uses the "7-bag" method. The game replenishes the Next Queue by adding new pieces 7 at a time: one of each of the unique tetromino types, shuffled randomly.
