@@ -46,7 +46,7 @@ public class ExtendedPlacementLockDown {
         }
     }
 
-    // Resets this.timesExtended to 0. Call this whenever a 
+    // Resets this.timesExtended to -1. Call this whenever a 
     // new piece is spawned.
     public void resetTimesExtended() {
         this.timesExtended = -1;
