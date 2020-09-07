@@ -164,9 +164,13 @@ public class TetrisGame {
     // If the piece is on the ground afterward, resets the lock timer.
     // If the piece is in the air afterward but was on the ground before,
     // sets a fall timer.
+    // Locks the piece if the move-reset limit has been reached and the 
+    // piece ended up on the ground.
     // Effects:
     // * May move the piece in play left on this.board
     // * If the piece moved, sets the last successful movement to LEFT
+    // * May hard-drop the piece after the movement if the move-reset 
+    //   limit has been reached
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveLeft();
@@ -206,9 +210,13 @@ public class TetrisGame {
     // If the piece is on the ground afterward, resets the lock timer.
     // If the piece is in the air afterward but was on the ground before,
     // sets a fall timer.
+    // Locks the piece if the move-reset limit has been reached and the 
+    // piece ended up on the ground.
     // Effects:
     // * May move the piece in play right on this.board
     // * If the piece moved, sets the last successful movement to RIGHT
+    // * May hard-drop the piece after the movement if the move-reset limit 
+    //   has been reached
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveRight();
@@ -248,9 +256,13 @@ public class TetrisGame {
     // If the piece is on the ground afterward, resets the lock timer.
     // If the piece is not on the ground afterward but was on the 
     // ground before, cancels the lock timer and sets a new fall timer.
+    // Locks the piece if the move-reset limit has been reached and the 
+    // piece ended up on the ground.
     // Effects:
     // * May rotate the piece in play on this.board
     // * If the piece rotated, sets the last successful movement to ROTATE
+    // * May hard-drop the piece after the movement if the move-reset limit 
+    //   has been reached
     public BoardUpdateMessage rotateClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
@@ -291,9 +303,13 @@ public class TetrisGame {
     // If the piece is on the ground afterwards, resets the lock timer.
     // If the piece is not on the ground afterward but was on the 
     // ground before, cancels the lock timer and sets a new fall timer.
+    // Locks the piece if the move-reset limit has been reached and the 
+    // piece ended up on the ground.
     // Effects:
     // * May rotate the piece on this.board
     // * If the piece rotated, sets the last successful movement to ROTATE
+    // * May hard-drop the piece after the movement if the move-reset limit 
+    //   has been reached
     public BoardUpdateMessage rotateCounterClockwise(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
