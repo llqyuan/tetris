@@ -1,11 +1,4 @@
 let tetris = {};
-tetris.stompClient = null;
-tetris.unitSize = null;
-tetris.gameActive = false;
-tetris.timer = null;
-tetris.previousSquaresOfPieceInPlay = null;
-tetris.previousSquaresOfHardDropGhost = null;
-tetris.message = {};
 
 const I = 1;
 const L = 2;
@@ -1349,9 +1342,15 @@ function sendHold() {
 }
 
 $(function() {
-    $( "#tetris-board" ).ready(function() { 
-        initCanvas(); 
-    });
+    tetris.stompClient = null;
+    tetris.unitSize = null;
+    tetris.gameActive = false;
+    tetris.timer = null;
+    tetris.previousSquaresOfPieceInPlay = null;
+    tetris.previousSquaresOfHardDropGhost = null;
+    tetris.message = {};
+
+    initCanvas();
     $( "#start" ).on("click", function() {
         let selectedLevel = document.getElementById("level-select").value;
 
@@ -1402,36 +1401,41 @@ $(function() {
             }
         }
     });
-    $( document ).keydown(function(event) {
+    $( document ).on("keydown", function(event) {
         if (tetris.gameActive) {
-            switch(event.which) {
-                case 40:
+            console.log("Registered key down while game active.");
+            console.log(event);
+            switch(String(event.key)) {
+                case "ArrowDown":
                     event.preventDefault();
                     sendSonicDrop();
                     break;
-                case 32:
+                case " ":
                     event.preventDefault();
                     sendHardDrop();
                     break;
-                case 37:
+                case "ArrowLeft":
                     event.preventDefault();
                     sendLeft();
                     break;
-                case 39:
+                case "ArrowRight":
                     event.preventDefault();
                     sendRight();
                     break;
-                case 38:
-                case 88:
+                case "ArrowUp":
+                case "x":
+                case "X":
                     event.preventDefault();
                     sendClockwise();
                     break;
-                case 90:
+                case "z":
+                case "Z":
                     event.preventDefault();
                     sendCounterClockwise();
                     break;
-                case 16:
-                case 67:
+                case "Shift":
+                case "c":
+                case "C":
                     event.preventDefault();
                     sendHold();
                     break;
