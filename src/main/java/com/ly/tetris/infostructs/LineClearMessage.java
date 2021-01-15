@@ -1,7 +1,7 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 LineClearMessage contains information on the changes to the board when a 
 line is cleared.
 */

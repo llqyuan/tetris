@@ -2,6 +2,8 @@ package com.ly.tetris.game;
 
 import java.lang.Math;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
 import com.ly.tetris.infostructs.KeyCommand;
@@ -12,7 +14,7 @@ import com.ly.tetris.infostructs.Movement;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
-/*
+/**
 TetrisGame maintains the state of the game as a whole. 
 It manages the game's internal decisions.
 
@@ -28,90 +30,120 @@ The following responsibilities are delegated to TetrisGame:
 
 public class TetrisGame {
 
-    // =================================================
-    // Fields
-    // =================================================
+    /*
+    =================================================
+    Fields
+    =================================================
+    */
 
-    // Game board.
+    /** Logger */
+    private Logger logger = LoggerFactory.getLogger(TetrisGame.class);
+
+    /** Game board */
     private Board board;
 
-    // Score.
+    /** Score */
     private int score;
 
-    // Level (1-15 valid, 1-5 used; see documentation for fallInterval())
+    /** Level (1-15 valid, 1-5 used; see documentation for fallInterval()) */
     private int level;
     private final int maxlevel = 5;
 
-    // Hold piece
+    /** Hold piece */
     private PieceName hold;
     
-    // Next queue
+    /** Next queue */
     private NextPiecesQueue next;
 
-    // Height of board.
+    /** Height of board. */
     private final int height;
 
-    // Width of board.
+    /** Width of board. */
     private final int width;
 
-    // Time to piece lock in milliseconds, if the piece is 
-    // on the ground and is not moved or rotated.
-    // (Tetris guideline: 500 milliseconds)
+    /** 
+    Time to piece lock in milliseconds, if the piece is 
+    on the ground and is not moved or rotated.
+    (Tetris guideline: 500 milliseconds)
+    */
     private final int lockTime;
 
-    // Time spent on each row when the player soft-drops the 
-    // piece.
+    /**
+    Time spent on each row when the player soft-drops the 
+    piece.
+    */
     private final int softDropTime;
 
-    // Time before the first gravityDrop when a piece 
-    // is spawned.
+    /**
+    Time before the first gravityDrop when a piece 
+    is spawned.
+    */
     private final int spawnDropTime;
 
-    // Copy of board as of previous update.
+    /**
+    Copy of board as of previous update.
+    */
     private Square[][] previousBoardCopy;
 
-    // Used to determine whether a piece movement on the ground 
-    // should extend the lock timer (move reset). Should call 
-    // resetTimesExtended() whenever a new piece is spawned. 
-    // Should call requestLockTimerExtension() **once** whenever 
-    // the player tries to extend the lock timer by rotating 
-    // or moving a piece on the ground.
+    /**
+    Used to determine whether a piece movement on the ground 
+    should extend the lock timer (move reset). Should call 
+    resetTimesExtended() whenever a new piece is spawned. 
+    Should call requestLockTimerExtension() **once** whenever 
+    the player tries to extend the lock timer by rotating 
+    or moving a piece on the ground.
+    */
     private ExtendedPlacementLockDown moveReset;
 
-    // True if a piece was previously held but no piece has 
-    // been locked between then and now (in which case the player 
-    // cannot spawn the currently held piece until the current 
-    // piece locks)
+    /**
+    True if a piece was previously held but no piece has 
+    been locked between then and now (in which case the player 
+    cannot spawn the currently held piece until the current 
+    piece locks)
+    */
     private boolean heldButNotLocked;
 
-    // Number of consecutive line clears that were tspins or 
-    // tetrises. Starts at -1, so that the first Tetris or T-spin 
-    // increases this to 0.
+    /**
+    Number of consecutive line clears that were tspins or 
+    tetrises. Starts at -1, so that the first Tetris or T-spin 
+    increases this to 0.
+    */
     private int consecTetrisOrTSpin;
 
-    // Number of consecutive piece-locks that cleared lines.
-    // Starts at -1, so that dropping the first line-clearing 
-    // piece increases this to 0.
+    /**
+    Number of consecutive piece-locks that cleared lines.
+    Starts at -1, so that dropping the first line-clearing 
+    piece increases this to 0.
+    */
     private int combo;
 
-    // Last successful movement. Should be NOTHING immediately 
-    // after a piece is spawned, and before its first movement.
+    /**
+    Last successful movement. Should be NOTHING immediately 
+    after a piece is spawned, and before its first movement.
+    */
     private Movement lastSuccessfulMovement;
 
-    // Number of lines cleared since the start of the level.
-    // Reset when a new level has been reached.
+    /**
+    Number of lines cleared since the start of the level.
+    Reset when a new level has been reached.
+    */
     private int linesClearedThisLevel;
 
-    // Number of lines required to advance to the next level.
+    /**
+    Number of lines required to advance to the next level.
+    */
     private final int linesToLevelUp;
 
-    // ==================================================
-    // Public interface
-    // ==================================================
-
     /*
-    Constructor. Sets the level to level.
+    ==================================================
+    Public interface
+    ==================================================
     */
+
+    /**
+     * Constructor
+     * @param level the game will start at this level
+     */
     public TetrisGame(int level) {
         this.board = new Board();
         this.score = 0;
@@ -133,15 +165,17 @@ public class TetrisGame {
         this.linesToLevelUp = 10;
     }
 
-    // Spawns the first piece at the start of the game.
-    // Only the first needs to be explicitly spawned; the rest will 
-    // spawn automatically after a piece is dropped.
-    // Requires:
-    // * No game is currently running
-    // Effects:
-    // * Spawns a new piece on this.board
-    // * Sets the last successful movement to NOTHING
-    // * Calls resetTimesExtended() on this.moveReset
+    /**
+    Spawns the first piece at the start of the game.
+    Only the first needs to be explicitly spawned; the rest will 
+    spawn automatically after a piece is dropped.
+    Requires:
+    - No game is currently running
+    Effects:
+    - Spawns a new piece on this.board
+    - Sets the last successful movement to NOTHING
+    - Calls resetTimesExtended() on this.moveReset
+    */
     public BoardUpdateMessage startingPieceSpawn() 
     throws Exception {
         if (!this.spawnPieceOnBoard(next.produceAndRemoveNextPieceInQueue())) {
@@ -159,19 +193,26 @@ public class TetrisGame {
             null);
     }
 
-    // Moves the piece and returns information on the state of the 
-    // resulting board.
-    // If the piece is on the ground afterward, resets the lock timer.
-    // If the piece is in the air afterward but was on the ground before,
-    // sets a fall timer.
-    // Locks the piece if the move-reset limit has been reached and the 
-    // piece ended up on the ground.
-    // Effects:
-    // * May move the piece in play left on this.board
-    // * If the piece moved, sets the last successful movement to LEFT
-    // * May hard-drop the piece after the movement if the move-reset 
-    //   limit has been reached
+    /** 
+    Moves the piece and returns information on the state of the 
+    resulting board.
+    If the piece is on the ground afterward, resets the lock timer.
+    If the piece is in the air afterward but was on the ground before,
+    sets a fall timer.
+    Locks the piece if the move-reset limit has been reached and the 
+    piece ended up on the ground.
+    Effects:
+    - May move the piece in play left on this.board
+    - If the piece moved, sets the last successful movement to LEFT
+    - May hard-drop the piece after the movement if the move-reset 
+      limit has been reached
+    */
     public BoardUpdateMessage moveLeft(EventMessage event) throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to move a nonexistent piece left.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveLeft();
         if (succeeded) {
@@ -205,19 +246,27 @@ public class TetrisGame {
             null);
     }
 
-    // Moves the piece and return information on the state of the 
-    // resulting board.
-    // If the piece is on the ground afterward, resets the lock timer.
-    // If the piece is in the air afterward but was on the ground before,
-    // sets a fall timer.
-    // Locks the piece if the move-reset limit has been reached and the 
-    // piece ended up on the ground.
-    // Effects:
-    // * May move the piece in play right on this.board
-    // * If the piece moved, sets the last successful movement to RIGHT
-    // * May hard-drop the piece after the movement if the move-reset limit 
-    //   has been reached
+    /**
+    Moves the piece and return information on the state of the 
+    resulting board.
+    If the piece is on the ground afterward, resets the lock timer.
+    If the piece is in the air afterward but was on the ground before,
+    sets a fall timer.
+    Locks the piece if the move-reset limit has been reached and the 
+    piece ended up on the ground.
+    Effects:
+    - May move the piece in play right on this.board
+    - If the piece moved, sets the last successful movement to RIGHT
+    - May hard-drop the piece after the movement if the move-reset limit 
+      has been reached
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage moveRight(EventMessage event) throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to move a nonexistent piece right.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.moveRight();
         if (succeeded) {
@@ -251,20 +300,28 @@ public class TetrisGame {
             null);
     }
 
-    // Rotates the piece clockwise and returns information on the state
-    // of the resulting board.
-    // If the piece is on the ground afterward, resets the lock timer.
-    // If the piece is not on the ground afterward but was on the 
-    // ground before, cancels the lock timer and sets a new fall timer.
-    // Locks the piece if the move-reset limit has been reached and the 
-    // piece ended up on the ground.
-    // Effects:
-    // * May rotate the piece in play on this.board
-    // * If the piece rotated, sets the last successful movement to ROTATE
-    // * May hard-drop the piece after the movement if the move-reset limit 
-    //   has been reached
+    /** 
+    Rotates the piece clockwise and returns information on the state
+    of the resulting board.
+    If the piece is on the ground afterward, resets the lock timer.
+    If the piece is not on the ground afterward but was on the 
+    ground before, cancels the lock timer and sets a new fall timer.
+    Locks the piece if the move-reset limit has been reached and the 
+    piece ended up on the ground.
+    Effects:
+    - May rotate the piece in play on this.board
+    - If the piece rotated, sets the last successful movement to ROTATE
+    - May hard-drop the piece after the movement if the move-reset limit 
+      has been reached
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage rotateClockwise(EventMessage event)
     throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to rotate a nonexistent piece clockwise.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.rotate(RotationDirection.CLOCKWISE);
         if (succeeded) {
@@ -298,20 +355,28 @@ public class TetrisGame {
             null);
     }
 
-    // Rotates the piece counterclockwise and returns information on the state 
-    // of the resulting board.
-    // If the piece is on the ground afterwards, resets the lock timer.
-    // If the piece is not on the ground afterward but was on the 
-    // ground before, cancels the lock timer and sets a new fall timer.
-    // Locks the piece if the move-reset limit has been reached and the 
-    // piece ended up on the ground.
-    // Effects:
-    // * May rotate the piece on this.board
-    // * If the piece rotated, sets the last successful movement to ROTATE
-    // * May hard-drop the piece after the movement if the move-reset limit 
-    //   has been reached
+    /**
+    Rotates the piece counterclockwise and returns information on the state 
+    of the resulting board.
+    If the piece is on the ground afterwards, resets the lock timer.
+    If the piece is not on the ground afterward but was on the 
+    ground before, cancels the lock timer and sets a new fall timer.
+    Locks the piece if the move-reset limit has been reached and the 
+    piece ended up on the ground.
+    Effects:
+    - May rotate the piece on this.board
+    - If the piece rotated, sets the last successful movement to ROTATE
+    - May hard-drop the piece after the movement if the move-reset limit 
+      has been reached
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage rotateCounterClockwise(EventMessage event)
     throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to rotate a nonexistent piece counterclockwise.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         boolean inAirBefore = board.pieceIsInAir();
         boolean succeeded = board.rotate(RotationDirection.COUNTERCLOCKWISE);
         if (succeeded) {
@@ -345,14 +410,22 @@ public class TetrisGame {
             null);
     }
 
-    // Holds the piece. 
-    // Effects:
-    // * Holds the current piece on the board
-    // * Sets this.heldButNotLocked to true
-    // * Sets the fall timer for a newly spawned piece
-    // * Calls resetTimesExtended() on moveReset once a new piece is spawned
+    /**
+    Holds the piece. 
+    Effects:
+    - Holds the current piece on the board
+    - Sets this.heldButNotLocked to true
+    - Sets the fall timer for a newly spawned piece
+    - Calls resetTimesExtended() on moveReset once a new piece is spawned
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage hold(EventMessage event)
     throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to hold a nonexistent piece.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         if (this.heldButNotLocked) {
             return this.produceBoardUpdate(
                 event, 
@@ -393,18 +466,25 @@ public class TetrisGame {
         }
     }
 
-    // Hard drops the piece (manual). Attempts to spawn a new piece.
-    // If the spawn was successful, sets the fall timer.
-    // Otherwise tells the browser to end the game.
-    // Effects:
-    // * Hard drops the current piece on the board
-    // * Updates the score
-    // * Resets the flag this.heldButNotLocked
-    // * May spawn a new piece on the board
-    // * Calls resetTimesExtended() on moveReset once a new piece is spawned
+    /**
+    Hard drops the piece (manual). Attempts to spawn a new piece.
+    If the spawn was successful, sets the fall timer.
+    Otherwise tells the browser to end the game.
+    Effects:
+    - Hard drops the current piece on the board
+    - Updates the score
+    - Resets the flag this.heldButNotLocked
+    - May spawn a new piece on the board
+    - Calls resetTimesExtended() on moveReset once a new piece is spawned
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage hardDrop(EventMessage event)
     throws Exception {
-        // board.hardDrop();
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to hard drop a nonexistent piece.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         int distanceDropped = board.distanceOfPieceToBottom();
         LineClearMessage lineClearInfo = this.hardDropAndCalculateRewards();
         boolean spawnUnsuccessful = 
@@ -441,16 +521,24 @@ public class TetrisGame {
         }
     }
 
-    // Sonic-drops the piece.
-    // If the piece was in the air before, stop the fall timer 
-    // and set the lock timer.
-    // Otherwise does not update the timer.
-    // Effects:
-    // * Updates the score
-    // * May move the piece down on this.board
-    // * If the piece moved down, sets the last successful movement to DOWN
+    /**
+    Sonic-drops the piece.
+    If the piece was in the air before, stop the fall timer 
+    and set the lock timer.
+    Otherwise does not update the timer.
+    Effects:
+    - Updates the score
+    - May move the piece down on this.board
+    - If the piece moved down, sets the last successful movement to DOWN
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage sonicDrop(EventMessage event)
     throws Exception {
+        if (board.pieceInPlay() == PieceName.NOTHING) {
+            logger.warn("Tried to sonic drop a nonexistent piece.");
+            return this.produceBoardUpdate(
+                event, false, false, false, false, -1, null);
+        }
         int distanceDropped = board.distanceOfPieceToBottom();
         boolean inAirBefore = board.pieceIsInAir();
         board.sonicDrop();
@@ -477,17 +565,20 @@ public class TetrisGame {
             null);
     }
 
-    // [unused] Soft drops the piece by one row (manual). Ignore for 
-    // certain levels (where a piece's fall from softdropping is 
-    // slower than the fall from gravity alone).
-    // If the piece is in the air afterwards, resets the fall timer.
-    // If the piece is in the air before and on the ground afterwards, 
-    // stops the fall timer and starts the lock timer.
-    // If the piece is on the ground both before and afterwards, 
-    // updates neither timer.
-    // Effects:
-    // * May move the piece down on this.board
-    // * If the piece moved down, sets the last successful movement to DOWN
+    /**
+    [unused] Soft drops the piece by one row (manual). Ignore for 
+    certain levels (where a piece's fall from softdropping is 
+    slower than the fall from gravity alone).
+    If the piece is in the air afterwards, resets the fall timer.
+    If the piece is in the air before and on the ground afterwards, 
+    stops the fall timer and starts the lock timer.
+    If the piece is on the ground both before and afterwards, 
+    updates neither timer.
+    Effects:
+    - May move the piece down on this.board
+    - If the piece moved down, sets the last successful movement to DOWN
+    @param event info communicated from browser
+    */
     public BoardUpdateMessage softDrop(EventMessage event)
     throws Exception {
         boolean inAirBefore = board.pieceIsInAir();
@@ -520,49 +611,29 @@ public class TetrisGame {
             null);
     }
 
-    // Locks the piece if it is on the ground, or soft-drops it 
-    // by one row if it is in the air (automatic).
-    // Effects:
-    // * Locks the piece or soft-drops it by one row
-    // * If the piece moved down by one row, sets the last successful movement 
-    //   to DOWN
-    // * If the piece was locked, resets the flag this.heldButNotLocked
-    // * Updates the score
-    public BoardUpdateMessage automaticFallOrLock(EventMessage event)
+    /**
+    Locks the piece on the ground (automatic, delayed lock).
+    Spawns a new piece and sets the fall timer.
+    Only appropriate to call if the piece is on the ground.
+    Requires:
+    * The piece in play is on the ground
+    Effects:
+    * Updates the score
+    * Locks the current piece on the board
+    * Resets the flag this.heldButNotLocked
+    * Spawns a new piece on the board
+    * Calls resetTimesExtended() on moveReset once a new piece is spawned
+    @param event info communicated from browser
+    */
+    public BoardUpdateMessage automaticLock(EventMessage event)
     throws Exception {
-        if (board.pieceIsInAir()) {
-            this.lastSuccessfulMovement = Movement.DOWN;
-            return this.gravityDrop(event);
-        } else {
-            return this.automaticLock(event);
+        if (board.pieceInPlay() == PieceName.NOTHING || board.pieceIsInAir()) {
+            // For safety, just do nothing
+            logger.warn(
+                "Called automaticLock() inappropriately while " + 
+                "the piece was nonexistent or in the air.");
+            return this.produceBoardUpdate(event, false, false, false, false, -1, null);
         }
-    }
-
-
-    // =========================================================
-    // Private helper methods
-    // =========================================================
-
-    // Locks the piece on the ground (automatic, delayed lock).
-    // Spawns a new piece and sets the fall timer.
-    // Only appropriate to call if the piece is on the ground.
-    // Requires:
-    // * The piece in play is on the ground
-    // Effects:
-    // * Updates the score
-    // * Locks the current piece on the board
-    // * Resets the flag this.heldButNotLocked
-    // * Spawns a new piece on the board
-    // * Calls resetTimesExtended() on moveReset once a new piece is spawned
-    private BoardUpdateMessage automaticLock(EventMessage event)
-    throws Exception {
-        if (board.pieceIsInAir()) {
-            throw new IllegalStateException(
-                "Called automaticLock() at an inappropriate time. " +
-                "The piece was in the air. gravityDrop() should have " +
-                "been called instead.");
-        }
-        // board.hardDrop();
         LineClearMessage lineClearInfo = this.hardDropAndCalculateRewards();
         boolean spawnUnsuccessful = 
             !this.spawnPieceOnBoard(next.produceAndRemoveNextPieceInQueue());
@@ -600,21 +671,25 @@ public class TetrisGame {
         }
     }
 
-    // Soft drops the piece by one row (automatic, due to gravity).
-    // If the piece is in the air afterwards, start a new fall timer.
-    // If the piece is on the ground afterwards, start a lock timer.
-    // Only appropriate to call when the piece is in the air.
-    // Requires:
-    // * The piece in play is in the air
-    // Effects:
-    // * Moves the piece down on this.board
-    private BoardUpdateMessage gravityDrop(EventMessage event) 
+    /**
+    Soft drops the piece by one row (automatic, due to gravity).
+    If the piece is in the air afterwards, start a new fall timer.
+    If the piece is on the ground afterwards, start a lock timer.
+    Only appropriate to call when the piece is in the air.
+    Requires:
+    - The piece in play is in the air
+    Effects:
+    - Moves the piece down on this.board
+    @param event info communicated from browser
+    */
+    public BoardUpdateMessage gravityDrop(EventMessage event) 
     throws Exception {
-        if (!board.moveDown()) {
-            throw new IllegalStateException(
-                "Called gravityDrop() at an inappropriate time. " +
-                "The piece was on the ground and unable to move down. " +
-                "automaticLock() should be called instead.");
+        if (board.pieceInPlay() == PieceName.NOTHING || !board.moveDown()) {
+            // For safety, just do nothing
+            logger.warn(
+                "Called gravityDrop() inappropriately while " + 
+                "the piece was nonexistent or on the ground.");
+            return this.produceBoardUpdate(event, false, false, false, false, -1, null);
         }
         boolean updateFallTimer;
         boolean updateLockTimer;
@@ -638,13 +713,19 @@ public class TetrisGame {
             null);
     }
 
+    /*
+    =========================================================
+    Private helper methods
+    =========================================================
+    */
 
-    /* 
-    Returns true if all of the below are true, or false otherwise:
-    1. The piece in play is T
-    2. The last successful movement was a rotation
+    /** 
+    Conditions for a valid T-spin:
+    1. The piece in play is T;
+    2. The last successful movement was a rotation;
     3. At least three squares adjacent to the center of the T
        are occupied on the board
+       @return true if a valid T-spin, false otherwise
     */
     private boolean validTSpinIfLockedNow() {
         boolean lastWasRotation = 
@@ -654,17 +735,17 @@ public class TetrisGame {
         return lastWasRotation && threeAreOccupied;
     }
 
-    /*
-    Attempts to spawn piece on this.board. Returns true if successful 
-    and false otherwise. Also calls resetTimesExtended() on 
-    this.moveReset if the spawn was successful. Should use this 
-    instead of board.spawn() to spawn new pieces.
-    Requires:
-     * No piece is in play
-    Effects:
-     * Spawns a new piece on the board
-     * Calls resetTimesExtended() on this.moveReset
-    */
+    /**
+     * Attempts to spawn a piece on this.board. Should use this instead of
+     * board.spawn() to spawn new pieces.
+     * Requires:
+     * - No piece is in play
+     * Effects:
+     * - Calls resetTimesExtended() on this.moveReset
+     * @param piece piece type to spawn
+     * @return true if successful and false otherwise
+     * @throws Exception
+     */
     private boolean spawnPieceOnBoard(PieceName piece) throws Exception{
         if (board.spawn(piece)) {
             this.moveReset.resetTimesExtended();
@@ -674,15 +755,16 @@ public class TetrisGame {
         }
     }
 
-    /* 
-    Drops the piece and returns the calculated LineClearMessage.
-    Effects:
-    * Hard-drops the piece
-    * Modifies the flag this.consecTetrisOrTSpin
-    * Modifies the flag this.consecLineClears
-    * Updates this.linesClearedThisLevel and this.level
-    * Updates this.combo
-    */
+    /**
+     * Hard-drops the piece.
+     * Effects:
+     * - Modifies the flag this.consecTetrisOrTspin
+     * - Modifies the flag this.consecLineClears
+     * - Updates this.linesClearedThisLevel and this.level
+     * - Updates this.combo
+     * @return info on lines cleared
+     * @throws Exception
+     */
     private LineClearMessage hardDropAndCalculateRewards()
     throws Exception {
         boolean isTSpin = validTSpinIfLockedNow();
@@ -715,18 +797,16 @@ public class TetrisGame {
             leveledUp);
     }
 
-
-    /*
-    Updates the score. Scoring mimics that of recent Tetris Guideline-adherent
-    games as closely as possible.
-    The value of distanceSonicDropped does not matter if sonicDropped is false.
-    The value of distanceHardDropped does not matter if hardDropped is false.
-    
-    Requires:
-    * lineClearInfo is not null
-    Effects:
-    * Modifies this.score
-    */
+    /**
+     * Updates the score. Scoring mimics that of recent Tetris-Guideline-adherent
+     * games as closely as possible. 
+     * @param lineClearInfo info on lines cleared, must be non-null.
+     * @param sonicDropped true if the piece was sonic-dropped and false otherwise
+     * @param hardDropped true if the piece was hard-dropped and false otherwise
+     * @param distanceSonicDropped distance sonic dropped, irrelevant if not sonic-dropped.
+     * @param distanceHardDropped distance hard dropped, irrelevant if not hard-dropped.
+     * @throws NullPointerException
+     */
     private void updateScore(
         LineClearMessage lineClearInfo, 
         boolean sonicDropped,
@@ -811,20 +891,23 @@ public class TetrisGame {
         this.score += addToScore;
     }
 
-    // Returns a message detailing the state of the board.
-    // This should be called once between each command from the 
-    // player. 
-    // * event should be the message from the controller; can be null
-    // * spawnWasUnsuccessful should be true if the game attempted 
-    //   to spawn a new piece but failed due 
-    //   to not having room.
-    // * updateFallTimer, updateLockTimer, and requestNewUpdateIn 
-    //   are as described in TimerUpdateMessage and are meant to 
-    //   be passed to a TimerUpdateMessage constructor.
-    // * lineClearInfo is the message produced by hardDropAndCalculateRewards;
-    //   can be null
-    // Effects:
-    // * Updates previousBoardCopy
+    /**
+     * Updates previousBoardCopy and returns a message detailing the state
+     * of the board. Should be called once between each command from
+     * the player.
+     * @param event message from the controller; can be null
+     * @param spawnedNewPiece true if a new piece was spawned, false otherwise
+     * @param spawnWasUnsuccessful true if the game attempted to spawn a 
+     * piece, but failed due to not having room; false otherwise
+     * @param updateFallTimer to be passed to the parameter of the same
+     * name in a TimerMessage constructor
+     * @param updateLockTimer to be passed to the parameter of the same
+     * name in a TimerMessage constructor
+     * @param requestNewUpdateIn to be passed to the parameter of the same
+     * name in a TimerMessage constructor
+     * @param lineClearInfo info on lines cleared; can be null
+     * @return a message detailing the state of the board
+     */
     private BoardUpdateMessage produceBoardUpdate(
         EventMessage event, 
         boolean spawnedNewPiece,
@@ -884,10 +967,6 @@ public class TetrisGame {
     }
 
     /*
-    Returns the interval between successive commands to 
-    automatically drop the piece by one block, depending on
-    the current level.
-
     Formula from Tetris Worlds for time spent per row in 
     milliseconds:
 
@@ -912,6 +991,13 @@ public class TetrisGame {
     Problem: higher levels would be less stable because of the connection
     being swamped by automatic-drop requests
     */
+    
+    /**
+     * 
+     * @return the interval between successive commands to 
+    automatically drop the piece by one block, depending on
+    the current level.
+     */
     private int fallInterval() {
         switch(this.level) {
             case 1:

@@ -1,7 +1,7 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 PieceName lists the names of the tetrominoes.
 */
 

@@ -1,7 +1,7 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 KeyCommand lists the types of commands expected from the player.
 */
 

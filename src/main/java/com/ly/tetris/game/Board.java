@@ -17,15 +17,15 @@ import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.RotationDirection;
 
 
-/*
+/** 
 Board manages the status of the game board.
 The following responsibilities are delegated to Board:
 
- * Maintaining a list of squares that are occupied by the Tetris stack
- * Storing the piece in play
- * Determining whether an attempted move of the piece in play 
-   is legal
- * Storing the relative location of the hard drop ghost
+ * Maintaining a list of squares that are occupied by the Tetris stack;
+ * Storing the piece in play;
+ * Determining whether an attempted move of the piece in play
+   is legal;
+ * Storing the relative location of the hard drop ghost;
  * Checking 2/3 of the criteria for determining that a T-spin was 
    performed, which require information that is only directly 
    accessible by Board. The method is intended to be a helper for the 
@@ -33,29 +33,41 @@ The following responsibilities are delegated to Board:
 */
 
 public class Board {
-    // ==============
-    // Fields
-    // ==============
+    /*
+    ==============
+    Fields
+    ==============
+    */
 
-    // The board. Rows 20 through 39 are the visible playing field.
-    // Rows 0 through 19 are hidden, above the visible playing field.
-    // The upper left corner is (0,0).
+    /**
+    The board. Rows 20 through 39 are the visible playing field.
+    Rows 0 through 19 are hidden, above the visible playing field.
+    The upper left corner is (0,0).
+    */
     private final Square[][] theBoard = new Square[40][10];
 
-    // The piece currently falling. Should be null before spawning 
-    // the first piece, or after locking a piece but before spawning a
-    // new one.
+    /**
+    The piece currently falling. Should be null before spawning 
+    the first piece, or after locking a piece but before spawning a
+    new one.
+    */
     private Piece inPlay;
 
-    // The number of squares that the piece would drop by 
-    // if it were hard-dropped now.
+    /** 
+    The number of squares that the piece would drop by 
+    if it were hard-dropped now.
+    */
     private int hardDropPieceBy;
 
-    // ================
-    // Constructors
-    // ================
+    /*
+    ================
+    Constructors
+    ================
+    */
 
-    // Initializes the board to be empty.
+    /** 
+    Initializes the board to be empty.
+    */
     public Board() {
         this.inPlay = null;
         for (int r = 0; r < 40; r++) {
@@ -65,7 +77,10 @@ public class Board {
         }
     }
 
-    // Initializes the board with some squares already occupied.
+    /**
+    Initializes the board with some squares already occupied.
+    * @param alreadyOccupied squares to fill upon initialization
+    */
     public Board(ArrayList<LocationPosn> alreadyOccupied) {
         this.inPlay = null;
         for (int r = 0; r < 40; r++) {
@@ -82,12 +97,16 @@ public class Board {
         }
     }
 
-    // =================
-    // Public interface: Status of board
-    // =================
+    /*
+    =================
+    Public interface: Status of board
+    =================
+    */
 
-    // Returns a copy of the board. The copy does not contain 
-    // information on the piece in play.
+    /**
+    Returns a copy of the board. The copy does not contain 
+    information on the piece in play.
+    */
     public Square[][] copyOfBoard() {
         Square[][] copy = new Square[40][10];
         for (int r = 0; r < 40; r++) {
@@ -98,8 +117,10 @@ public class Board {
         return copy;
     }
 
-    // Returns the name of the piece currently in play, or 
-    // PieceName.NOTHING if none are in play.
+    /**
+    Returns the name of the piece currently in play, or 
+    PieceName.NOTHING if none are in play.
+    */
     public PieceName pieceInPlay() {
         if (inPlay != null) {
             return inPlay.name();
@@ -108,21 +129,26 @@ public class Board {
         }
     }
 
-    // Returns the orientation of the piece currently in play.
-    // Requires: there is a piece in play
+    /**
+    Returns the orientation of the piece currently in play.
+    Requires: there is a piece in play
+    */
     public PieceOrientation orientationOfPieceInPlay() 
-    throws NullPointerException 
+    throws NullPointerException
     {
         if (inPlay == null) {
             throw new NullPointerException(
-                "Can't get orientation of a nonexistent piece in play.");
+                "Can't get the orientation of a nonexistent piece.");
         }
         return inPlay.orientationNow();
     }
 
-    // Returns the (row, col) coordinates of the squares currently 
-    // occupied by the piece in play. List may be empty if no piece 
-    // is in play.
+    /**
+     * 
+     * @return the (row, col) coordinates of the squares currently 
+     * occupied by the piece in play. List may be empty if no piece 
+     * is in play.
+     */
     public ArrayList<LocationPosn> squaresOccupiedByPieceInPlay() {
         if (inPlay != null) {
             return inPlay.squaresOccupiedNow();
@@ -130,10 +156,13 @@ public class Board {
             return new ArrayList<LocationPosn>();
         }
     }
-    
-    // Returns the (row, col) coordinates of the squares that 
-    // the piece in play would occupy if it were hard-dropped now.
-    // List may be empy if no piece is in play.
+
+    /**
+     * 
+     * @return the (row, col) coordinates of the squares that 
+    the piece in play would occupy if it were hard-dropped now, May be empty if
+    no piece is in play.
+     */
     public ArrayList<LocationPosn> squaresOccupiedByHardDropGhost() {
         if (inPlay == null) {
             return new ArrayList<LocationPosn>();
@@ -142,10 +171,13 @@ public class Board {
         }
     }
 
-    // Returns the (row, col) coordinates of the squares on the board 
-    // currently occupied by the Tetris stack -- ie. parts of 
-    // previously dropped pieces, but not the piece that's currently 
-    // falling.
+    /**
+     * 
+     * @return the (row, col) coordinates of the squares on the board 
+     * currently occupied by the Tetris stack -- ie. parts of 
+     * previously dropped pieces, but not the piece that's currently 
+     * falling.
+     */
     public ArrayList<LocationPosn> squaresOccupiedByStack() {
         ArrayList<LocationPosn> occupied = new ArrayList<LocationPosn>();
         for (int row = 0; row < 40; row++) {
@@ -158,10 +190,13 @@ public class Board {
         return occupied;
     }
 
-    // Returns true if there is a piece in play and it is in the 
-    // air, and false otherwise.
-    // Requires:
-    // * hardDropPieceBy is up to date
+    /**
+    Requires:
+    hardDropPieceBy is up to date
+     * @return true if there is a piece in play and it is in the 
+    air, and false otherwise.
+     */
+    
     public boolean pieceIsInAir() {
         if (inPlay == null) {
             return false;
@@ -170,10 +205,11 @@ public class Board {
         }
     }
 
-    /* 
-    Returns true if the piece in play is a T and at least three squares 
+    /**
+     * 
+     * @return true if the piece in play is a T and at least three squares 
     adjacent to the center are occupied on the board, and false otherwise.
-    */
+     */
     public boolean pieceIsTAndThreeAdjacentToCenterAreOccupied() {
         if (inPlay == null || inPlay.name() != PieceName.T) {
             return false;
@@ -197,9 +233,10 @@ public class Board {
         return squaresOccupied >= 3;
     }
 
-    /* 
-    Returns true if the board is empty and false otherwise.
-    */
+    /**
+     * 
+     * @return true if the board is empty and false otherwise.
+     */
     public boolean isEmpty() {
         for (int r = 0; r < 40; r++) {
             for (int c = 0; c < 10; c++) {
@@ -211,13 +248,12 @@ public class Board {
         return true;
     }
 
-    /*
-    Returns the number of lines that the piece would drop by if it were 
+    /**
+     * Requires:
+     * There is a piece in play (otherwise hardDropPieceBy would be invalid)
+     * @return the number of lines that the piece would drop by if it were 
     hard-dropped (or sonic-dropped) now.
-
-    Requires:
-    * There is a piece in play (otherwise hardDropPieceBy would be invalid)
-    */
+     */
     public int distanceOfPieceToBottom() throws IllegalStateException {
         if (inPlay == null) {
             throw new IllegalStateException(
@@ -227,15 +263,20 @@ public class Board {
     }
 
 
-    // =====================================
-    // Public interface: Modifying the board
-    // =====================================
+    /*
+    =====================================
+    Public interface: Modifying the board
+    =====================================
+    */
 
-    // Removes the piece from play. Returns the name of the piece 
-    // in play, or NOTHING if no piece was in play.
-    // Effects:
-    // * Removes the current piece from play, if there was one.
-    // * hardDropPieceBy becomes invalid until a new piece is spawned.
+    /**
+     * Removes the piece from play.
+     * Effects: 
+     * * Removes the current piece from play, if there was one
+     * * hardDropPieceBy becomes invalid until a new piece is spawned.
+     * @return the name of the piece 
+    in play, or NOTHING if no piece was in play.
+     */
     public PieceName removePieceFromPlay() {
         PieceName piece = PieceName.NOTHING;
         if (inPlay != null) {
@@ -245,48 +286,56 @@ public class Board {
         return piece;
     }
 
-    // Attempts to move the piece in play left by one square.
-    // Returns true if successful and false otherwise.
-    // Requires:
-    // * there is a piece in play
-    // Effects:
-    // * May modify board
-    // * Updates hardDropPieceBy if the piece was successfully moved
+    /**
+     * Attempts to move the piece in play left by one square.
+     * Requires: 
+     * * There is a piece in play.
+     * Effects:
+     * * Updates hardDropPieceBy if the piece is successfully moved.
+     * @return true if successful and false otherwise.
+     * @throws IllegalStateException
+     */
     public boolean moveLeft() throws IllegalStateException {
         return this.moveDirection(0, -1);
     }
 
-    // Attempts to move the piece in play right by one square.
-    // Returns true if successful and false otherwise.
-    // Requires:
-    // * there is a piece in play
-    // Effects:
-    // * May modify the board
-    // * Updates hardDropPieceBy if the piece was successfully moved
+    /**
+     * Attempts to move the piece in play right by one square.
+     * Requires:
+     * * There is a piece in play
+     * Effects:
+     * * Updates hardDropPieceBy if the piece was successfully moved
+     * @return true if successful and false otherwise.
+     * @throws IllegalStateException
+     */
     public boolean moveRight() throws IllegalStateException {
         return this.moveDirection(0, 1);
     }
 
-    // Attempts to move the piece in play down by one square.
-    // Returns true if successful and false otherwise.
-    // Requires:
-    // * there is a piece in play
-    // Effects:
-    // * May modify the board
-    // * Updates hardDropPieceBy if the piece was successfully moved
+    /**
+     * Attempts to move the piece in play down by one square.
+     * Requires:
+     * * There is a piece in play
+     * Effects:
+     * * Updates hardDropPieceBy if the piece was successfully moved
+     * @return true if successful and false otherwise.
+     * @throws IllegalStateException
+     */
     public boolean moveDown() throws IllegalStateException {
         return this.moveDirection(1, 0);
     }
 
-    // Hard drops the current piece and removes it from play.
-    // Returns the number of lines cleared.
-    // Requires:
-    // * there is a piece in play
-    // Effects: 
-    // * Modifies the board.
-    // * Removes the current piece in play from play, after which 
-    //   no piece will be falling.
-    // * hardDropPieceBy becomes invalid until a new piece is spawned.
+    /**
+     * Hard drops the current piece and removes it from play.
+     * Requires:
+     * - There is a piece in play
+     * Effects:
+     * - Removes the current piece in play from play, after which
+     * no piece will be falling.
+     * - hardDropPieceBy becomes invalid until a new piece is spawned.
+     * @return the number of lines cleared
+     * @throws IllegalStateException
+     */
     public int hardDrop() throws IllegalStateException {
         if (inPlay != null) {
             movePieceToBottom();
@@ -300,24 +349,30 @@ public class Board {
     } 
 
 
-    // Sonic-drops the current piece, if one is in play.
-    // Effects:
-    // * Modifies the board
-    // * Updates hardDropPieceBy
+    /**
+    Sonic-drops the current piece, if one is in play.
+    Effects:
+    - Modifies the board
+    - Updates hardDropPieceBy
+    */
     public void sonicDrop() {
         if (inPlay != null) {
             movePieceToBottom();
         }
     }
 
-    // Attempts to spawn the new piece and update hard drop location.
-    // Returns true if piece has room to spawn and false otherwise.
-    // Requires: 
-    // * there is no piece in play before calling the function
-    // * piece is not NOTHING
-    // Effects:
-    // * May modify the board by spawning a new piece
-    // * Updates hardDropPieceBy if the piece is successfully spawned
+    /**
+     * Attempts to spawn the new piece and update hard drop location.
+     * Requires:
+     * - There is no piece in play before calling the function
+     * - Piece is not NOTHING
+     * Effects:
+     * - Updates hardDropPieceBy if the piece is successfully spawned
+     * @param piece piece type to spawn
+     * @return true if piece has room to spawn and false otherwise
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     */
     public boolean spawn(PieceName piece) 
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -360,16 +415,22 @@ public class Board {
         }
     }
 
-    // Attempts to spawn the new piece at (r, c) and update hard drop 
-    // location. Returns true if the piece has room to spawn and 
-    // false otherwise.
-    // (Intended for debugging purposes only)
-    // Requires:
-    // * there is no piece in play before calling the function
-    // * piece is not NOTHING
-    // Effects:
-    // * May modify the board by spawning a new piece
-    // * Updates hardDropPieceBy if the piece is successfully spawned
+    /**
+     * Attempts to spawn the new piece at (r, c) and update hard drop
+     * location.
+     * Requires:
+     * - There is no piece in play before calling the function
+     * - piece is not NOTHING
+     * Effects:
+     * - Updates hardDropPieceBy if the piece is successfully spawned
+     * @param piece piece type to spawn
+     * @param r row to spawn on
+     * @param c column to spawn on
+     * @return true if the piece has room to spawn and 
+    false otherwise
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     */
     public boolean spawn(PieceName piece, int r, int c)
     throws IllegalArgumentException, IllegalStateException {
         if (inPlay != null) {
@@ -412,15 +473,20 @@ public class Board {
         }
     }
 
-    // Attempts to rotate the piece that's currently in play and 
-    // update hard drop location. Returns true if the piece 
-    // has room to rotate and false otherwise. 
-    // Follows Super Rotation System (SRS) rules.
-    // Requires: 
-    // * the piece in play is not null.
-    // Effects: 
-    // * May modify the board.
-    // * Updates hardDropPieceBy if the piece is successfully rotated
+    /**
+     * Attempts to rotate the piece that's currently in play and
+     * update hard drop location.
+     * Follows Super Rotation System (SRS) rules.
+     * Requires:
+     * - Piece in play is not null
+     * Effects:
+     * - Updates hardDropPieceBy if the piece is successfully rotated
+     * @param direction direction to rotate in
+     * @return true if the piece 
+    has room to rotate and false otherwise
+     * @throws NullPointerException
+     * @throws IllegalStateException
+     */
     public boolean rotate(RotationDirection direction) 
     throws NullPointerException, IllegalStateException
     {
@@ -484,22 +550,31 @@ public class Board {
     }
 
 
-    // =================================
-    // Private helper methods
-    // =================================
+    /*
+    =================================
+    Private helper methods
+    =================================
+    */
 
-    // Returns true if the posn is a legal coordinate on the board 
-    // and false otherwise.
+    /**
+     * 
+     * @param p position
+     * @return true if p is a legal coordinate on the board 
+    and false otherwise
+     */
     private boolean isInRange(LocationPosn p) {
         return (0 <= p.row && p.row < 40 && 0 <= p.col && p.col < 10);
     }
 
-    // Updates the flag hardDropPieceBy.
-    // Requires:
-    // * There is a piece in play
-    // Effects: 
-    // * Modifies the board
-    // * Updates hardDropPieceBy
+    /**
+     * Updates the flag hardDropPieceBy.
+     * Requires:
+     * - There is a piece in play
+     * Effects:
+     * - Modifies the board
+     * - Updates hardDropPieceBy
+     * @throws NullPointerException
+     */
     private void updateHardDropPieceBy() throws NullPointerException {
         if (inPlay == null) {
             throw new NullPointerException("Piece in play is null.");
@@ -522,13 +597,17 @@ public class Board {
         this.hardDropPieceBy = updatedHardDropBy;
     }
 
-    // Attempts to move the piece by diffr rows down and diffc cols right.
-    // Returns true if the piece was able to move and false otherwise.
-    // Requires: 
-    // * there is a piece in play
-    // Effects:
-    // * May modify the board by moving the piece in play
-    // * Updates hardDropPieceBy if the piece was successfully moved
+    /**
+     * Attempts to move the piece diffr rows down and diffc columns right.
+     * Requires:
+     * - There is a piece in play
+     * Effects:
+     * - Updates hardDropPieceBy if the piece was successfully moved
+     * @param diffr move down by this amount
+     * @param diffc move right by this amount
+     * @return true if the piece was able to move and false otherwise
+     * @throws IllegalStateException
+     */
     private boolean moveDirection(int diffr, int diffc) 
     throws IllegalStateException {
         if (inPlay == null) {
@@ -550,28 +629,30 @@ public class Board {
         }
     }
 
-    // Moves the current piece to the bottom of the board
-    // Requires:
-    // * hardDropPieceBy is up to date
-    // Effects:
-    // * Modifies the board.
-    // * Updates the flag hardDropPieceBy.
+    /**
+     * Moves the current piece to the bottom of the board.
+     * Requires:
+     * - hardDropPieceBy is up to date
+     * Effects:
+     * - Updates the flag hardDropPieceBy
+     */
     private void movePieceToBottom() {
         inPlay.movePieceBy(hardDropPieceBy, 0);
         this.hardDropPieceBy = 0;
     }
 
-    // Locks the current piece and sets inPlay to null. 
-    // Does not clear lines.
-    // Requires: 
-    // * the piece is in range of the board (that is, it is not occupying 
-    ///  squares off of the board)
-    // * the piece is at the bottom of the board
-    // * all squares occupied are free
-    // Effects:
-    // * Modifies the board.
-    // * inPlay becomes null, and hardDropPieceBy becomes invalid until 
-    //   a new piece is spawned
+    /**
+    Locks the current piece and sets inPlay to null. 
+    Does not clear lines.
+    Requires: 
+    - the piece is in range of the board (that is, it is not occupying 
+    / squares off of the board)
+    - the piece is at the bottom of the board
+    - all squares occupied are free
+    Effects:
+    - inPlay becomes null, and hardDropPieceBy becomes invalid until 
+      a new piece is spawned
+    */
     private void lockPiece() {
         ArrayList<LocationPosn> occupied = inPlay.squaresOccupiedNow();
         ListIterator<LocationPosn> iterOccupied = occupied.listIterator();
@@ -582,11 +663,11 @@ public class Board {
         inPlay = null;
     }
 
-    // Clears the rows that are currently "full", ie. can be cleared.
-    // Returns the number of lines cleared.
-    // Intended for use immediately after this.lockPiece().
-    // Effects:
-    // * May modify the board by clearing lines.
+    /**
+     * Clears the rows that are currently "full"; ie. can be cleared.
+     * Intended for use immediately after this.lockPiece().
+     * @return the number of lines cleared
+     */
     private int clearLines() {
         int cleared = 0;
         for (int r = 0; r < 40; r++) {
@@ -605,12 +686,12 @@ public class Board {
         return cleared;
     }
 
-    // Copies the rows above copyDownTo one row down.
-    // Intended for use in this.clearLines() only.
-    // Requires:
-    // * 16 <= copyDownTo < 40
-    // Effects:
-    // * Modifies the board
+    /**
+     * Copies the rows above copyDownTo down one row.
+     * Intended for use in this.clearLines() only.
+     * @param copyDownTo 16 <= copyDownTo < 40. Copies down the rows above this row
+     * @throws IllegalArgumentException
+     */
     private void copyRowsAboveOneRowDown(int copyDownTo) 
     throws IllegalArgumentException {
         if (!(16 <= copyDownTo && copyDownTo < 40)) {
@@ -626,15 +707,22 @@ public class Board {
         }
     }
 
-    // Returns true if the piece does not overlap with any part of 
-    // the current board and false otherwise.
-    // (Probably useful only for spawning and nothing else)
+    /**
+     * (Probably useful only for spawning and nothing else)
+     * @param piece non-null piece object
+     * @return true if the piece does not overlap with any part of 
+    the current board and false otherwise
+     */
     private boolean pieceCanOccupyCurrentLocation(Piece piece) {
         return this.squaresAreFree(piece.squaresOccupiedNow());
     }
 
-    // Returns true if all coordinates in posns are legal coordinates 
-    // on the board, and false otherwise.
+    /**
+     * 
+     * @param posns positions on the board
+     * @return true if all coordinates in posns are legal coordinates 
+    on the board, and false otherwise
+     */
     private boolean posnsInRange(ArrayList<LocationPosn> posns) {
         ListIterator<LocationPosn> it = posns.listIterator();
         while (it.hasNext()) {
@@ -646,10 +734,13 @@ public class Board {
         return true;
     }
 
-    // Returns true if the squares given in squares are unoccupied 
-    // on the board, and false otherwise.
-    // Requires: 
-    // * each posn in the list is in range (0 <= row < 40, 0 <= col < 10)
+    /**
+     * 
+     * @param squares positions satisfying 0 <= row < 40 and 0 <= col < 10 for each square
+     * @return true if the squares given in squares are unoccupied 
+    on the board, and false otherwise
+     * @throws IndexOutOfBoundsException
+     */
     private boolean squaresAreFree(ArrayList<LocationPosn> squares) 
     throws IndexOutOfBoundsException 
     {
@@ -672,8 +763,13 @@ public class Board {
         return true;
     }
 
-    // Returns a list obtained from original by applying an offset 
-    // of offsetBy to each entry.
+    /**
+     * 
+     * @param original list of positions
+     * @param offsetBy apply this to each element of original
+     * @return a list obtained from original by applying an offset 
+    of offsetBy to each entry
+     */
     private ArrayList<LocationPosn> 
     offsetList(ArrayList<LocationPosn> original, OffsetPosn offsetBy) {
         ArrayList<LocationPosn> offset  = new ArrayList<LocationPosn>();

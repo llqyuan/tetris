@@ -5,30 +5,35 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
-/*
+/** 
 
 SuperRotationSystem determines the list of wall kicks to use 
 for an attempted rotation, following the Super Rotation System.
-    
+
 Interpret language from Tetris wiki:
 
 Rotation state:
- * "spawn state": UPRIGHT
- * "right": RIGHT
- * "state resulting from two successive rotations": UPSIDEDOWN
- * "left": LEFT
+ - "spawn state": UPRIGHT
+ - "right": RIGHT
+ - "state resulting from two successive rotations": UPSIDEDOWN
+ - "left": LEFT
 
 Wall kick direction:
- * (x, y) in coordinates is equivalent to (-y, x) for a OffsetPosn.
+ - (x, y) in coordinates is equivalent to (-y, x) for a OffsetPosn.
 
 */
 
 public class SuperRotationSystem {
 
-    // Returns the wall kicks to be attempted (in order) for the
-    // piece given by piece, that starts in the orientation start, 
-    // and rotates to the orientation end.
-    // Requires: piece is not NOTHING
+    /**
+     * 
+     * @param piece piece type for which the wall kicks will be attempted. 
+     * Must not be NOTHING.
+     * @param start starting orientation
+     * @param end ending orientation
+     * @return the wall kicks to be attempted, in order
+     * @throws IllegalArgumentException
+     */
     public static ArrayList<OffsetPosn> 
     kicksToAttempt(PieceName piece, 
                    PieceOrientation start, 

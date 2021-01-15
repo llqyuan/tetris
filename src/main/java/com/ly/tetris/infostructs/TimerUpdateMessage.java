@@ -1,26 +1,32 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 TimerUpdateMessage contains information on the timer for automatic piece-drops 
 due to gravity, or automatic delayed locking when a piece reaches the ground.
 */
 
 public class TimerUpdateMessage {
 
-    // Set to true to tell the browser to send a message 
-    // to drop the piece by one block later. Use when 
-    // the falling piece is in the air.
+    /**
+    Set to true to tell the browser to send a message 
+    to drop the piece by one block later. Use when 
+    the falling piece is in the air.
+    */
     private boolean updateFallTimer;
 
-    // Set to true to tell the browser to send a message 
-    // to lock the piece later. Use when the falling piece 
-    // is on the ground/stack.
+    /**
+    Set to true to tell the browser to send a message 
+    to lock the piece later. Use when the falling piece 
+    is on the ground/stack.
+    */
     private boolean updateLockTimer;
 
-    // If one of the above two is true, tells the browser to send 
-    // the message after this many milliseconds. Irrelevant if 
-    // both of the above are false.
+    /**
+    If one of the above two is true, tells the browser to send 
+    the message after this many milliseconds. Irrelevant if 
+    both of the above are false.
+    */
     private int requestNewUpdateIn;
 
     public TimerUpdateMessage() {

@@ -6,17 +6,22 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
-/*
+/** 
 OPiece implements Piece as appropriate for an O tetromino.
 */
 
 public class OPiece extends Piece {
-    // A grid 4 units wide and 3 units tall, representing the field 
-    // around the piece. The upper left corner is (0,0). 
-    // An entry is true when the piece occupies that square, and 
-    // false otherwise.
+    /**
+    A grid 4 units wide and 3 units tall, representing the field 
+    around the piece. The upper left corner is (0,0). 
+    An entry is true when the piece occupies that square, and 
+    false otherwise.
+    */
     private boolean[][] localFieldOccupied = new boolean[3][4];
 
+    /**
+     * Constructor
+     */
     public OPiece() {
         super(18, 3, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 2; i++) {
@@ -30,6 +35,11 @@ public class OPiece extends Piece {
         }
     }
 
+    /**
+     * Constructor
+     * @param r row to spawn at
+     * @param c column to spawn at
+     */
     public OPiece(int r, int c) {
         super(r, c, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 2; i++) {

@@ -1,7 +1,7 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 EventMessage contains information on commands, 
 sent to the controller by the browser.
 */

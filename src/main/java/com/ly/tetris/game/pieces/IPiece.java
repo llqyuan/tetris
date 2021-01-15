@@ -6,19 +6,23 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
-/*
-IPiece implements Piece as appropriate for an I tetromino.
+/** 
+ * IPiece implements Piece as appropriate for an I tetromino.
 */
 
 public class IPiece extends Piece {
-    // A 4x4 grid, representing the field around the piece. 
-    // The upper left corner is (0,0). 
-    // An entry is true when the piece occupies that square, and 
-    // false otherwise.
+    /** 
+    A 4x4 grid, representing the field around the piece. 
+    The upper left corner is (0,0). 
+    An entry is true when the piece occupies that square, and 
+    false otherwise.
+    */
     private boolean[][] localFieldOccupied = new boolean[4][4];
 
-    // Constructor. Spawns the piece in the upright position above 
-    // the visible field
+    /** 
+    Constructor. Spawns the piece in the upright position above 
+    the visible field
+    */
     public IPiece() {
         super(18, 3, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 4; i++) {
@@ -29,6 +33,10 @@ public class IPiece extends Piece {
         }
     }
 
+    /** Constructor. Spawns the piece at (r, c)
+     * @param r row to spawn at
+     * @param c column to spawn at
+     */
     public IPiece(int r, int c) {
         super(r, c, PieceOrientation.UPRIGHT);
         for (int i = 0; i < 4; i++) {
@@ -109,12 +117,16 @@ public class IPiece extends Piece {
         return occupied;
     }
 
-    // ======================
-    // Private helpers
-    // ======================
+    /*
+    ======================
+    Private helpers
+    ======================
+    */
 
-    // Returns the 4x4 array that localFieldOccupied would have 
-    // been set to if the piece were rotated clockwise. 
+    /** 
+    Returns the 4x4 array that localFieldOccupied would have 
+    been set to if the piece were rotated clockwise. 
+    */
     private boolean[][] rotatedClockwise() {
         boolean[][] occupiedWhenRotated = new boolean[4][4];
         for (int r = 0; r < 4; r++) {
@@ -125,8 +137,10 @@ public class IPiece extends Piece {
         return occupiedWhenRotated;
     }
 
-    // Returns the 4x4 array that localFieldOccupied would have 
-    // been set to if the piece were rotated counterclockwise.
+    /** 
+    Returns the 4x4 array that localFieldOccupied would have 
+    been set to if the piece were rotated counterclockwise.
+    */
     private boolean[][] rotatedCounterClockwise() {
         boolean[][] occupiedWhenRotated = new boolean[4][4];
         for (int r = 0; r < 4; r++) {

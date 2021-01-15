@@ -1,7 +1,7 @@
 package com.ly.tetris.infostructs;
 
 
-/*
+/**
 GameStartMessage contains information on the settings that 
 the user set for the new game.
 */

@@ -6,19 +6,23 @@ import com.ly.tetris.infostructs.OffsetPosn;
 import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 
-/*
+/**
 LPiece implements Piece as appropriate for an L tetromino.
 */
 
 public class LPiece extends Piece {
-    // A 3x3 grid, representing the field around the piece. 
-    // The upper left corner is (0,0). 
-    // An entry is true when the piece occupies that square, and 
-    // false otherwise.
+    /** 
+    A 3x3 grid, representing the field around the piece. 
+    The upper left corner is (0,0). 
+    An entry is true when the piece occupies that square, and 
+    false otherwise.
+    */
     private boolean[][] localFieldOccupied = new boolean[3][3];
 
-    // Constructor. Spawns the piece in the upright position above
-    // the visible field
+    /** 
+    Constructor. Spawns the piece in the upright position above
+    the visible field
+    */
     public LPiece() {
         super(18, 3, PieceOrientation.UPRIGHT);
         localFieldOccupied[0][0] = false;
@@ -30,6 +34,11 @@ public class LPiece extends Piece {
         }
     }
 
+    /**
+     * Constructor.
+     * @param r row to spawn at
+     * @param c column to spawn at
+     */
     public LPiece(int r, int c) {
         super(r, c, PieceOrientation.UPRIGHT);
         localFieldOccupied[0][0] = false;
@@ -107,12 +116,16 @@ public class LPiece extends Piece {
         return occupied;
     }
 
-    // ======================
-    // Private helpers
-    // ======================
+    /*
+    ======================
+    Private helpers
+    ======================
+    */
 
-    // Returns the 3x3 array that localFieldOccupied would have 
-    // been set to if the piece were rotated clockwise. 
+    /** 
+    Returns the 3x3 array that localFieldOccupied would have 
+    been set to if the piece were rotated clockwise. 
+    */
     private boolean[][] rotatedClockwise() {
         boolean[][] occupiedWhenRotated = new boolean[4][4];
         for (int r = 0; r < 3; r++) {
@@ -123,8 +136,10 @@ public class LPiece extends Piece {
         return occupiedWhenRotated;
     }
 
-    // Returns the 3x3 array that localFieldOccupied would have 
-    // been set to if the piece were rotated counterclockwise.
+    /**
+    Returns the 3x3 array that localFieldOccupied would have 
+    been set to if the piece were rotated counterclockwise.
+    */
     private boolean[][] rotatedCounterClockwise() {
         boolean[][] occupiedWhenRotated = new boolean[4][4];
         for (int r = 0; r < 3; r++) {

@@ -9,7 +9,7 @@ import com.ly.tetris.infostructs.PieceName;
 import com.ly.tetris.infostructs.PieceOrientation;
 import com.ly.tetris.infostructs.RotationDirection;
 
-/*
+/**
 Piece defines the implementation for the 7 Tetris pieces. The following 
 responsibilities are delegated to the piece classes:
 
@@ -19,41 +19,59 @@ responsibilities are delegated to the piece classes:
 */
 
 public abstract class Piece {
-    // The absolute position of the piece. It represents the upper left 
-    // corner of the piece's local field of occupied squares (shape of 
-    // field depends on the piece -- eg. 4x4 for I, 3x3 for L)
+    /** 
+    The absolute position of the piece. It represents the upper left 
+    corner of the piece's local field of occupied squares (shape of 
+    field depends on the piece -- eg. 4x4 for I, 3x3 for L)
+    */
     private LocationPosn absolutePosition = null;
 
-    // The orientation of the piece.
+    /** 
+    The orientation of the piece.
+    */
     private PieceOrientation orientation = PieceOrientation.UPRIGHT;
 
-    // ===================================================
-    // Public interface
-    // ===================================================
+    /*
+    ===================================================
+    Public interface
+    ===================================================
+    */
 
-    // Constructor. Sets absolute position to (r, c)
+    /**
+     * Constructor. Sets absolute position to (r, c)
+     * @param r row of absolute position
+     * @param c column of absolute position
+     * @param o orientation of piece
+     */
     public Piece(int r, int c, PieceOrientation o) {
         absolutePosition = new LocationPosn(r, c);
         orientation = o;
     }
 
-    // Returns the name of the piece.
+    /**
+     * Returns the name of this piece
+     * @return
+     */
     public final PieceName name() {
         return this.nameOfPiece();
     }
 
-    /* 
+    /**
     Move the piece down by diffr and right by diffc.
     Effects:
-    * Modifies the piece
-    */
+     * Modifies the piece
+     * @param diffr move the piece down by this amount
+     * @param diffc move the piece right by this amount
+     */
     public final void movePieceBy(int diffr, int diffc) {
         absolutePosition = absolutePosition.add(new OffsetPosn(diffr, diffc));
     }
 
-    // Rotate the piece counterclockwise by 90 degrees.
-    // Effects: 
-    // * Modifies the piece
+    /** 
+    Rotate the piece counterclockwise by 90 degrees.
+    Effects: 
+    * Modifies the piece
+    */
     public final void performRotationClockwise() {
 
         this.rotateClockwise();
@@ -72,9 +90,11 @@ public abstract class Piece {
         }
     }
 
-    // Rotate the piece clockwise by 90 degrees.
-    // Effects:
-    // * Modifies the piece
+    /** 
+    Rotate the piece clockwise by 90 degrees.
+    Effects:
+    * Modifies the piece
+    */
     public final void performRotationCounterClockwise() {
         
         this.rotateCounterClockwise();
@@ -93,8 +113,10 @@ public abstract class Piece {
         }
     }
 
-    // Returns an arraylist of posns that are currently occupied 
-    // on the board.
+    /** 
+    Returns an arraylist of posns that are currently occupied 
+    on the board.
+    */
     public final ArrayList<LocationPosn> squaresOccupiedNow() {
         ArrayList<LocationPosn> absoluteOccupied = 
             new ArrayList<LocationPosn>();
@@ -106,13 +128,17 @@ public abstract class Piece {
         return absoluteOccupied;
     }
 
-    // Returns the piece's orientation.
+    /** 
+    Returns the piece's orientation.
+    */
     public final PieceOrientation orientationNow() {
         return orientation;
     }
 
-    // Returns what the piece's orientation would be if it were 
-    // rotated clockwise.
+    /** 
+    Returns what the piece's orientation would be if it were 
+    rotated clockwise.
+    */
     public final PieceOrientation orientationIfRotatedClockwise() {
         if (this.orientation == PieceOrientation.UPRIGHT) {
             return PieceOrientation.RIGHT;
@@ -125,8 +151,10 @@ public abstract class Piece {
         }
     }
 
-    // Returns what the piece's orientation would be if it were 
-    // rotated counterclockwise.
+    /** 
+    Returns what the piece's orientation would be if it were 
+    rotated counterclockwise.
+    */
     public final PieceOrientation orientationIfRotatedCounterClockwise() {
         if (this.orientation == PieceOrientation.UPRIGHT) {
             return PieceOrientation.LEFT;
@@ -139,8 +167,10 @@ public abstract class Piece {
         }
     }
 
-    // Returns an arraylist of posns that would be occupied on the board 
-    // if the piece were to be rotated clockwise.
+    /** 
+    Returns an arraylist of posns that would be occupied on the board 
+    if the piece were to be rotated clockwise.
+    */
     public final ArrayList<LocationPosn> squaresOccupiedIfRotatedClockwise() {
         ArrayList<LocationPosn> absoluteOccupied = new ArrayList<LocationPosn>();
         ArrayList<OffsetPosn> relativeOccupied = this.occupiedIfRotatedClockwise();
@@ -151,8 +181,11 @@ public abstract class Piece {
         return absoluteOccupied;
     }
 
-    // Returns an arraylist of posns that would be occupied on the board 
-    // if the piece were to be rotated counterclockwise.
+    /**
+     * Returns an arraylist of posns that would be occupied on the board 
+    if the piece were to be rotated counterclockwise.
+     */
+
     public final ArrayList<LocationPosn> squaresOccupiedIfRotatedCounterClockwise() {
         ArrayList<LocationPosn> absoluteOccupied = new ArrayList<LocationPosn>();
         ArrayList<OffsetPosn> relativeOccupied = 
@@ -164,10 +197,13 @@ public abstract class Piece {
         return absoluteOccupied;
     }
 
-    /*
-    Returns an arraylist of posns that would be occupied on the board 
-    if the piece were to be moved down by diffr and right by diffc.
-    */
+    /**
+     * Returns an arraylist of posns that would be occupied on the board 
+     * if the piece were to be moved down by diffr and right by diffc.
+     * @param diffr move the piece down by this amount
+     * @param diffc move the piece right by this amount
+     * @return positions that would be occupied on the board if moved
+     */
     public final ArrayList<LocationPosn> 
     squaresOccupiedIfMoved(int diffr, int diffc) {
         ArrayList<LocationPosn> occupiedBeforeMove = 
@@ -175,11 +211,15 @@ public abstract class Piece {
         return this.offsetList(occupiedBeforeMove, new OffsetPosn(diffr, diffc));
     }
 
-    /*
-    Returns an arraylist of posns that would be occupied on the board 
-    if the piece were to be moved down by diffr, right by diffc, 
-    and rotated in the direction rotateInDirection.
-    */
+    /**
+     * Returns an arraylist of posns that would be occupied on the board 
+     * if the piece were to be moved down by diffr, right by diffc, 
+     * and rotated in the direction rotateInDirection.
+     * @param diffr move the piece down by this amount
+     * @param diffc move the piece right by this amount
+     * @param rotateInDirection rotate in this direction
+     * @return positions that would be occupied on the board if moved
+     */
     public final ArrayList<LocationPosn>
     squaresOccupiedIfMovedAndRotated(
         int diffr, 
@@ -197,49 +237,74 @@ public abstract class Piece {
         return occupiedIfMovedAndRotated;
     }
 
-    // ========================================
-    // Interface provided only for child classes
-    // ========================================
+    /*
+    ========================================
+    Interface provided only for child classes
+    ========================================
+    */
 
-    // Returns a copy of the position of the piece.
+    /**
+     * 
+     * @return a copy of the position of the piece.
+     */
     protected final LocationPosn getAbsolutePosition() {
         return new LocationPosn(absolutePosition);
     }
 
-    // ========================================
-    // Private/protected helper methods
-    // ========================================
+    /*
+    ========================================
+    Private/protected helper methods
+    ========================================
+    */
 
-    // Returns the name of the piece. (Protected virtual helper)
+    /**
+     * 
+     * @return name of the piece
+     */
     protected abstract PieceName nameOfPiece();
 
-    // Rotate the piece counterclockwise by 90 degrees. (Protected 
-    // virtual helper)
+    /** 
+    Rotate the piece counterclockwise by 90 degrees. (Protected 
+    virtual helper)
+    */
     protected abstract void rotateCounterClockwise();
 
-    // Rotate the piece clockwise by 90 degrees. (Protected virtual 
-    // helper)
+    /** 
+    Rotate the piece clockwise by 90 degrees. (Protected virtual 
+    helper)
+    */
     protected abstract void rotateClockwise();
 
-    // Returns an arraylist of posns, representing squares relative to
-    // the piece's absolute position, that are currently occupied.
-    // (Protected virtual helper)
+    /**
+     * 
+     * @return an arraylist of posns, representing square relative to
+     * the piece's absolute position, that are currently occupied.
+     */
     protected abstract ArrayList<OffsetPosn> occupiedNow();
 
-    // Returns an arraylist of posns, representing squares relative to 
-    // the piece's absolute position, that would be occupied if the 
-    // piece were to be rotated clockwise.
-    // (Protected virtual helper)
+    /**
+     * 
+     * @return an arraylist of posns, representing squares relative to 
+     * the piece's absolute position, that would be occupied if the 
+     * piece were to be rotated clockwise.
+     */
     protected abstract ArrayList<OffsetPosn> occupiedIfRotatedClockwise();
 
-    // Returns an arraylist of posns, representing squares relative to 
-    // the piece's absolute position, that would be occupied if the 
-    // piece were to be rotated counterclockwise.
-    // (Protected virtual helper)
+    /**
+     * 
+     * @return an arraylist of posns, representing squares relative to 
+     * the piece's absolute position, that would be occupied if the 
+     * piece were to be rotated counterclockwise.
+     */
     protected abstract ArrayList<OffsetPosn> occupiedIfRotatedCounterClockwise();
 
-    // Returns a list obtained from original by applying an offset 
-    // of offsetBy to each entry.
+    /**
+     * 
+     * @param original list of original positions
+     * @param offsetBy offset amount for each position
+     * @return a list obtained from original by applying an offset 
+     * of offsetBy to each entry.
+     */
     private ArrayList<LocationPosn> 
     offsetList(ArrayList<LocationPosn> original, OffsetPosn offsetBy) {
         ArrayList<LocationPosn> offset  = new ArrayList<LocationPosn>();

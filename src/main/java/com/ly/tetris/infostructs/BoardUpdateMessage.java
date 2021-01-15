@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import com.ly.tetris.game.Square;
 
 
-/*
+/** 
 BoardUpdateMessage contains information on the status of the game,
 sent to the browser by the controller.
 */
