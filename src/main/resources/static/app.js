@@ -660,7 +660,7 @@ function initCanvas() {
 // ========================================================================
 
 /** Connects to the server.
- * @return Promise
+ * @return Promise that is resolved when done connecting
  */
 function connect() {
     let socket = new SockJS("/tetris");
@@ -697,14 +697,21 @@ function disconnect() {
 
 /** 
 Update the page after the game has started.
-@param level {int} level that the player starts at
+@param {int} level level that the player starts at
 @return {nothing}
 */
 async function start(level) {
     await connect();
     document.getElementById("start-overlay").style.display = "none";
     document.getElementById("game-over-overlay").style.display = "none";
-    $('#tetris-theme').trigger("play");
+    document.getElementById("tetris-theme").currentTime = 0;
+    $("#tetris-theme").trigger("play");
+    tetris.music = setInterval(
+        function() {
+            document.getElementById("tetris-theme").currentTime = 0;
+            $("#tetris-theme").trigger("play");
+        },
+        96055);
     clearBoard();
     clearPieceInHold();
     sendGameStart(level);
@@ -719,6 +726,7 @@ Update the page after the game has ended.
 */
 function end(finalScore) {
     document.getElementById("game-over-overlay").style.display = "block";
+    clearInterval(tetris.music);
     $('#tetris-theme').trigger("pause");
     tetris.gameActive = false;
     clearTimeout(tetris.timer);
@@ -1342,12 +1350,24 @@ function sendHold() {
 }
 
 $(function() {
+    /** The websocket client for communicating with the server. */
     tetris.stompClient = null;
+    /** Width in pixels of one square. */
     tetris.unitSize = null;
+    /** True if a game is active, and false otherwise. */
     tetris.gameActive = false;
+    /** For timeout objects related to delayed locks, timed falls. */
     tetris.timer = null;
+    /** For the music loop. (Prefer this over the loop 
+     * attribute since the latter has delays upon restarting) */
+    tetris.music = null;
+    /** Array of Javascript objects containing {row, col}*/
     tetris.previousSquaresOfPieceInPlay = null;
+    /** Array of Javascript objects containing {row, col} */
     tetris.previousSquaresOfHardDropGhost = null;
+    /** Contains row0, row1, row2, row3, row4, row5, each mapping
+     * to a timeout object for the message on that row.
+     */
     tetris.message = {};
 
     initCanvas();
