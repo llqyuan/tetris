@@ -695,6 +695,26 @@ function disconnect() {
     }
 }
 
+/**
+ * Starts music and sets up a loop.
+ */
+function startMusic() {
+    document.getElementById("tetris-theme").currentTime = 0;
+    $("#tetris-theme").trigger("play");
+    tetris.music = setInterval(
+        function() {
+            document.getElementById("tetris-theme").currentTime = 0;
+            $("#tetris-theme").trigger("play");
+        },
+        192140);
+}
+
+/** Stops music */
+function endMusic() {
+    clearInterval(tetris.music);
+    $('#tetris-theme').trigger("pause");
+}
+
 /** 
 Update the page after the game has started.
 @param {int} level level that the player starts at
@@ -704,14 +724,7 @@ async function start(level) {
     await connect();
     document.getElementById("start-overlay").style.display = "none";
     document.getElementById("game-over-overlay").style.display = "none";
-    document.getElementById("tetris-theme").currentTime = 0;
-    $("#tetris-theme").trigger("play");
-    tetris.music = setInterval(
-        function() {
-            document.getElementById("tetris-theme").currentTime = 0;
-            $("#tetris-theme").trigger("play");
-        },
-        96055);
+    startMusic();
     clearBoard();
     clearPieceInHold();
     sendGameStart(level);
@@ -726,8 +739,7 @@ Update the page after the game has ended.
 */
 function end(finalScore) {
     document.getElementById("game-over-overlay").style.display = "block";
-    clearInterval(tetris.music);
-    $('#tetris-theme').trigger("pause");
+    endMusic();
     tetris.gameActive = false;
     clearTimeout(tetris.timer);
     $("#final-score").empty();
