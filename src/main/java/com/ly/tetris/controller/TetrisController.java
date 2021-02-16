@@ -1,10 +1,11 @@
-package com.ly.tetris.game;
+package com.ly.tetris.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import com.ly.tetris.game.TetrisGame;
 import com.ly.tetris.infostructs.BoardUpdateMessage;
 import com.ly.tetris.infostructs.EventMessage;
 import com.ly.tetris.infostructs.GameStartMessage;

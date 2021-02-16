@@ -2,6 +2,11 @@ body {
     background-color: #ac4dac;
 }
 
+#home {
+    text-align: center;
+    margin: auto;
+}
+
 #main-content {
     margin: auto;
     text-align: center;
