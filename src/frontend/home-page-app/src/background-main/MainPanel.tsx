@@ -2,6 +2,7 @@ import React, { SyntheticEvent } from "react";
 import PlayButton from "../buttons/PlayButton";
 import ControlsButton from "../buttons/ControlsButton";
 import HighScoreButton from "../buttons/HighScoreButton";
+import "./MainPanel.css"
 
 class MainPanel extends React.Component {
     msg: string = "testet";
@@ -14,16 +15,21 @@ class MainPanel extends React.Component {
 
     render(): React.ReactNode {
         return (
-            <div style={{width: "100%", alignItems: "center"}}>
-                <div id="main-panel-title">Tetris</div>
-                <div 
-                    id="button-container" 
-                    style={{width: "40%", margin: "auto", alignItems: "center"}}>
+            <div className="row">
+                <div id="main-left-panel" className="column">
+                    <p id="panel-title">Tetris</p>
+                    <div
+                        id="button-container" 
+                        style={{width: "70%", margin: "auto", alignItems: "center"}}>
 
-                    <PlayButton/>
-                    <ControlsButton handleClick={this.handleClickControls}/>
-                    <HighScoreButton handleClick={this.handleClickHighScore}/>
-                    
+                        <PlayButton/>
+                        <ControlsButton handleClick={this.handleClickControls}/>
+                        <HighScoreButton handleClick={this.handleClickHighScore}/>
+                        
+                    </div>
+                </div>
+                
+                <div id="main-right-panel" className="column">
                 </div>
             </div>
         );

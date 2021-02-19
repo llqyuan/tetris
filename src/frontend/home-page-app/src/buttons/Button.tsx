@@ -53,7 +53,7 @@ class Button extends React.Component<ButtonProps, ButtonState> {
             button = (
                 <div 
                     className="hover-zoom-button" 
-                    style={{width: "100%", fontSize: "1.5em", textAlign: "center", margin: "10px"}}>
+                    style={{width: "100%", fontSize: "1em", textAlign: "center", margin: "10px"}}>
     
                     {this.props.text}
     

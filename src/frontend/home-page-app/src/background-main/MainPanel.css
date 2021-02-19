@@ -1,0 +1,25 @@
+#panel-title {
+    font-size: 1.5em;
+    text-align: left;
+    padding-left: 10%;
+}
+
+/* Three image containers (use 25% for four, and 50% for two, etc) */
+.column {
+    box-sizing: border-box;
+    float: left;
+    width: 50%;
+    padding: 5px;
+}
+
+.row {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Clear floats after image containers */
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
