@@ -26,13 +26,11 @@ class Button extends React.Component<ButtonProps, ButtonState> {
 
         if (this.props.url != null) {
             button = (
-                <a 
-                    href={this.props.url} 
-                    style={{width: "40%", alignItems: "center", margin: "auto"}}> 
+                <a href={this.props.url} > 
 
                     <div 
                         className="hover-zoom-button" 
-                        style={{fontSize: "1.5em", textAlign: "center"}}>
+                        style={{width: "100%", fontSize: "1.5em", textAlign: "center", margin: "10px"}}>
 
                         {this.props.text}
                         
@@ -44,7 +42,7 @@ class Button extends React.Component<ButtonProps, ButtonState> {
             button = (
                 <div 
                     className="hover-zoom-button" 
-                    style={{width: "40%", fontSize: "1.5em", textAlign: "center", margin: "auto"}}
+                    style={{width: "100%", fontSize: "1.5em", textAlign: "center", margin: "10px"}}
                     onClick={this.props.handleClick}>
     
                     {this.props.text}
@@ -55,7 +53,7 @@ class Button extends React.Component<ButtonProps, ButtonState> {
             button = (
                 <div 
                     className="hover-zoom-button" 
-                    style={{width: "40%", fontSize: "1.5em", textAlign: "center", margin: "auto"}}>
+                    style={{width: "100%", fontSize: "1.5em", textAlign: "center", margin: "10px"}}>
     
                     {this.props.text}
     

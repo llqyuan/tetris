@@ -1,7 +1,5 @@
 import React from 'react';
-import PlayButton from "./buttons/PlayButton";
-import ControlsButton from "./buttons/ControlsButton";
-import HighScoreButton from "./buttons/HighScoreButton";
+import MainPanel from "./background-main/MainPanel";
 import logo from './logo.svg';
 import './App.css';
 
@@ -21,10 +19,7 @@ function App() {
         >
           Learn React
         </a>
-        <PlayButton/> 
-        <ControlsButton/>
-        <ControlsButton/>
-        <HighScoreButton/>
+        <MainPanel/>
       </header>
     </div>
   );
