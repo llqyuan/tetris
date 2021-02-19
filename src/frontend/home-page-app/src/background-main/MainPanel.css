@@ -4,6 +4,11 @@
     padding-left: 10%;
 }
 
+#main-left-panel {
+    background-color: #f8a7f8;
+    margin: 5%;
+}
+
 /* Three image containers (use 25% for four, and 50% for two, etc) */
 .column {
     box-sizing: border-box;

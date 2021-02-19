@@ -4,13 +4,19 @@ import ControlsButton from "../buttons/ControlsButton";
 import HighScoreButton from "../buttons/HighScoreButton";
 import "./MainPanel.css"
 
-class MainPanel extends React.Component {
+interface MainPanelProps {
+    handleClickControls: (e: SyntheticEvent) => void;
+    handleClickHighScore: (e: SyntheticEvent) => void;
+}
+
+interface MainPanelState {}
+
+/** Middle section -- title, buttons, etc */
+class MainPanel extends React.Component<MainPanelProps, MainPanelState> {
     msg: string = "testet";
     
     constructor(props: any) {
         super(props);
-        this.handleClickControls = this.handleClickControls.bind(this);
-        this.handleClickHighScore = this.handleClickHighScore.bind(this);
     }
 
     render(): React.ReactNode {
@@ -23,8 +29,8 @@ class MainPanel extends React.Component {
                         style={{width: "70%", margin: "auto", alignItems: "center"}}>
 
                         <PlayButton/>
-                        <ControlsButton handleClick={this.handleClickControls}/>
-                        <HighScoreButton handleClick={this.handleClickHighScore}/>
+                        <ControlsButton handleClick={this.props.handleClickControls}/>
+                        <HighScoreButton handleClick={this.props.handleClickHighScore}/>
                         
                     </div>
                 </div>
@@ -33,16 +39,6 @@ class MainPanel extends React.Component {
                 </div>
             </div>
         );
-    }
-
-    handleClickControls(e: SyntheticEvent): void {
-        e.preventDefault();
-        console.log("Clicked controls button, " + this.msg);
-    }
-
-    handleClickHighScore(e: SyntheticEvent): void {
-        e.preventDefault();
-        console.log("Clicked high score button, " + this.msg);
     }
 }
 

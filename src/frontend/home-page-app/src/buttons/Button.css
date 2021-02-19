@@ -4,6 +4,7 @@
     width: 100%;
     background-color: #fa73fa;
     text-align: center;
+    border-radius: 25px;
 }
 .hover-zoom-button:hover {
     transform: scale(1.1);

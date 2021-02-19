@@ -1,5 +1,5 @@
 import React from 'react';
-import MainPanel from "./background-main/MainPanel";
+import Background from "./background-main/Background";
 import logo from './logo.svg';
 import './App.css';
 
@@ -19,7 +19,7 @@ function App() {
         >
           Learn React
         </a>
-        <MainPanel/>
+        <Background/>
       </header>
     </div>
   );
