@@ -1,4 +1,7 @@
 import React from 'react';
+import PlayButton from "./buttons/PlayButton";
+import ControlsButton from "./buttons/ControlsButton";
+import HighScoreButton from "./buttons/HighScoreButton";
 import logo from './logo.svg';
 import './App.css';
 
@@ -18,6 +21,10 @@ function App() {
         >
           Learn React
         </a>
+        <PlayButton/> 
+        <ControlsButton/>
+        <ControlsButton/>
+        <HighScoreButton/>
       </header>
     </div>
   );

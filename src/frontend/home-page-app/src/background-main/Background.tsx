@@ -6,7 +6,7 @@ class Background extends React.Component {
         super(props);
     }
 
-    render() {
+    render(): React.ReactNode {
         return (
             <div>
                 insert something here

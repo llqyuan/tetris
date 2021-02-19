@@ -1,0 +1,10 @@
+
+.hover-zoom-button {
+    transition: all 0.3s ease 0s;
+    width: 100%;
+    background-color: #fa73fa;
+    text-align: center;
+}
+.hover-zoom-button:hover {
+    transform: scale(1.1);
+}

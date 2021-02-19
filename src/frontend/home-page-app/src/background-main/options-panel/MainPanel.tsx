@@ -5,7 +5,7 @@ class MainPanel extends React.Component {
         super(props);
     }
 
-    render() {
+    render(): React.ReactNode {
         return (
             <div id="main-panel-title">Tetris</div>
             // buttons here
