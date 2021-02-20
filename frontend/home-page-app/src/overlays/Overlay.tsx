@@ -6,41 +6,45 @@ interface OverlayProps {
     title: string;
     contents: React.ReactNode;
     toggledOn: boolean;
+    rerenderParent: () => void;
 }
 
-interface OverlayState {
-    toggledOn: boolean;
-}
+interface OverlayState {}
 
-
+/** Props:
+ * - title: Title of overlay panel
+ * - contents: Inner contents of overlay
+ * - toggledOn: True if overlay should be visible, 
+ * and false if it should be invisible
+ * - rerenderParent: Callback to use when clicking the close button
+ */
 class Overlay 
 extends React.Component<OverlayProps, OverlayState> {
     constructor(props: any) {
         super(props);
-        this.state = {toggledOn: this.props.toggledOn};
-        this.closeOverlay = this.closeOverlay.bind(this);
+        this.rerenderParent = this.rerenderParent.bind(this);
     }
 
     render(): React.ReactNode {
         let displayString: string = "hidden";
-        if (this.state.toggledOn) {
+        if (this.props.toggledOn) {
             displayString = "block";
         }
         return (
             <div>
                 <div style={{display: displayString}} className="opened-panel">
-                    <h2> title </h2>
+                    <h2> {this.props.title} </h2>
                     this.props.contents;
-                    <CloseOverlayButton handleClick={this.closeOverlay}/>
+                    <CloseOverlayButton handleClick={this.rerenderParent}/>
                 </div>
             </div>
         );
     }
 
-    closeOverlay(e: SyntheticEvent): void {
+    rerenderParent(e: SyntheticEvent): void {
         e.preventDefault();
-        this.setState({toggledOn: false});
-        console.log("Closing overlay");
+        this.props.rerenderParent();
+        console.log("Closing overlay, parent's rerendering should set this invisible");
     }
 }
 

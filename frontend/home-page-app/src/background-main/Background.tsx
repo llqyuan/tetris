@@ -1,5 +1,6 @@
 import React, { SyntheticEvent } from "react";
 import MainPanel from "./MainPanel";
+import ControlsOverlay from "../overlays/ControlsOverlay";
 
 interface BackgroundProps {}
 
@@ -8,6 +9,8 @@ interface BackgroundState {
     highscoreOverlayOn: boolean;
 }
 
+/** Intended to control which layers of the page are visible.
+ * Stores main panel, as well as state for overlays */
 class Background 
 extends React.Component<BackgroundProps, BackgroundState> {
 
@@ -17,31 +20,42 @@ extends React.Component<BackgroundProps, BackgroundState> {
         super(props);
         this.state = {controlsOverlayOn: false, highscoreOverlayOn: false};
 
-        this.handleClickControls = this.handleClickControls.bind(this);
-        this.handleClickHighScore = this.handleClickHighScore.bind(this);
+        this.openControlsOverlay = this.openControlsOverlay.bind(this);
+        this.openHighscoreOverlay = this.openHighscoreOverlay.bind(this);
+        this.closeControlsOverlay = this.closeControlsOverlay.bind(this);
+        this.closeHighscoreOverlay = this.closeHighscoreOverlay.bind(this);
     }
 
     render(): React.ReactNode {
         return (
-            <MainPanel 
-                handleClickControls={this.handleClickControls} 
-                handleClickHighScore={this.handleClickHighScore}/>
+            <div>
+                <MainPanel 
+                    handleClickControls={this.openControlsOverlay} 
+                    handleClickHighScore={this.openHighscoreOverlay}/>
+                <ControlsOverlay 
+                    toggledOn={this.state.controlsOverlayOn}
+                    rerenderParent={this.closeControlsOverlay}/>
+            </div>
         );
     }
 
-    handleClickControls(e: SyntheticEvent): void {
+    openControlsOverlay(e: SyntheticEvent): void {
         e.preventDefault();
-        console.log("Clicked controls button, " + this.msg);
+        console.log("Clicked controls button, set state to rerender, " + this.msg);
     }
 
-    handleClickHighScore(e: SyntheticEvent): void {
+    openHighscoreOverlay(e: SyntheticEvent): void {
         e.preventDefault();
-        console.log("Clicked high score button, " + this.msg);
+        console.log("Clicked high score button, set state to rerender, " + this.msg);
     }
 
-    /*
-    Store the state for overlay toggling here?
-    */
+    closeControlsOverlay(): void {
+        console.log("Close controls overlay, set state to rerender, " + this.msg);
+    }
+
+    closeHighscoreOverlay(): void {
+        console.log("Close high score overlay, set state to rerender, " + this.msg);
+    }
 }
 
 export default Background;

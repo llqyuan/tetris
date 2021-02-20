@@ -1,12 +1,17 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import Overlay from "./Overlay";
 
 interface ControlsOverlayProps {
     toggledOn: boolean;
+    rerenderParent: () => void;
 }
 interface ControlsOverlayState {}
 
-/** Shows controls for game */
+/** Shows controls for game.
+ * Props:
+ * - toggledOn: True if overlay should be visible and false otherwise
+ * - rerenderParent: Callback to pass to Overlay
+ */
 class ControlsOverlay 
 extends React.Component<ControlsOverlayProps, ControlsOverlayState> {
     constructor(props: any) {
@@ -20,7 +25,8 @@ extends React.Component<ControlsOverlayProps, ControlsOverlayState> {
         return <Overlay 
             title="Controls" 
             contents={innerText} 
-            toggledOn={this.props.toggledOn}/>;
+            toggledOn={this.props.toggledOn}
+            rerenderParent={this.props.rerenderParent}/>;
     }
 }
 

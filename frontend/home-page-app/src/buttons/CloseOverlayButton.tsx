@@ -8,6 +8,10 @@ interface CloseOverlayButtonProps {
 
 interface CloseOverlayButtonState {}
 
+/** Intended to close the overlay.
+ * Props:
+ * - handleClick: Callback to use when clicking the close button
+ */
 class CloseOverlayButton 
 extends React.Component<CloseOverlayButtonProps, CloseOverlayButtonState> {
     constructor(props: any) {
